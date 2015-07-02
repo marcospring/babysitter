@@ -22,7 +22,6 @@ public abstract class BaseUser extends BaseEntity {
 	private String mobilePhone;
 
 	public String getUsername() {
-		log.info(">>>>>>>>>");
 		return username;
 	}
 
