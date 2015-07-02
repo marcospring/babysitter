@@ -1,4 +1,4 @@
-package com.zhangk.babysitter.controller;
+package com.zhangk.babysitter.controller.web.page;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

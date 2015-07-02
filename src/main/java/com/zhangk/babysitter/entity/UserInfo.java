@@ -1,26 +1,27 @@
 package com.zhangk.babysitter.entity;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
-@Entity(name = "babysister_babysister")
-public class Babysister implements Serializable {
+@Entity(name = "babysitter_user")
+public class UserInfo implements Serializable {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-
 	private long id;
 	private String guid;
 	private String username;
 	private String password;
-	private String name;
-	private String mobilePhone;
+	private List<Role> roles;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -56,20 +57,13 @@ public class Babysister implements Serializable {
 		this.password = password;
 	}
 
-	public String getName() {
-		return name;
+	@OneToMany(cascade = CascadeType.ALL)
+	public List<Role> getRoles() {
+		return roles;
 	}
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getMobilePhone() {
-		return mobilePhone;
-	}
-
-	public void setMobilePhone(String mobilePhone) {
-		this.mobilePhone = mobilePhone;
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 }

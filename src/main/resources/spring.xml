@@ -63,7 +63,7 @@
 
     <!-- 定义切面，在 * badminton.*.service.*ServiceImpl.*(..) 中执行有关的hibernate session的事务操作 -->
     <aop:config>
-        <aop:pointcut id="serviceOperation" expression="execution(* babysitter.*.service.*Service.*(..))" />
+        <aop:pointcut id="serviceOperation" expression="execution(* babysitter.*.service.*.*Service.*(..))" />
         <aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
     </aop:config>
 
