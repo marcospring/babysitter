@@ -9,16 +9,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
 
 @Entity
-@Table(name = "babysitter_user")
-public class UserInfo implements Serializable {
-
+@Table(name = "babysitter_county")
+public class County implements Serializable {
 	/**
 	 *
 	 */
@@ -28,9 +27,9 @@ public class UserInfo implements Serializable {
 	private String guid;
 	private Date createDate;
 	private Date updateDate;
-	private String username;
-	private String password;
-	private List<Role> roles;
+	private String name;
+	private County parent;
+	private List<County> children;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -42,38 +41,20 @@ public class UserInfo implements Serializable {
 		this.id = id;
 	}
 
+	public boolean isOvld() {
+		return ovld;
+	}
+
+	public void setOvld(boolean ovld) {
+		this.ovld = ovld;
+	}
+
 	public String getGuid() {
 		return guid;
 	}
 
 	public void setGuid(String guid) {
 		this.guid = guid;
-	}
-
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	@ManyToMany
-	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
 	}
 
 	public Date getCreateDate() {
@@ -92,16 +73,35 @@ public class UserInfo implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public boolean isOvld() {
-		return ovld;
+	public String getName() {
+		return name;
 	}
 
-	public void setOvld(boolean ovld) {
-		this.ovld = ovld;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public static UserInfo getInstance() {
-		UserInfo o = new UserInfo();
+	@ManyToOne
+	@JoinColumn(name = "parent_id")
+	public County getParent() {
+		return parent;
+	}
+
+	public void setParent(County parent) {
+		this.parent = parent;
+	}
+
+	@OneToMany(mappedBy = "parent")
+	public List<County> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<County> children) {
+		this.children = children;
+	}
+
+	public static County getInstance() {
+		County o = new County();
 		o.setOvld(true);
 		o.setGuid(GUIDCreator.GUID());
 		o.setCreateDate(new Date());

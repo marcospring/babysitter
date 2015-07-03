@@ -6,42 +6,63 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta content="width=device-width,initial-scale=1" name="viewport">
 <title>Insert title here</title>
-<link rel="stylesheet" href="css/bootstrap.min.css">
+<!-- Bootstrap -->
+<link rel="stylesheet" media="screen" href="css/bootstrap.min.css">
+<link rel="stylesheet" media="screen" href="css/bootstrap-theme.min.css">
+
+<!-- Bootstrap Admin Theme -->
+<link rel="stylesheet" media="screen"
+	href="css/bootstrap-admin-theme.css">
+<!-- Custom styles -->
 <style type="text/css">
-body {
-	padding-top:50px;
-}
-.starter{
-	padding:40pd 15px;
-	text-align:center;
+.alert {
+	margin: 0 auto 20px;
 }
 </style>
+<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+<!--[if lt IE 9]>
+           <script type="text/javascript" src="js/html5shiv.js"></script>
+           <script type="text/javascript" src="js/respond.min.js"></script>
+        <![endif]-->
 </head>
-<body>
-	<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+<body class="bootstrap-admin-without-padding">
 	<div class="container">
-		<div class="navbar-heard">
-			<a href="#" class="navbar-brand">Project Name</a>
-		</div>
-		<div id="navbar" class="collapse navbar-collapse">
-			<ul class="nav navbar-nav">
-				<li class="active"><a href="#">Home</a></li>
-				<li><a href="#">About</a></li>
-				<li><a href="#">Contact</a></li>
-			</ul>
+            <div class="row">
+                <div class="col-lg-12">
+                   
+                    <form method="post" action="login.html" class="bootstrap-admin-login-form">
+                        <h1>登陆</h1>
+                        <div class="form-group">
+                            <input class="form-control" type="text" id="username" placeholder="Username">
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" type="password" id="password" placeholder="Password">
+                        </div>
+                        <button id="loginBtn" class="btn btn-lg btn-primary" type="submit">登陆</button>
+                    </form>
+                </div>
+            </div>
+        </div>
 
-		</div>
-	</div>
-	</nav>
-	<div class="container">
-		<div class="starter">
-
-			<h1>Bootstrap starter template</h1>
-			<p class="lead">
-				这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始这是一个开始
-			</p>
-		</div>
-
-	</div>
+        <script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript">
+            $(function() {
+                // Setting focus
+                $('input[name="username"]').focus();
+                $("#loginBtn").bind('click',function(){
+                	var params = {};
+                	params.username=$.trim($("#username").val());
+                	params.password=$.trim($("#password").val());
+                	$.post('/user/login.html',params,function(data){
+                		if(data.code == 0){
+                			window.parent.location="user/main.html";
+                		}else{
+                			alert(data.msg);
+                		}
+                	});
+                });
+            });
+        </script>
 </body>
 </html>
