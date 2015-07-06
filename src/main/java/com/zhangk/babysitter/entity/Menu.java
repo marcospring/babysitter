@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -31,7 +32,7 @@ public class Menu implements Serializable {
 	private Date updateDate;
 	private String title;
 	private String url;
-	private Role role;
+	private List<Role> roles;
 	private Menu parent;
 	private List<Menu> children;
 
@@ -96,14 +97,13 @@ public class Menu implements Serializable {
 		this.children = children;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "role_id")
-	public Role getRole() {
-		return role;
+	@ManyToMany(mappedBy = "menus")
+	public List<Role> getRoles() {
+		return roles;
 	}
 
-	public void setRole(Role role) {
-		this.role = role;
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 	public Date getCreateDate() {

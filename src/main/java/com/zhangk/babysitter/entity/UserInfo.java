@@ -1,6 +1,7 @@
 package com.zhangk.babysitter.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class UserInfo implements Serializable {
 	private Date updateDate;
 	private String username;
 	private String password;
+	private String name;
 	private List<Role> roles;
 
 	@Id
@@ -69,6 +71,8 @@ public class UserInfo implements Serializable {
 	@ManyToMany
 	@JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	public List<Role> getRoles() {
+		if (roles == null)
+			roles = new ArrayList<Role>();
 		return roles;
 	}
 
@@ -98,6 +102,14 @@ public class UserInfo implements Serializable {
 
 	public void setOvld(boolean ovld) {
 		this.ovld = ovld;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public static UserInfo getInstance() {
