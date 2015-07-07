@@ -5,6 +5,7 @@ import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.view.velocity.VelocityConfig;
 
 import com.zhangk.babysitter.entity.UserInfo;
 import com.zhangk.babysitter.utils.common.Constants;
@@ -12,6 +13,8 @@ import com.zhangk.babysitter.utils.common.Constants;
 public class BaseController {
 	@Autowired
 	protected HttpServletRequest request;
+	@Autowired
+	protected VelocityConfig velocity;
 
 	protected PageResult res = new PageResult();
 

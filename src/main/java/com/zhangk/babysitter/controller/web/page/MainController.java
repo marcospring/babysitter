@@ -32,6 +32,10 @@ public class MainController extends BaseController {
 
 	@RequestMapping("/m")
 	public String main() {
+		UserInfo user = (UserInfo) request.getSession().getAttribute(
+				Constants.SESSION_USER);
+		List<Menu> menus = userService.getUserMenus(user);
+		request.setAttribute("menus", menus);
 		return "main";
 	}
 
