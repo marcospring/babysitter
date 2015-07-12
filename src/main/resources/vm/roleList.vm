@@ -1,0 +1,3 @@
+#foreach($role in $page.result)
+$role.name
+#end

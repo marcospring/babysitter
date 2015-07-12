@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Tables | Bootstrap 3.x Admin Theme</title>
+<title>babysitter</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -36,27 +36,44 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<div class="text-muted bootstrap-admin-box-title">
-						角色管理&nbsp;
-						<button class="btn btn-xs btn-info" id="btnAddRole"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;添加角色</button>
-						<button class="btn btn-xs btn-info"><i class="glyphicon glyphicon-filter"></i>&nbsp;功能分配</button>
+						月嫂管理&nbsp;
+						<button class="btn btn-xs btn-info" id="btnAddRole"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;添加月嫂</button>
 						</div>
 					</div>
 					<div class="bootstrap-admin-panel-content">
+					<div class="row">
+						<div class="col-md-6"></div>
+						<div class="col-md-6">
+						<fieldset>
+							<div class="clearfix">
+								<div class="input-append input-prepend">
+									<span class="add-on"><i class="icon-search"></i></span>
+									<input type="text" id="search" placeholder="Search" class="placeholder">
+									<button type="button" class="btn btn-primary"><i class="glyphicon glyphicon-search small"></i></button>
+								</div>
+							
+								
+							</div>
+							</fieldset>
+						</div>
+					</div>
 						<table class="table  table-bordered">
 							<thead>
 								<tr>
 									<th>编号</th>
-									<th>GUID</th>
-									<th>角色名称</th>
+									<th>姓名</th>
+									<th>级别</th>
+									<th>电话</th>
 									<th>操作</th>
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="role" items="${page.result}">
+								<c:forEach var="babysitter" items="${page.result}">
 									<tr class="odd gradeX">
-										<td>${role.id}</td>
-										<td>${role.guid}</td>
-										<td>${role.name}</td>
+										<td>${babysitter.id}</td>
+										<td>${babysitter.name}</td>
+										<td>${babysitter.level.name}</td>
+										<td>${babysitter.mobilePhone}</td>
 										<td>
 											 <button class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
                                               <button class="btn btn-sm btn-success"><i class="glyphicon glyphicon-ok-sign"></i>Confirm</button>
@@ -81,15 +98,48 @@
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="addRoleTitle">添加角色</h4>
+					<h4 class="modal-title" id="addRoleTitle">添加月嫂</h4>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<label class="col-lg-2 control-label" for="focusedInput">角色名称</label>
+						<label class="col-lg-2 control-label" for="focusedInput">姓名</label>
 						<div class="col-lg-10">
-							<input id="roleName" class="form-control" type="text" />
+							<input id="name" class="form-control" type="text" />
 						</div>
 					</div>
+					<div class="form-group">
+						<label class="col-lg-2 control-label" for="focusedInput">用户名</label>
+						<div class="col-lg-10">
+							<input id="username" class="form-control" type="text" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-2 control-label" for="focusedInput">密码</label>
+						<div class="col-lg-10">
+							<input id="password" class="form-control" type="text" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-2 control-label" for="focusedInput">确认密码</label>
+						<div class="col-lg-10">
+							<input id="checkpassword" class="form-control" type="text" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-2 control-label" for="focusedInput">月嫂级别</label>
+						<div class="col-lg-10">
+							<div class="dropdown">
+								<button class="btn btn-default dropdown-toggle" type="button" id="dropdownLevel">月嫂级别</button>
+								<ul class="dropdown-menu" aria-labelledby="dropdownLevel">
+									<c:forEach var="level" items="${levels}">
+									<li><a>${level.name}</a></li>
+									</c:forEach>
+								</ul>
+							</div>
+							
+						</div>
+					</div>
+					
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>

@@ -4,7 +4,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Tables | Bootstrap 3.x Admin Theme</title>
+<title>babysitter</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -36,9 +36,8 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<div class="text-muted bootstrap-admin-box-title">
-						角色管理&nbsp;
-						<button class="btn btn-xs btn-info" id="btnAddRole"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;添加角色</button>
-						<button class="btn btn-xs btn-info"><i class="glyphicon glyphicon-filter"></i>&nbsp;功能分配</button>
+						月嫂级别管理&nbsp;
+						<button class="btn btn-xs btn-info" id="btnAddLevel"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;添加月嫂级别</button>
 						</div>
 					</div>
 					<div class="bootstrap-admin-panel-content">
@@ -46,17 +45,19 @@
 							<thead>
 								<tr>
 									<th>编号</th>
-									<th>GUID</th>
-									<th>角色名称</th>
+									<th>名称</th>
+									<th>积分</th>
+									<th>升级费</th>
 									<th>操作</th>
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="role" items="${page.result}">
+								<c:forEach var="level" items="${levels}">
 									<tr class="odd gradeX">
-										<td>${role.id}</td>
-										<td>${role.guid}</td>
-										<td>${role.name}</td>
+										<td>${level.id}</td>
+										<td>${level.name}</td>
+										<td>${level.score}</td>
+										<td>${level.money}</td>
 										<td>
 											 <button class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
                                               <button class="btn btn-sm btn-success"><i class="glyphicon glyphicon-ok-sign"></i>Confirm</button>
@@ -74,26 +75,40 @@
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="addRole" tabindex="-1" role="dialog" >
+	<div class="modal fade" id="addLevel" tabindex="-1" role="dialog" >
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="addRoleTitle">添加角色</h4>
+					<h4 class="modal-title" id="addRoleTitle">添加级别</h4>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<label class="col-lg-2 control-label" for="focusedInput">角色名称</label>
+						<label class="col-lg-2 control-label" for="focusedInput">名称</label>
 						<div class="col-lg-10">
-							<input id="roleName" class="form-control" type="text" />
+							<input id="name" class="form-control" type="text" />
 						</div>
 					</div>
+					<div class="form-group">
+						<label class="col-lg-2 control-label" for="focusedInput">积分</label>
+						<div class="col-lg-10">
+							<input id="score" class="form-control" type="text" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-2 control-label" for="focusedInput">升级费</label>
+						<div class="col-lg-10">
+							<input id="money" class="form-control" type="text" />
+						</div>
+					</div>
+					
+					
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" id="activeAddRole" class="btn btn-primary" >添加</button>
+					<button type="button" id="activeAddLevel" class="btn btn-primary" >添加</button>
 				</div>
 			</div>
 		</div>
@@ -108,16 +123,20 @@
 	<script type="text/javascript" src="${ctx}/js/DT_bootstrap.js"></script>
 	<script type="text/javascript">
 		$(function(){
-			$("#btnAddRole").bind("click",function(){
-				$("#addRole").modal("show");
+			$("#btnAddLevel").bind("click",function(){
+				$("#addLevel").modal("show");
 			})
-			$("#activeAddRole").bind("click",function(){
-				var roleName = $("#roleName").val();
+			$("#activeAddLevel").bind("click",function(){
+				var name = $("#name").val();
+				var score = $("#score").val();
+				var money = $("#money").val();
 				var param = {};
-				param.roleName = roleName;
-				$.post('${ctx}/role/addRole.html',param,function(data){
+				param.name = name;
+				param.score = score;
+				param.money = money;
+				$.post('${ctx}/babysitter/addLevel.html',param,function(data){
 					if(data.code == 0){
-						window.location = "${ctx}/role/roleList.html"
+						window.location = "${ctx}/babysitter/levelList.html"
 					}else{
 						alert(data.msg);
 					}

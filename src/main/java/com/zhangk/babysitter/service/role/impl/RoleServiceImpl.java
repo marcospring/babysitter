@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Role;
 import com.zhangk.babysitter.service.role.RoleService;
+import com.zhangk.babysitter.utils.common.Pagination;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -20,6 +21,17 @@ public class RoleServiceImpl implements RoleService {
 		String hql = "from Role r ";
 		List<Role> list = dao.getListResultByHQL(Role.class, hql);
 		return list;
+	}
+
+	public Pagination<Role> getPageRoleList(Pagination<Role> page) {
+		String hql = "from Role r";
+		String countHql = "select count(r.id) from Role r";
+
+		Pagination<Role> p = dao.getPageResult(Role.class, hql,
+				page.getPageNo(), page.getPageSize());
+		Long count = dao.getSingleResultByHQL(Long.class, countHql);
+		p.setResultSize(count);
+		return p;
 	}
 
 	@Transactional

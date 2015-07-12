@@ -11,6 +11,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.zhangk.babysitter.utils.common.GUIDCreator;
+
 @Entity
 @Table(name = "babysitter_service_order")
 public class ServiceOrder implements Serializable {
@@ -105,4 +107,12 @@ public class ServiceOrder implements Serializable {
 		this.serviceEndDate = serviceEndDate;
 	}
 
+	public static ServiceOrder getInstance() {
+		ServiceOrder o = new ServiceOrder();
+		o.setOvld(true);
+		o.setGuid(GUIDCreator.GUID());
+		o.setCreateDate(new Date());
+		o.setUpdateDate(new Date());
+		return o;
+	}
 }

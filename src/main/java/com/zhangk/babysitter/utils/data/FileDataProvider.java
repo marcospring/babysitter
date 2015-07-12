@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import com.zhangk.babysitter.entity.UserInfo;
-
 public class FileDataProvider {
 
 	private static StringBuffer BASE_PATH = new StringBuffer(
@@ -27,19 +25,7 @@ public class FileDataProvider {
 		USERNAME, NAME, PHONE, EMAIL
 	}
 
-	public List<UserInfo> getUserInfoData() {
-		List<UserInfo> list = new ArrayList<UserInfo>();
-		for (int i = 0; i < 20; i++) {
-			UserInfo u = UserInfo.getInstance();
-			u.setUsername(getValue(Type.USERNAME));
-			u.setName(getValue(Type.NAME));
-			u.setPassword("123");
-			list.add(u);
-		}
-		return list;
-	}
-
-	private String getValue(Type typeName) {
+	public String getValue(Type typeName) {
 		Random random = new Random();
 		switch (typeName) {
 		case USERNAME:

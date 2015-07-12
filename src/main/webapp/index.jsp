@@ -34,7 +34,7 @@
 			<div class="col-lg-12">
 				 
 				<form class="bootstrap-admin-login-form">
-					<h1>登陆</h1>
+					<h1>登录</h1>
 					<div class="form-group">
 						<input class="form-control" type="text" id="username"
 							placeholder="Username">

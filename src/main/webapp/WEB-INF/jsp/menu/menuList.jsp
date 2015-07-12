@@ -36,9 +36,8 @@
 				<div class="panel panel-default">
 					<div class="panel-heading">
 						<div class="text-muted bootstrap-admin-box-title">
-						角色管理&nbsp;
-						<button class="btn btn-xs btn-info" id="btnAddRole"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;添加角色</button>
-						<button class="btn btn-xs btn-info"><i class="glyphicon glyphicon-filter"></i>&nbsp;功能分配</button>
+						菜单管理&nbsp;
+						<button class="btn btn-xs btn-info" id="btnAddMenu"><i class="glyphicon glyphicon-plus-sign"></i>&nbsp;添加菜单</button>
 						</div>
 					</div>
 					<div class="bootstrap-admin-panel-content">
@@ -46,17 +45,17 @@
 							<thead>
 								<tr>
 									<th>编号</th>
-									<th>GUID</th>
-									<th>角色名称</th>
+									<th>名称</th>
+									<th>uri</th>
 									<th>操作</th>
 								</tr>
 							</thead>
 							<tbody>
-								<c:forEach var="role" items="${page.result}">
+								<c:forEach var="menu" items="${menus}">
 									<tr class="odd gradeX">
-										<td>${role.id}</td>
-										<td>${role.guid}</td>
-										<td>${role.name}</td>
+										<td>${menu.id}</td>
+										<td>${menu.title}</td>
+										<td>${menu.url}</td>
 										<td>
 											 <button class="btn btn-sm btn-primary"><i class="glyphicon glyphicon-pencil"></i> Edit</button>
                                               <button class="btn btn-sm btn-success"><i class="glyphicon glyphicon-ok-sign"></i>Confirm</button>
@@ -68,32 +67,37 @@
 
 							</tbody>
 						</table>
-						${page.pageStr }
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	<div class="modal fade" id="addRole" tabindex="-1" role="dialog" >
+	<div class="modal fade" id="addMenu" tabindex="-1" role="dialog" >
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">&times;</span>
 					</button>
-					<h4 class="modal-title" id="addRoleTitle">添加角色</h4>
+					<h4 class="modal-title" id="addRoleTitle">添加菜单</h4>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						<label class="col-lg-2 control-label" for="focusedInput">角色名称</label>
+						<label class="col-lg-2 control-label" for="focusedInput">菜单名称</label>
 						<div class="col-lg-10">
-							<input id="roleName" class="form-control" type="text" />
+							<input id="title" class="form-control" type="text" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-lg-2 control-label" for="focusedInput">菜单路径</label>
+						<div class="col-lg-10">
+							<input id="url" class="form-control" type="text" />
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-					<button type="button" id="activeAddRole" class="btn btn-primary" >添加</button>
+					<button type="button" id="activeAddMenu" class="btn btn-primary" >添加</button>
 				</div>
 			</div>
 		</div>
@@ -108,16 +112,18 @@
 	<script type="text/javascript" src="${ctx}/js/DT_bootstrap.js"></script>
 	<script type="text/javascript">
 		$(function(){
-			$("#btnAddRole").bind("click",function(){
-				$("#addRole").modal("show");
+			$("#btnAddMenu").bind("click",function(){
+				$("#addMenu").modal("show");
 			})
-			$("#activeAddRole").bind("click",function(){
-				var roleName = $("#roleName").val();
+			$("#activeAddMenu").bind("click",function(){
+				var title = $("#title").val();
+				var url = $("#url").val();
 				var param = {};
-				param.roleName = roleName;
-				$.post('${ctx}/role/addRole.html',param,function(data){
+				param.title = title;
+				param.url = url;
+				$.post('${ctx}/menu/addMenu.html',param,function(data){
 					if(data.code == 0){
-						window.location = "${ctx}/role/roleList.html"
+						window.location = "${ctx}/menu/menuList.html"
 					}else{
 						alert(data.msg);
 					}

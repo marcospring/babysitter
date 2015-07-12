@@ -45,7 +45,9 @@ public class BaseDaoImpl implements BaseDao {
 		if (param == null || param.length == 0)
 			return;
 		for (int i = 0; i < param.length; i++) {
-			query.setParameter(i, param[i]);
+			if (param[i] != null) {
+				query.setParameter(i, param[i]);
+			}
 		}
 	}
 
@@ -131,7 +133,8 @@ public class BaseDaoImpl implements BaseDao {
 			log.info("执行HQL：{}", hql);
 			Query query = session.createQuery(hql);
 			buildParam(query, param);
-			list = query.list();
+			list = query.setFirstResult((pageNo - 1) * pageSize)
+					.setMaxResults(pageSize).list();
 			page = new Pagination<T>(list, pageNo, pageSize);
 		} catch (RuntimeException e) {
 			log.error("执行basedao#{}出错：{}", "getPageResult", e.getMessage());

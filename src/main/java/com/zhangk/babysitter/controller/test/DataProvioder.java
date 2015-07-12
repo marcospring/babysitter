@@ -1,6 +1,7 @@
 package com.zhangk.babysitter.controller.test;
 
 import java.util.List;
+import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -8,9 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zhangk.babysitter.controller.web.BaseController;
+import com.zhangk.babysitter.entity.Babysitter;
+import com.zhangk.babysitter.entity.BabysitterOrder;
+import com.zhangk.babysitter.entity.Employer;
+import com.zhangk.babysitter.entity.Level;
 import com.zhangk.babysitter.entity.Menu;
 import com.zhangk.babysitter.entity.Role;
 import com.zhangk.babysitter.entity.UserInfo;
+import com.zhangk.babysitter.service.babysitter.BabysitterService;
+import com.zhangk.babysitter.service.exployer.EmployerService;
+import com.zhangk.babysitter.service.level.LevelService;
 import com.zhangk.babysitter.service.menu.MenuService;
 import com.zhangk.babysitter.service.role.RoleService;
 import com.zhangk.babysitter.service.user.UserService;
@@ -26,6 +34,12 @@ public class DataProvioder extends BaseController {
 	private UserService userService;
 	@Autowired
 	private MenuService menuService;
+	@Autowired
+	private BabysitterService babyService;
+	@Autowired
+	private LevelService levelService;
+	@Autowired
+	private EmployerService employerService;
 
 	@ResponseBody
 	@RequestMapping("/userData")
@@ -104,11 +118,96 @@ public class DataProvioder extends BaseController {
 		Role role = roleService.getRole(1);
 		role.setMenus(menus);
 		roleService.updateRole(role);
-		UserInfo u = userService.login("n10", "123");
+		UserInfo u = userService.login("zhangsan", "123");
 		List<Role> roles = u.getRoles();
 		roles.add(role);
 		u.setRoles(roles);
 		userService.updateUser(u);
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/levelData")
+	public PageResult levelData() {
+		Level chuji = Level.getInstance();
+		chuji.setName("初级月嫂");
+		chuji.setScore(15);
+		chuji.setMoney(0);
+		levelService.addLevel(chuji);
+
+		Level zhongji = Level.getInstance();
+		zhongji.setName("中级月嫂");
+		zhongji.setScore(30);
+		zhongji.setMoney(1000);
+		levelService.addLevel(zhongji);
+
+		Level gaoji = Level.getInstance();
+		gaoji.setName("高级月嫂");
+		gaoji.setScore(50);
+		gaoji.setMoney(2000);
+		levelService.addLevel(gaoji);
+
+		Level teji = Level.getInstance();
+		teji.setName("特级月嫂");
+		teji.setScore(60);
+		teji.setMoney(3000);
+		levelService.addLevel(teji);
+
+		Level jinpai = Level.getInstance();
+		jinpai.setName("金牌月嫂");
+		jinpai.setScore(70);
+		jinpai.setMoney(5000);
+		levelService.addLevel(jinpai);
+
+		Level zuanshi = Level.getInstance();
+		zuanshi.setName("钻石月嫂");
+		zuanshi.setScore(80);
+		zuanshi.setMoney(6000);
+		levelService.addLevel(zuanshi);
+
+		Level huangguan = Level.getInstance();
+		huangguan.setName("皇冠月嫂");
+		huangguan.setScore(90);
+		huangguan.setMoney(7000);
+		levelService.addLevel(huangguan);
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/babysitterData")
+	public PageResult babysitterData() {
+		UserInfoData userData = new UserInfoData();
+		List<Babysitter> list = userData.initBabysitterData();
+		for (Babysitter babysitter : list) {
+			babysitter.setLevel(userData.getRandomLevel());
+			babyService.addBabysitter(babysitter);
+		}
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/babysitterOrderData")
+	public PageResult babysitterOrderData() {
+		UserInfoData userData = new UserInfoData();
+		List<BabysitterOrder> list = userData.initBabysitterOrderData();
+		Babysitter b = new Babysitter();
+		Random r = new Random();
+		for (BabysitterOrder babysitter : list) {
+			b.setId(r.nextInt(26) == 2 || r.nextInt() == 0 ? 3 : r.nextInt(26));
+			babysitter.setBabysitter(b);
+			babyService.addOrder(babysitter);
+		}
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/employerData")
+	public PageResult employerData() {
+		UserInfoData userData = new UserInfoData();
+		List<Employer> list = userData.initEmployerData();
+		for (Employer userInfo : list) {
+			employerService.addEmployer(userInfo);
+		}
 		return res;
 	}
 }

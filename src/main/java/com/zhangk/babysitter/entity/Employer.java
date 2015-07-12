@@ -13,6 +13,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.zhangk.babysitter.utils.common.GUIDCreator;
+
 @Entity
 @Table(name = "babysitter_employer")
 public class Employer implements Serializable {
@@ -125,4 +127,12 @@ public class Employer implements Serializable {
 		this.serviceOrders = serviceOrders;
 	}
 
+	public static Employer getInstance() {
+		Employer o = new Employer();
+		o.setOvld(true);
+		o.setGuid(GUIDCreator.GUID());
+		o.setCreateDate(new Date());
+		o.setUpdateDate(new Date());
+		return o;
+	}
 }

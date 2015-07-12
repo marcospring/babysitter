@@ -7,15 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
 
 @Entity
-@Table(name = "babysister_babysister")
-public class Babysitter implements Serializable {
+@Table(name = "babysitter_level")
+public class Level implements Serializable {
 
 	/**
 	 *
@@ -27,12 +25,9 @@ public class Babysitter implements Serializable {
 	private String guid;
 	private Date createDate;
 	private Date updateDate;
-	private String username;
-	private String password;
 	private String name;
-	private String mobilePhone;
-	private County county;
-	private Level level;
+	private long score;
+	private long money;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -60,38 +55,6 @@ public class Babysitter implements Serializable {
 		this.guid = guid;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getMobilePhone() {
-		return mobilePhone;
-	}
-
-	public void setMobilePhone(String mobilePhone) {
-		this.mobilePhone = mobilePhone;
-	}
-
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -108,28 +71,32 @@ public class Babysitter implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "county_id")
-	public County getCounty() {
-		return county;
+	public String getName() {
+		return name;
 	}
 
-	public void setCounty(County county) {
-		this.county = county;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "level_id")
-	public Level getLevel() {
-		return level;
+	public long getScore() {
+		return score;
 	}
 
-	public void setLevel(Level level) {
-		this.level = level;
+	public void setScore(long score) {
+		this.score = score;
 	}
 
-	public static Babysitter getInstance() {
-		Babysitter o = new Babysitter();
+	public long getMoney() {
+		return money;
+	}
+
+	public void setMoney(long money) {
+		this.money = money;
+	}
+
+	public static Level getInstance() {
+		Level o = new Level();
 		o.setOvld(true);
 		o.setGuid(GUIDCreator.GUID());
 		o.setCreateDate(new Date());
