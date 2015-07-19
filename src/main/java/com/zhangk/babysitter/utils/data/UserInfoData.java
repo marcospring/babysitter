@@ -8,8 +8,9 @@ import java.util.Random;
 
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
+import com.zhangk.babysitter.entity.County;
+import com.zhangk.babysitter.entity.CountyLevel;
 import com.zhangk.babysitter.entity.Employer;
-import com.zhangk.babysitter.entity.Level;
 import com.zhangk.babysitter.entity.UserInfo;
 import com.zhangk.babysitter.utils.data.FileDataProvider.Type;
 
@@ -36,13 +37,14 @@ public class UserInfoData {
 			u.setName(dataProvider.getValue(Type.NAME));
 			u.setPassword("123");
 			u.setMobilePhone(dataProvider.getValue(Type.PHONE));
+
 			list.add(u);
 		}
 		return list;
 	}
 
-	public Level getRandomLevel() {
-		Level level = new Level();
+	public CountyLevel getRandomLevel() {
+		CountyLevel level = new CountyLevel();
 		Random r = new Random();
 		int id = r.nextInt(7);
 		level.setId(id);
@@ -74,6 +76,23 @@ public class UserInfoData {
 			u.setPassword("123");
 			list.add(u);
 		}
+		return list;
+	}
+
+	public List<County> initCountyData() {
+		List<County> list = new ArrayList<County>();
+		County beijing = County.getInstance();
+		beijing.setName("北京");
+		list.add(beijing);
+		County shanghai = County.getInstance();
+		shanghai.setName("上海");
+		list.add(shanghai);
+		County guangzhou = County.getInstance();
+		guangzhou.setName("广州");
+		list.add(guangzhou);
+		County shenzhen = County.getInstance();
+		shenzhen.setName("深圳");
+		list.add(shenzhen);
 		return list;
 	}
 }

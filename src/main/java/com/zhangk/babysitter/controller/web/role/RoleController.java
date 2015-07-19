@@ -23,7 +23,7 @@ public class RoleController extends BaseController {
 	@RequestMapping("/roleList")
 	public String roleList(HttpServletRequest request,
 			HttpServletResponse response, Pagination<Role> page) {
-		page.setPageSize(1);
+		// page.setPageSize(1);
 		page = roleService.getPageRoleList(page);
 		request.setAttribute("page", page);
 		page.setRequestUri(request.getRequestURI());

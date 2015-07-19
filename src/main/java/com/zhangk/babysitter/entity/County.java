@@ -13,7 +13,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.utils.mapper.JsonDateSerializer;
 
 @Entity
 @Table(name = "babysitter_county")
@@ -57,6 +60,7 @@ public class County implements Serializable {
 		this.guid = guid;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -65,6 +69,7 @@ public class County implements Serializable {
 		this.createDate = createDate;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public Date getUpdateDate() {
 		return updateDate;
 	}

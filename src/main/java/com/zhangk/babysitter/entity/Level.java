@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import com.zhangk.babysitter.utils.common.GUIDCreator;
 
 @Entity
-@Table(name = "babysitter_level")
+@Table(name = "babysitter_dic_level")
 public class Level implements Serializable {
 
 	/**

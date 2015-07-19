@@ -11,13 +11,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zhangk.babysitter.controller.web.BaseController;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
+import com.zhangk.babysitter.entity.County;
+import com.zhangk.babysitter.entity.CountyLevel;
+import com.zhangk.babysitter.entity.Credential;
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.entity.Level;
 import com.zhangk.babysitter.entity.Menu;
+import com.zhangk.babysitter.entity.PromotionInfo;
 import com.zhangk.babysitter.entity.Role;
 import com.zhangk.babysitter.entity.UserInfo;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
+import com.zhangk.babysitter.service.common.CountyService;
+import com.zhangk.babysitter.service.common.CredentialService;
+import com.zhangk.babysitter.service.common.PromotionService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
+import com.zhangk.babysitter.service.level.CountyLevelService;
 import com.zhangk.babysitter.service.level.LevelService;
 import com.zhangk.babysitter.service.menu.MenuService;
 import com.zhangk.babysitter.service.role.RoleService;
@@ -40,6 +48,14 @@ public class DataProvioder extends BaseController {
 	private LevelService levelService;
 	@Autowired
 	private EmployerService employerService;
+	@Autowired
+	private CountyService countyService;
+	@Autowired
+	private CountyLevelService countyLevelService;
+	@Autowired
+	private PromotionService promotionService;
+	@Autowired
+	private CredentialService credentialService;
 
 	@ResponseBody
 	@RequestMapping("/userData")
@@ -180,6 +196,9 @@ public class DataProvioder extends BaseController {
 		List<Babysitter> list = userData.initBabysitterData();
 		for (Babysitter babysitter : list) {
 			babysitter.setLevel(userData.getRandomLevel());
+			babysitter.setHeadUrl("/head/babysitter/head.jpg");
+			babysitter.setCounty(countyService
+					.getCounty("531439B087FA42F99ECD429CF2B5054B"));
 			babyService.addBabysitter(babysitter);
 		}
 		return res;
@@ -210,4 +229,99 @@ public class DataProvioder extends BaseController {
 		}
 		return res;
 	}
+
+	@ResponseBody
+	@RequestMapping("/countyData")
+	public PageResult countyData() {
+		UserInfoData userData = new UserInfoData();
+		List<County> list = userData.initCountyData();
+		for (County county : list) {
+			countyService.addCounty(county, 0);
+		}
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/promotionData")
+	public PageResult promotionData() {
+		PromotionInfo san = PromotionInfo.getInstance();
+		san.setTitle("三天免费试用");
+		san.setMemo("可以免费试用三天");
+		promotionService.addPromotion(san);
+		PromotionInfo wu = PromotionInfo.getInstance();
+		wu.setTitle("五天免费试用");
+		wu.setMemo("可以免费试用五天");
+		promotionService.addPromotion(wu);
+		PromotionInfo all = PromotionInfo.getInstance();
+		all.setTitle("终生免费试用");
+		all.setMemo("可以终生试用，管一日三餐和住宿");
+		promotionService.addPromotion(all);
+
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/credentialData")
+	public PageResult CredentialData() {
+		Credential shenfenzheng = Credential.getInstance();
+		shenfenzheng.setName("身份证");
+		credentialService.addCredential(shenfenzheng);
+		Credential yuesaozheng = Credential.getInstance();
+		yuesaozheng.setName("月嫂证");
+		credentialService.addCredential(yuesaozheng);
+		Credential jiankangzheng = Credential.getInstance();
+		jiankangzheng.setName("健康证");
+		credentialService.addCredential(jiankangzheng);
+
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/countyLevelData")
+	public PageResult countyLevelData() {
+		CountyLevel beijingchuji = CountyLevel.getInstance();
+		beijingchuji.setCounty(countyService.getCount(1));
+		beijingchuji.setLevel(levelService.getLevel(1));
+		beijingchuji.setMoney(0);
+		beijingchuji.setScore(15);
+		countyLevelService.addCountyLevel(beijingchuji);
+		CountyLevel beijingzhongji = CountyLevel.getInstance();
+		beijingzhongji.setCounty(countyService.getCount(1));
+		beijingzhongji.setLevel(levelService.getLevel(2));
+		beijingzhongji.setMoney(1000);
+		beijingzhongji.setScore(30);
+		countyLevelService.addCountyLevel(beijingzhongji);
+		CountyLevel beijinggaoji = CountyLevel.getInstance();
+		beijinggaoji.setCounty(countyService.getCount(1));
+		beijinggaoji.setLevel(levelService.getLevel(3));
+		beijinggaoji.setMoney(2000);
+		beijinggaoji.setScore(50);
+		countyLevelService.addCountyLevel(beijinggaoji);
+		CountyLevel beijingteji = CountyLevel.getInstance();
+		beijingteji.setCounty(countyService.getCount(1));
+		beijingteji.setLevel(levelService.getLevel(4));
+		beijingteji.setMoney(3000);
+		beijingteji.setScore(60);
+		countyLevelService.addCountyLevel(beijingteji);
+		CountyLevel beijingjinpai = CountyLevel.getInstance();
+		beijingjinpai.setCounty(countyService.getCount(1));
+		beijingjinpai.setLevel(levelService.getLevel(5));
+		beijingjinpai.setMoney(5000);
+		beijingjinpai.setScore(70);
+		countyLevelService.addCountyLevel(beijingjinpai);
+		CountyLevel beijingzuanshi = CountyLevel.getInstance();
+		beijingzuanshi.setCounty(countyService.getCount(1));
+		beijingzuanshi.setLevel(levelService.getLevel(6));
+		beijingzuanshi.setMoney(6000);
+		beijingzuanshi.setScore(80);
+		countyLevelService.addCountyLevel(beijingzuanshi);
+		CountyLevel beijinghuangguan = CountyLevel.getInstance();
+		beijinghuangguan.setCounty(countyService.getCount(1));
+		beijinghuangguan.setLevel(levelService.getLevel(6));
+		beijinghuangguan.setMoney(7000);
+		beijinghuangguan.setScore(90);
+		countyLevelService.addCountyLevel(beijinghuangguan);
+		return res;
+	}
+
 }
