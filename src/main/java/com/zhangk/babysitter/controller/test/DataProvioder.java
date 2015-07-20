@@ -15,6 +15,7 @@ import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.CountyLevel;
 import com.zhangk.babysitter.entity.Credential;
 import com.zhangk.babysitter.entity.Employer;
+import com.zhangk.babysitter.entity.Image;
 import com.zhangk.babysitter.entity.Level;
 import com.zhangk.babysitter.entity.Menu;
 import com.zhangk.babysitter.entity.PromotionInfo;
@@ -23,6 +24,7 @@ import com.zhangk.babysitter.entity.UserInfo;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
 import com.zhangk.babysitter.service.common.CountyService;
 import com.zhangk.babysitter.service.common.CredentialService;
+import com.zhangk.babysitter.service.common.ImageService;
 import com.zhangk.babysitter.service.common.PromotionService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.service.level.CountyLevelService;
@@ -30,6 +32,7 @@ import com.zhangk.babysitter.service.level.LevelService;
 import com.zhangk.babysitter.service.menu.MenuService;
 import com.zhangk.babysitter.service.role.RoleService;
 import com.zhangk.babysitter.service.user.UserService;
+import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.data.UserInfoData;
 
 @Controller
@@ -56,6 +59,8 @@ public class DataProvioder extends BaseController {
 	private PromotionService promotionService;
 	@Autowired
 	private CredentialService credentialService;
+	@Autowired
+	private ImageService imageService;
 
 	@ResponseBody
 	@RequestMapping("/userData")
@@ -194,11 +199,16 @@ public class DataProvioder extends BaseController {
 	public PageResult babysitterData() {
 		UserInfoData userData = new UserInfoData();
 		List<Babysitter> list = userData.initBabysitterData();
+		List<Credential> cres = credentialService.getCredentials();
+		List<PromotionInfo> infos = promotionService.getPagePromotionInfo(
+				new Pagination<PromotionInfo>()).getResult();
 		for (Babysitter babysitter : list) {
 			babysitter.setLevel(userData.getRandomLevel());
 			babysitter.setHeadUrl("/head/babysitter/head.jpg");
 			babysitter.setCounty(countyService
-					.getCounty("531439B087FA42F99ECD429CF2B5054B"));
+					.getCounty("13189F35478B4E01BD6F1F057C20CA4B"));
+			babysitter.setCredentials(cres);
+			babysitter.setPromotions(infos);
 			babyService.addBabysitter(babysitter);
 		}
 		return res;
@@ -272,6 +282,28 @@ public class DataProvioder extends BaseController {
 		Credential jiankangzheng = Credential.getInstance();
 		jiankangzheng.setName("健康证");
 		credentialService.addCredential(jiankangzheng);
+
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/imageData")
+	public PageResult imageData() {
+		Image image1 = Image.getInstance();
+		image1.setName("宣传图片1");
+		image1.setTopIndex(1);
+		image1.setUrl("/top/image1.jpg");
+		imageService.addImage(image1);
+		Image image2 = Image.getInstance();
+		image2.setName("宣传图片2");
+		image2.setTopIndex(1);
+		image2.setUrl("/top/image2.jpg");
+		imageService.addImage(image2);
+		Image image3 = Image.getInstance();
+		image3.setName("宣传图片3");
+		image3.setTopIndex(1);
+		image3.setUrl("/top/image3.jpg");
+		imageService.addImage(image3);
 
 		return res;
 	}

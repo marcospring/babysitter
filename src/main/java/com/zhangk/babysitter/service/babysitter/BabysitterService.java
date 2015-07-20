@@ -5,6 +5,7 @@ import java.util.List;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.utils.common.Pagination;
+import com.zhangk.babysitter.viewmodel.BabysitterView;
 
 public interface BabysitterService {
 	List<Babysitter> BabysitterList();
@@ -23,5 +24,8 @@ public interface BabysitterService {
 			Pagination<BabysitterOrder> page, String name);
 
 	void addOrder(BabysitterOrder order);
+
+	Pagination<BabysitterView> getMobileBabysitters(String countyGuid,
+			Pagination<BabysitterView> page);
 
 }

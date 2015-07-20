@@ -1,5 +1,6 @@
 package com.zhangk.babysitter.service.babysitter.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -13,6 +14,7 @@ import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
 import com.zhangk.babysitter.utils.common.Pagination;
+import com.zhangk.babysitter.viewmodel.BabysitterView;
 
 @Service
 public class BabysitterServiceImpl implements BabysitterService {
@@ -76,5 +78,31 @@ public class BabysitterServiceImpl implements BabysitterService {
 	@Transactional
 	public void addOrder(BabysitterOrder order) {
 		dao.add(order);
+	}
+
+	public Pagination<BabysitterView> getMobileBabysitters(String countyGuid,
+			Pagination<BabysitterView> page) {
+		String hql = "from Babysitter r where r.county.guid = ?";
+		String countHql = "select count(r.id) from Babysitter r where r.county.guid = ?";
+		Pagination<Babysitter> p = dao.getPageResult(Babysitter.class, hql,
+				page.getPageNo(), page.getPageSize(), countyGuid);
+		Long count = dao.getSingleResultByHQL(Long.class, countHql, countyGuid);
+		p.setResultSize(count);
+		List<Babysitter> list = p.getResult();
+		List<BabysitterView> viewList = toBabysitterView(list);
+		Pagination<BabysitterView> pa = new Pagination<BabysitterView>(
+				viewList, p.getPageNo(), p.getPageSize());
+		pa.setResultSize(p.getResultSize());
+		pa.setPageStr("");
+		return pa;
+	}
+
+	private List<BabysitterView> toBabysitterView(List<Babysitter> list) {
+		List<BabysitterView> result = new ArrayList<BabysitterView>();
+		for (Babysitter babysitter : list) {
+			BabysitterView view = new BabysitterView(babysitter);
+			result.add(view);
+		}
+		return result;
 	}
 }
