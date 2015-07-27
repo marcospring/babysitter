@@ -29,7 +29,8 @@ public class BabysitterController extends BaseController {
 
 	@RequestMapping("/babysitterList")
 	public String babysitterList(HttpServletRequest request,
-			HttpServletResponse response, Pagination<Babysitter> page) {
+			HttpServletResponse response, Pagination<Babysitter> page,
+			String name, String orderStr) {
 		page = babysitterService.getPageBabysitterList(page);
 		request.setAttribute("page", page);
 		page.setRequestUri(request.getRequestURI());

@@ -1,6 +1,7 @@
 package com.zhangk.babysitter.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -27,7 +32,10 @@ public class CustomerManager implements Serializable {
 	private Date updateDate;
 	private List<Babysitter> babysitters;
 	private String telephone;
+	private String username;
+	private String password;
 	private County county;
+	private List<Role> roles;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -88,12 +96,42 @@ public class CustomerManager implements Serializable {
 		this.telephone = telephone;
 	}
 
+	@ManyToOne
+	@JoinColumn(name = "county_id")
 	public County getCounty() {
 		return county;
 	}
 
 	public void setCounty(County county) {
 		this.county = county;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	@ManyToMany
+	@JoinTable(name = "manager_role", joinColumns = @JoinColumn(name = "manager_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
+	public List<Role> getRoles() {
+		if (roles == null)
+			roles = new ArrayList<Role>();
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
 	}
 
 	public static CustomerManager getInstance() {

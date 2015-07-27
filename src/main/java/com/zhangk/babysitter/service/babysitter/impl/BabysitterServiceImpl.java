@@ -81,28 +81,30 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	public Pagination<BabysitterView> getMobileBabysitters(String countyGuid,
-			Pagination<BabysitterView> page) {
+			Pagination<BabysitterView> page, String name, String orderStr) {
 		String hql = "from Babysitter r where r.county.guid = ?";
 		String countHql = "select count(r.id) from Babysitter r where r.county.guid = ?";
 		Pagination<Babysitter> p = dao.getPageResult(Babysitter.class, hql,
 				page.getPageNo(), page.getPageSize(), countyGuid);
-		Long count = dao.getSingleResultByHQL(Long.class, countHql, countyGuid);
-		p.setResultSize(count);
 		List<Babysitter> list = p.getResult();
-		List<BabysitterView> viewList = toBabysitterView(list);
+		List<BabysitterView> viewList = new ArrayList<BabysitterView>();
+		for (Babysitter babysitter : list) {
+			BabysitterView view = new BabysitterView(babysitter);
+			viewList.add(view);
+		}
 		Pagination<BabysitterView> pa = new Pagination<BabysitterView>(
 				viewList, p.getPageNo(), p.getPageSize());
-		pa.setResultSize(p.getResultSize());
+		Long count = dao.getSingleResultByHQL(Long.class, countHql, countyGuid);
+		pa.setResultSize(count);
 		pa.setPageStr("");
 		return pa;
 	}
 
-	private List<BabysitterView> toBabysitterView(List<Babysitter> list) {
-		List<BabysitterView> result = new ArrayList<BabysitterView>();
-		for (Babysitter babysitter : list) {
-			BabysitterView view = new BabysitterView(babysitter);
-			result.add(view);
-		}
-		return result;
+	public BabysitterView getBabysitterView(String guid) {
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
+		if (babysitter == null)
+			return null;
+		BabysitterView view = new BabysitterView(babysitter);
+		return view;
 	}
 }

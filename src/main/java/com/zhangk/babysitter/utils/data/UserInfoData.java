@@ -10,6 +10,7 @@ import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.CountyLevel;
+import com.zhangk.babysitter.entity.CustomerManager;
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.entity.UserInfo;
 import com.zhangk.babysitter.utils.data.FileDataProvider.Type;
@@ -94,5 +95,16 @@ public class UserInfoData {
 		shenzhen.setName("深圳");
 		list.add(shenzhen);
 		return list;
+	}
+
+	public CustomerManager initManagerData() {
+		// List<CustomerManager> list = new ArrayList<CustomerManager>();
+		// for (int i = 0; i < 20; i++) {
+		CustomerManager u = CustomerManager.getInstance();
+		u.setUsername(dataProvider.getValue(Type.USERNAME));
+		u.setPassword("123");
+
+		// }
+		return u;
 	}
 }

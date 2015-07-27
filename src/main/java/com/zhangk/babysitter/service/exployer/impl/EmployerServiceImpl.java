@@ -53,4 +53,11 @@ public class EmployerServiceImpl implements EmployerService {
 		return dao.getResultById(Employer.class, id);
 	}
 
+	public Employer getEmployerByMobile(String mobile) {
+		String hql = "from Employer e where e.ovld = true and e.mobilePhone = ?";
+		Employer employer = dao.getSingleResultByHQL(Employer.class, hql,
+				mobile);
+		return employer;
+	}
+
 }

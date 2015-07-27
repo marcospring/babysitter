@@ -14,6 +14,7 @@ import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.CountyLevel;
 import com.zhangk.babysitter.entity.Credential;
+import com.zhangk.babysitter.entity.CustomerManager;
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.entity.Image;
 import com.zhangk.babysitter.entity.Level;
@@ -29,6 +30,7 @@ import com.zhangk.babysitter.service.common.PromotionService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.service.level.CountyLevelService;
 import com.zhangk.babysitter.service.level.LevelService;
+import com.zhangk.babysitter.service.manager.CustomerManagerService;
 import com.zhangk.babysitter.service.menu.MenuService;
 import com.zhangk.babysitter.service.role.RoleService;
 import com.zhangk.babysitter.service.user.UserService;
@@ -61,6 +63,8 @@ public class DataProvioder extends BaseController {
 	private CredentialService credentialService;
 	@Autowired
 	private ImageService imageService;
+	@Autowired
+	private CustomerManagerService managerService;
 
 	@ResponseBody
 	@RequestMapping("/userData")
@@ -353,6 +357,20 @@ public class DataProvioder extends BaseController {
 		beijinghuangguan.setMoney(7000);
 		beijinghuangguan.setScore(90);
 		countyLevelService.addCountyLevel(beijinghuangguan);
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/managerData")
+	public PageResult managerData() {
+		UserInfoData userData = new UserInfoData();
+		CustomerManager manager = userData.initManagerData();
+		manager.setCounty(countyService
+				.getCounty("13189F35478B4E01BD6F1F057C20CA4B"));
+		List<Babysitter> babysitters = babyService.BabysitterList();
+		manager.setBabysitters(babysitters);
+		manager.setTelephone("15111311131");
+		managerService.addCustomerManager(manager);
 		return res;
 	}
 

@@ -25,7 +25,7 @@ public class SessionFilter extends OncePerRequestFilter {
 			HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
 		String[] notFilter = new String[] { "login.html", "dataProvider",
-				"error", "mobile" };
+				"error", "mobile", "file" };
 		String uri = request.getRequestURI();
 		boolean doFilter = true;
 		for (String s : notFilter) {

@@ -2,9 +2,7 @@ package com.zhangk.babysitter.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.CredentialView;
 
 @Entity
 @Table(name = "babysitter_dic_credential")
@@ -89,10 +88,10 @@ public class Credential implements Serializable {
 		this.babysitters = babysitters;
 	}
 
-	public Map<String, String> view() {
-		Map<String, String> view = new HashMap<String, String>();
-		view.put("name", getName());
-		view.put("guid", getGuid());
+	public CredentialView view() {
+		CredentialView view = new CredentialView();
+		view.setName(getName());
+		view.setGuid(getGuid());
 		return view;
 	}
 

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zhangk.babysitter.controller.web.BaseController;
 import com.zhangk.babysitter.entity.UserInfo;
 import com.zhangk.babysitter.service.user.UserService;
+import com.zhangk.babysitter.utils.common.ResultInfo;
 
 @Controller
 @RequestMapping("/user")
@@ -24,12 +25,12 @@ public class LoginController extends BaseController {
 	public PageResult login(String username, String password) {
 		if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) {
 			log.warn("登陆用户名或密码为空！");
-			return getErrRes(-1, "请输入用户名后密码");
+			return getErrRes(ResultInfo.VALID_USER_PASS.getCode());
 		}
 		UserInfo userinfo = userService.login(username, password);
 		if (userinfo == null) {
 			log.warn("用户名{},用户名或密码错误！", username);
-			return getErrRes(-1, "用户名或密码错误！");
+			return getErrRes(ResultInfo.VALID_USER_PASS.getCode());
 		}
 		res.login(userinfo);
 		return res;

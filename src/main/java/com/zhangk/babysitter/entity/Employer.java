@@ -32,7 +32,9 @@ public class Employer implements Serializable {
 	private String email;
 	private String mobilePhone;
 	private County county;
+	private String address;
 	private List<ServiceOrder> serviceOrders;
+	private List<BabysitterOrder> babysitterOrders;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -125,6 +127,23 @@ public class Employer implements Serializable {
 
 	public void setServiceOrders(List<ServiceOrder> serviceOrders) {
 		this.serviceOrders = serviceOrders;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	@OneToMany(mappedBy = "employer")
+	public List<BabysitterOrder> getBabysitterOrders() {
+		return babysitterOrders;
+	}
+
+	public void setBabysitterOrders(List<BabysitterOrder> babysitterOrders) {
+		this.babysitterOrders = babysitterOrders;
 	}
 
 	public static Employer getInstance() {

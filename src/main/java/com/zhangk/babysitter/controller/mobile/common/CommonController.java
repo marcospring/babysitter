@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zhangk.babysitter.controller.web.BaseController;
 import com.zhangk.babysitter.entity.County;
+import com.zhangk.babysitter.entity.FeedBack;
 import com.zhangk.babysitter.entity.Image;
 import com.zhangk.babysitter.service.common.CountyService;
+import com.zhangk.babysitter.service.common.FeedBackService;
 import com.zhangk.babysitter.service.common.ImageService;
 import com.zhangk.babysitter.service.level.CountyLevelService;
-import com.zhangk.babysitter.utils.common.ErrorInfo;
+import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.viewmodel.CountyLevelView;
 
 @Controller("mobileCommonController")
@@ -27,6 +29,8 @@ public class CommonController extends BaseController {
 	private ImageService imgService;
 	@Autowired
 	private CountyLevelService levelService;
+	@Autowired
+	private FeedBackService feedbackService;
 
 	@ResponseBody
 	@RequestMapping("/countyList")
@@ -48,9 +52,21 @@ public class CommonController extends BaseController {
 	@RequestMapping("/levelList")
 	public PageResult getCountyLevel(String countyGuid) {
 		if (StringUtils.isEmpty(countyGuid))
-			return getErrRes(ErrorInfo.INF_EMPTY);
+			return getErrRes(ResultInfo.INF_EMPTY);
 		List<CountyLevelView> list = levelService.countyLevels(countyGuid);
 		res.put("result", list);
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/addFeedBack")
+	public PageResult addFeedBack(String msg, String telephone) {
+		if (StringUtils.isEmpty(msg) || StringUtils.isEmpty(telephone))
+			return getErrRes(ResultInfo.INF_EMPTY);
+		FeedBack feedback = FeedBack.getInstance();
+		feedback.setMessage(msg);
+		feedback.setTelephone(telephone);
+		feedbackService.addFeedBack(feedback);
 		return res;
 	}
 }

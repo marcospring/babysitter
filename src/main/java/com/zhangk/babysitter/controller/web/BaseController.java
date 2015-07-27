@@ -6,15 +6,20 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.zhangk.babysitter.entity.CustomerManager;
 import com.zhangk.babysitter.entity.UserInfo;
 import com.zhangk.babysitter.utils.common.Constants;
-import com.zhangk.babysitter.utils.common.ErrorInfo;
+import com.zhangk.babysitter.utils.common.ResultInfo;
 
 public class BaseController {
 	@Autowired
 	protected HttpServletRequest request;
 
 	protected PageResult res = new PageResult();
+
+	protected PageResult getResult(ResultInfo info) {
+		return new PageResult(info);
+	}
 
 	protected PageResult getErrRes() {
 		return new PageResult(-1, null);
@@ -24,7 +29,7 @@ public class BaseController {
 		return new PageResult(code, null);
 	}
 
-	protected PageResult getErrRes(ErrorInfo info) {
+	protected PageResult getErrRes(ResultInfo info) {
 		return new PageResult(info);
 	}
 
@@ -49,7 +54,7 @@ public class BaseController {
 
 		public PageResult(Object info) {
 			this.put("code", 0);
-			this.put("info", info);
+			this.put("result", info);
 		}
 
 		public PageResult(int code, String errorTextKey) {
@@ -57,7 +62,7 @@ public class BaseController {
 			this.put("msg", errorTextKey);
 		}
 
-		public PageResult(ErrorInfo info) {
+		public PageResult(ResultInfo info) {
 			this.put("code", info.getCode());
 			this.put("msg", info.getMsg());
 		}
@@ -73,6 +78,11 @@ public class BaseController {
 		public void login(UserInfo userinfo) {
 			request.getSession(true).setAttribute(Constants.SESSION_USER,
 					userinfo);
+		}
+
+		public void login(CustomerManager manager) {
+			request.getSession(true).setAttribute(Constants.SESSION_MANAGER,
+					manager);
 		}
 
 		public void logout() {

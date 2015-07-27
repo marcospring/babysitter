@@ -17,4 +17,6 @@ public interface EmployerService {
 	void updateEmployer(Employer employer);
 
 	Employer getEmployer(long id);
+
+	Employer getEmployerByMobile(String mobile);
 }

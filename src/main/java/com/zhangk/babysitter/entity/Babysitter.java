@@ -45,6 +45,7 @@ public class Babysitter implements Serializable {
 	private List<PromotionInfo> promotions;
 	private List<BabysitterOrder> orders;
 	private List<BabysitterImage> images;
+	private List<BabysitterEvaluate> evaluates;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -211,6 +212,15 @@ public class Babysitter implements Serializable {
 
 	public void setImages(List<BabysitterImage> images) {
 		this.images = images;
+	}
+
+	@OneToMany(mappedBy = "babysitter")
+	public List<BabysitterEvaluate> getEvaluates() {
+		return evaluates;
+	}
+
+	public void setEvaluates(List<BabysitterEvaluate> evaluates) {
+		this.evaluates = evaluates;
 	}
 
 	public static Babysitter getInstance() {

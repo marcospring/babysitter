@@ -83,14 +83,15 @@ public class BaseDaoImpl implements BaseDao {
 		return result;
 	}
 
-	public void add(Object o) {
+	public Object add(Object o) {
 		try {
 			Session session = getSession();
-			session.save(o);
+			o = session.save(o);
 		} catch (RuntimeException e) {
 			log.error("执行basedao#{}出错：{}", "add", e.getMessage());
 			throw e;
 		}
+		return o;
 	}
 
 	public void update(Object o) {

@@ -2,9 +2,7 @@ package com.zhangk.babysitter.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +12,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.PromotionView;
 
 @Entity
 @Table(name = "babysitter_dic_promotion")
@@ -107,11 +106,11 @@ public class PromotionInfo implements Serializable {
 		this.babysitters = babysitters;
 	}
 
-	public Map<String, String> view() {
-		Map<String, String> view = new HashMap<String, String>();
-		view.put("guid", getGuid());
-		view.put("title", getTitle());
-		view.put("memo", getMemo());
+	public PromotionView view() {
+		PromotionView view = new PromotionView();
+		view.setGuid(getGuid());
+		view.setTitle(getTitle());
+		view.setMemo(getMemo());
 		return view;
 	}
 

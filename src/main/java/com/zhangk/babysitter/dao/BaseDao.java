@@ -9,7 +9,7 @@ import com.zhangk.babysitter.utils.common.Pagination;
 public interface BaseDao {
 	Session getSession() throws RuntimeException;
 
-	void add(Object o) throws RuntimeException;
+	Object add(Object o) throws RuntimeException;
 
 	void update(Object o) throws RuntimeException;
 

@@ -27,6 +27,9 @@ public class ServiceOrder implements Serializable {
 	private Date createDate;
 	private Date updateDate;
 	private Employer employer;
+	private County county;
+	private String address;
+	private String mobilePhone;
 	private long orderPrice;
 	private Date serviceBeginDate;
 	private Date serviceEndDate;
@@ -105,6 +108,32 @@ public class ServiceOrder implements Serializable {
 
 	public void setServiceEndDate(Date serviceEndDate) {
 		this.serviceEndDate = serviceEndDate;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "county_id")
+	public County getCounty() {
+		return county;
+	}
+
+	public void setCounty(County county) {
+		this.county = county;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getMobilePhone() {
+		return mobilePhone;
+	}
+
+	public void setMobilePhone(String mobilePhone) {
+		this.mobilePhone = mobilePhone;
 	}
 
 	public static ServiceOrder getInstance() {

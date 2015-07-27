@@ -10,7 +10,7 @@
     http://www.springframework.org/schema/context/spring-context-3.2.xsd
     http://www.springframework.org/schema/mvc
     http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd">
-    <context:component-scan base-package="com.zhangk.babysitter.controller" />
+	<context:component-scan base-package="com.zhangk.babysitter.controller" />
 	<!-- spring 4.X json拦截器特殊配置，需要配合schemaLocation xxx-3.2.xsd -->
 	<mvc:annotation-driven
 		content-negotiation-manager="contentNegotiationManager" />
@@ -28,7 +28,7 @@
 			</value>
 		</property>
 	</bean>
-	
+
 	<bean
 		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
 		<property name="ignoreDefaultModelOnRedirect" value="true" />
@@ -47,14 +47,22 @@
 		<property name="supportedMediaTypes" value="application/json" />
 	</bean>
 	<!-- 异常拦截 -->
-	<bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+	<bean
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
 		<property name="defaultErrorView" value="error" />
 		<property name="defaultStatusCode" value="500"></property>
 	</bean>
- 
-  
+
+
 	<!-- 对模型视图添加前后缀 -->
 	<bean id="viewResolver"
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
 		p:prefix="/WEB-INF/jsp/" p:suffix=".jsp" />
+
+	<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"></property>
+		<property name="maxUploadSize" value="10485760000"></property>
+		<property name="maxInMemorySize" value="40960"></property>
+	</bean>
 </beans>

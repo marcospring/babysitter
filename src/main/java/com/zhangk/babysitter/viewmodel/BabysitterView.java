@@ -5,7 +5,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.zhangk.babysitter.entity.Babysitter;
+import com.zhangk.babysitter.entity.BabysitterEvaluate;
 import com.zhangk.babysitter.entity.BabysitterImage;
+import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.entity.Credential;
 import com.zhangk.babysitter.entity.PromotionInfo;
 
@@ -19,8 +21,10 @@ public class BabysitterView {
 	private long score;
 	private int orderCount;
 
-	private List<Map<String, String>> credentials;
-	private List<Map<String, String>> promotions;
+	private List<CredentialView> credentials;
+	private List<PromotionView> promotions;
+	private List<BabysitterOrderView> orders;
+	private List<BabysitterEvaluateView> evaluates;
 	private List<Map<String, String>> images;
 
 	public BabysitterView(Babysitter babysitter) {
@@ -30,9 +34,29 @@ public class BabysitterView {
 		setName(babysitter.getName());
 		setLevel(babysitter.getLevel().getLevel().getName());
 		setScore(babysitter.getScore());
+		setOrderCount(babysitter.getOrders().size());
 		setCredentials(getCredentialView(babysitter.getCredentials()));
 		setPromotions(getPromotionView(babysitter.getPromotions()));
 		setImages(getImageView(babysitter.getImages()));
+		setOrders(getOrderView(babysitter.getOrders()));
+		setEvaluates(getEvaluate(babysitter.getEvaluates()));
+	}
+
+	private List<BabysitterEvaluateView> getEvaluate(
+			List<BabysitterEvaluate> evaluates) {
+		List<BabysitterEvaluateView> result = new ArrayList<BabysitterEvaluateView>();
+		for (BabysitterEvaluate info : evaluates) {
+			result.add(info.view());
+		}
+		return result;
+	}
+
+	private List<BabysitterOrderView> getOrderView(List<BabysitterOrder> orders) {
+		List<BabysitterOrderView> result = new ArrayList<BabysitterOrderView>();
+		for (BabysitterOrder info : orders) {
+			result.add(info.view());
+		}
+		return result;
 	}
 
 	private List<Map<String, String>> getImageView(List<BabysitterImage> images) {
@@ -43,18 +67,16 @@ public class BabysitterView {
 		return result;
 	}
 
-	private List<Map<String, String>> getPromotionView(
-			List<PromotionInfo> promotions) {
-		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+	private List<PromotionView> getPromotionView(List<PromotionInfo> promotions) {
+		List<PromotionView> result = new ArrayList<PromotionView>();
 		for (PromotionInfo info : promotions) {
 			result.add(info.view());
 		}
 		return result;
 	}
 
-	private List<Map<String, String>> getCredentialView(
-			List<Credential> credentials) {
-		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+	private List<CredentialView> getCredentialView(List<Credential> credentials) {
+		List<CredentialView> result = new ArrayList<CredentialView>();
 		for (Credential credential : credentials) {
 			result.add(credential.view());
 		}
@@ -129,19 +151,19 @@ public class BabysitterView {
 		this.orderCount = orderCount;
 	}
 
-	public List<Map<String, String>> getCredentials() {
+	public List<CredentialView> getCredentials() {
 		return credentials;
 	}
 
-	public void setCredentials(List<Map<String, String>> credentials) {
+	public void setCredentials(List<CredentialView> credentials) {
 		this.credentials = credentials;
 	}
 
-	public List<Map<String, String>> getPromotions() {
+	public List<PromotionView> getPromotions() {
 		return promotions;
 	}
 
-	public void setPromotions(List<Map<String, String>> promotions) {
+	public void setPromotions(List<PromotionView> promotions) {
 		this.promotions = promotions;
 	}
 
@@ -151,6 +173,22 @@ public class BabysitterView {
 
 	public void setImages(List<Map<String, String>> images) {
 		this.images = images;
+	}
+
+	public List<BabysitterOrderView> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<BabysitterOrderView> orders) {
+		this.orders = orders;
+	}
+
+	public List<BabysitterEvaluateView> getEvaluates() {
+		return evaluates;
+	}
+
+	public void setEvaluates(List<BabysitterEvaluateView> evaluates) {
+		this.evaluates = evaluates;
 	}
 
 }

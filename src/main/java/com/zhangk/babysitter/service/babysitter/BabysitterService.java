@@ -8,6 +8,10 @@ import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
 
 public interface BabysitterService {
+	String level = "level";
+	String orderCount = "orderCount";
+	String score = "score";
+
 	List<Babysitter> BabysitterList();
 
 	Pagination<Babysitter> getPageBabysitterList(Pagination<Babysitter> page);
@@ -26,6 +30,8 @@ public interface BabysitterService {
 	void addOrder(BabysitterOrder order);
 
 	Pagination<BabysitterView> getMobileBabysitters(String countyGuid,
-			Pagination<BabysitterView> page);
+			Pagination<BabysitterView> page, String name, String orderStr);
+
+	BabysitterView getBabysitterView(String guid);
 
 }

@@ -33,6 +33,7 @@ public class Role implements Serializable {
 	private String name;
 	private List<Menu> menus;
 	private List<UserInfo> users;
+	private List<CustomerManager> managers;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -105,6 +106,15 @@ public class Role implements Serializable {
 
 	public void setUsers(List<UserInfo> users) {
 		this.users = users;
+	}
+
+	@ManyToMany(mappedBy = "roles")
+	public List<CustomerManager> getManagers() {
+		return managers;
+	}
+
+	public void setManagers(List<CustomerManager> managers) {
+		this.managers = managers;
 	}
 
 	public static Role getInstance() {

@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.BabysitterOrderView;
 
 @Entity
 @Table(name = "babysitter_babysitter_order")
@@ -31,6 +32,7 @@ public class BabysitterOrder implements Serializable {
 	private Date serviceEndDate;
 	private long orderPrice;
 	private Babysitter babysitter;
+	private Employer employer;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -114,6 +116,26 @@ public class BabysitterOrder implements Serializable {
 
 	public void setBabysitter(Babysitter babysitter) {
 		this.babysitter = babysitter;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "employer_id")
+	public Employer getEmployer() {
+		return employer;
+	}
+
+	public void setEmployer(Employer employer) {
+		this.employer = employer;
+	}
+
+	public BabysitterOrderView view() {
+		BabysitterOrderView view = new BabysitterOrderView();
+		view.setGuid(guid);
+		view.setBeginDate(serviceBeginDate);
+		view.setEndDate(serviceEndDate);
+		view.setPrice(String.valueOf(orderPrice));
+		view.setEmployerName(employer.getUsername());
+		return view;
 	}
 
 	public static BabysitterOrder getInstance() {
