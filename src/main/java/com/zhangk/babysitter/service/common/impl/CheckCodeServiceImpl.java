@@ -16,8 +16,21 @@ public class CheckCodeServiceImpl implements CheckCodeService {
 	private BaseDao dao;
 
 	@Transactional
-	public void addCheckCode(CheckCode code) {
-		dao.add(code);
+	public CheckCode addCheckCode(String telephone, int type) {
+		String hql = "from CheckCode t where t.ovld = true and mobilePhone=? and type=?";
+		CheckCode DBcode = dao.getSingleResultByHQL(CheckCode.class, hql,
+				telephone, type);
+		if (DBcode != null) {
+			DBcode.setOvld(false);
+			dao.update(DBcode);
+		}
+		DBcode = CheckCode.getInstance();
+		DBcode.setMobilePhone(telephone);
+		DBcode.setType(type);
+		dao.add(DBcode);
+		// 发短信
+		//
+		return DBcode;
 	}
 
 	@Transactional

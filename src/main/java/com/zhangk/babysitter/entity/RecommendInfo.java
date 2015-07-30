@@ -8,14 +8,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.RecommendInfoView;
 
 @Entity
-@Table(name = "babysitter_dic_credential")
-public class Credential implements Serializable {
+@Table(name = "babysitter_recommend_info")
+public class RecommendInfo implements Serializable {
 	/**
 	 *
 	 */
@@ -25,9 +29,8 @@ public class Credential implements Serializable {
 	private String guid;
 	private Date createDate;
 	private Date updateDate;
-	private String name;
-	private int credentialType;
-	private List<BabysitterCredential> babysitters;
+	private County county;
+	private List<Babysitter> babysitters;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,33 +74,32 @@ public class Credential implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public String getName() {
-		return name;
+	@ManyToOne
+	@JoinColumn(name = "county_id")
+	public County getCounty() {
+		return county;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCounty(County county) {
+		this.county = county;
 	}
 
-	@OneToMany(mappedBy = "credential")
-	public List<BabysitterCredential> getBabysitters() {
+	@ManyToMany
+	@JoinTable(name = "recommend_babysitter", joinColumns = @JoinColumn(name = "recommend_id"), inverseJoinColumns = @JoinColumn(name = "babysitter_id"))
+	public List<Babysitter> getBabysitters() {
 		return babysitters;
 	}
 
-	public void setBabysitters(List<BabysitterCredential> babysitters) {
+	public void setBabysitters(List<Babysitter> babysitters) {
 		this.babysitters = babysitters;
 	}
 
-	public int getCredentialType() {
-		return credentialType;
+	public RecommendInfoView view() {
+		return new RecommendInfoView(this);
 	}
 
-	public void setCredentialType(int credentialType) {
-		this.credentialType = credentialType;
-	}
-
-	public static Credential getInstance() {
-		Credential o = new Credential();
+	public static RecommendInfo getInstance() {
+		RecommendInfo o = new RecommendInfo();
 		o.setOvld(true);
 		o.setGuid(GUIDCreator.GUID());
 		o.setCreateDate(new Date());

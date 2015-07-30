@@ -38,7 +38,7 @@ public class CountyServiceImpl implements CountyService {
 		return county;
 	}
 
-	public County getCount(long id) {
+	public County getCounty(long id) {
 		County county = dao.getResultById(County.class, id);
 		return county;
 	}

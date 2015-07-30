@@ -4,15 +4,25 @@ import java.util.Date;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
+import com.zhangk.babysitter.entity.RestInfo;
 import com.zhangk.babysitter.utils.mapper.JsonDateSerializer;
 
-public class BabysitterOrderView {
+public class RestInfoView {
 	private String guid;
+	private String memo;
 	private Date beginDate;
 	private Date endDate;
-	private String employerName;
-	private String price;
-	private int state;
+
+	public RestInfoView() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public RestInfoView(RestInfo info) {
+		setGuid(info.getGuid());
+		setMemo(info.getMemo());
+		setBeginDate(info.getRestBeginDate());
+		setEndDate(info.getRestEndDate());
+	}
 
 	public String getGuid() {
 		return guid;
@@ -20,6 +30,14 @@ public class BabysitterOrderView {
 
 	public void setGuid(String guid) {
 		this.guid = guid;
+	}
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
 	}
 
 	@JsonSerialize(using = JsonDateSerializer.class)
@@ -38,30 +56,6 @@ public class BabysitterOrderView {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
-	}
-
-	public String getEmployerName() {
-		return employerName;
-	}
-
-	public void setEmployerName(String employerName) {
-		this.employerName = employerName;
-	}
-
-	public String getPrice() {
-		return price;
-	}
-
-	public void setPrice(String price) {
-		this.price = price;
-	}
-
-	public int getState() {
-		return state;
-	}
-
-	public void setState(int state) {
-		this.state = state;
 	}
 
 }

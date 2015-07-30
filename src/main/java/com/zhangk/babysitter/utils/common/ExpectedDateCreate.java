@@ -5,7 +5,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import com.zhangk.babysitter.entity.Babysitter;
+import com.zhangk.babysitter.entity.BabysitterOrder;
 
 public class ExpectedDateCreate {
 
@@ -293,4 +297,23 @@ public class ExpectedDateCreate {
 		return "未知";
 	}
 
+	public static boolean checkBabysitterOrder(Babysitter babysitter,
+			Map<String, Date> dates) {
+		Date expectedBeginDate = dates.get(ExpectedDateCreate.BEGIN_DATE);
+		Date expectedEndDate = dates.get(ExpectedDateCreate.END_DATE);
+		List<BabysitterOrder> orders = babysitter.getOrders();
+		for (BabysitterOrder order : orders) {
+			if (order.getState() >= Constants.EARNEST_MONEY) {
+				Date beginDate = order.getServiceBeginDate();
+				Date endDate = order.getServiceEndDate();
+				if ((expectedBeginDate.getTime() > beginDate.getTime() && expectedBeginDate
+						.getTime() < endDate.getTime())
+						|| (expectedEndDate.getTime() > beginDate.getTime() && expectedEndDate
+								.getTime() < endDate.getTime())) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 }

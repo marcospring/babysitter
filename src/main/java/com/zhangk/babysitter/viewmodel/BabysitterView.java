@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.zhangk.babysitter.entity.Babysitter;
+import com.zhangk.babysitter.entity.BabysitterCredential;
 import com.zhangk.babysitter.entity.BabysitterEvaluate;
 import com.zhangk.babysitter.entity.BabysitterImage;
 import com.zhangk.babysitter.entity.BabysitterOrder;
-import com.zhangk.babysitter.entity.Credential;
 import com.zhangk.babysitter.entity.PromotionInfo;
+import com.zhangk.babysitter.entity.RestInfo;
 
 public class BabysitterView {
 	private String guid;
@@ -24,6 +25,7 @@ public class BabysitterView {
 	private List<CredentialView> credentials;
 	private List<PromotionView> promotions;
 	private List<BabysitterOrderView> orders;
+	private List<RestInfoView> restInfos;
 	private List<BabysitterEvaluateView> evaluates;
 	private List<Map<String, String>> images;
 
@@ -39,7 +41,16 @@ public class BabysitterView {
 		setPromotions(getPromotionView(babysitter.getPromotions()));
 		setImages(getImageView(babysitter.getImages()));
 		setOrders(getOrderView(babysitter.getOrders()));
+		setRestInfos(getRestView(babysitter.getRestInfos()));
 		setEvaluates(getEvaluate(babysitter.getEvaluates()));
+	}
+
+	private List<RestInfoView> getRestView(List<RestInfo> restInfos) {
+		List<RestInfoView> result = new ArrayList<RestInfoView>();
+		for (RestInfoView info : restInfos) {
+			result.add(info.view());
+		}
+		return result;
 	}
 
 	private List<BabysitterEvaluateView> getEvaluate(
@@ -75,9 +86,10 @@ public class BabysitterView {
 		return result;
 	}
 
-	private List<CredentialView> getCredentialView(List<Credential> credentials) {
+	private List<CredentialView> getCredentialView(
+			List<BabysitterCredential> credentials) {
 		List<CredentialView> result = new ArrayList<CredentialView>();
-		for (Credential credential : credentials) {
+		for (BabysitterCredential credential : credentials) {
 			result.add(credential.view());
 		}
 		return result;
@@ -189,6 +201,14 @@ public class BabysitterView {
 
 	public void setEvaluates(List<BabysitterEvaluateView> evaluates) {
 		this.evaluates = evaluates;
+	}
+
+	public List<RestInfoView> getRestInfos() {
+		return restInfos;
+	}
+
+	public void setRestInfos(List<RestInfoView> restInfos) {
+		this.restInfos = restInfos;
 	}
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.utils.common.Pagination;
+import com.zhangk.babysitter.viewmodel.BabysitterView;
 
 public interface EmployerService {
 	List<Employer> ExployerList();
@@ -19,4 +20,7 @@ public interface EmployerService {
 	Employer getEmployer(long id);
 
 	Employer getEmployerByMobile(String mobile);
+
+	List<BabysitterView> getRecommendBabysitter(String date, int page,
+			String countyGuid);
 }

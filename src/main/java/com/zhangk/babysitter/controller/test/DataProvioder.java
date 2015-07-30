@@ -1,5 +1,6 @@
 package com.zhangk.babysitter.controller.test;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -20,6 +21,7 @@ import com.zhangk.babysitter.entity.Image;
 import com.zhangk.babysitter.entity.Level;
 import com.zhangk.babysitter.entity.Menu;
 import com.zhangk.babysitter.entity.PromotionInfo;
+import com.zhangk.babysitter.entity.RecommendInfo;
 import com.zhangk.babysitter.entity.Role;
 import com.zhangk.babysitter.entity.UserInfo;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
@@ -211,7 +213,7 @@ public class DataProvioder extends BaseController {
 			babysitter.setHeadUrl("/head/babysitter/head.jpg");
 			babysitter.setCounty(countyService
 					.getCounty("13189F35478B4E01BD6F1F057C20CA4B"));
-			babysitter.setCredentials(cres);
+			// babysitter.setCredentials(cres);
 			babysitter.setPromotions(infos);
 			babyService.addBabysitter(babysitter);
 		}
@@ -316,43 +318,43 @@ public class DataProvioder extends BaseController {
 	@RequestMapping("/countyLevelData")
 	public PageResult countyLevelData() {
 		CountyLevel beijingchuji = CountyLevel.getInstance();
-		beijingchuji.setCounty(countyService.getCount(1));
+		beijingchuji.setCounty(countyService.getCounty(1));
 		beijingchuji.setLevel(levelService.getLevel(1));
 		beijingchuji.setMoney(0);
 		beijingchuji.setScore(15);
 		countyLevelService.addCountyLevel(beijingchuji);
 		CountyLevel beijingzhongji = CountyLevel.getInstance();
-		beijingzhongji.setCounty(countyService.getCount(1));
+		beijingzhongji.setCounty(countyService.getCounty(1));
 		beijingzhongji.setLevel(levelService.getLevel(2));
 		beijingzhongji.setMoney(1000);
 		beijingzhongji.setScore(30);
 		countyLevelService.addCountyLevel(beijingzhongji);
 		CountyLevel beijinggaoji = CountyLevel.getInstance();
-		beijinggaoji.setCounty(countyService.getCount(1));
+		beijinggaoji.setCounty(countyService.getCounty(1));
 		beijinggaoji.setLevel(levelService.getLevel(3));
 		beijinggaoji.setMoney(2000);
 		beijinggaoji.setScore(50);
 		countyLevelService.addCountyLevel(beijinggaoji);
 		CountyLevel beijingteji = CountyLevel.getInstance();
-		beijingteji.setCounty(countyService.getCount(1));
+		beijingteji.setCounty(countyService.getCounty(1));
 		beijingteji.setLevel(levelService.getLevel(4));
 		beijingteji.setMoney(3000);
 		beijingteji.setScore(60);
 		countyLevelService.addCountyLevel(beijingteji);
 		CountyLevel beijingjinpai = CountyLevel.getInstance();
-		beijingjinpai.setCounty(countyService.getCount(1));
+		beijingjinpai.setCounty(countyService.getCounty(1));
 		beijingjinpai.setLevel(levelService.getLevel(5));
 		beijingjinpai.setMoney(5000);
 		beijingjinpai.setScore(70);
 		countyLevelService.addCountyLevel(beijingjinpai);
 		CountyLevel beijingzuanshi = CountyLevel.getInstance();
-		beijingzuanshi.setCounty(countyService.getCount(1));
+		beijingzuanshi.setCounty(countyService.getCounty(1));
 		beijingzuanshi.setLevel(levelService.getLevel(6));
 		beijingzuanshi.setMoney(6000);
 		beijingzuanshi.setScore(80);
 		countyLevelService.addCountyLevel(beijingzuanshi);
 		CountyLevel beijinghuangguan = CountyLevel.getInstance();
-		beijinghuangguan.setCounty(countyService.getCount(1));
+		beijinghuangguan.setCounty(countyService.getCounty(1));
 		beijinghuangguan.setLevel(levelService.getLevel(6));
 		beijinghuangguan.setMoney(7000);
 		beijinghuangguan.setScore(90);
@@ -371,6 +373,24 @@ public class DataProvioder extends BaseController {
 		manager.setBabysitters(babysitters);
 		manager.setTelephone("15111311131");
 		managerService.addCustomerManager(manager);
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/recommendData")
+	public PageResult recommendData() {
+		County county = countyService.getCounty(1);
+		RecommendInfo info = RecommendInfo.getInstance();
+		info.setCounty(county);
+		Babysitter a = babyService.getBabysitter(14);
+		Babysitter b = babyService.getBabysitter(15);
+		Babysitter c = babyService.getBabysitter(16);
+		List<Babysitter> list = new ArrayList<Babysitter>();
+		list.add(a);
+		list.add(b);
+		list.add(c);
+		info.setBabysitters(list);
+		babyService.addRecommendInfo(info);
 		return res;
 	}
 

@@ -1,7 +1,9 @@
 package com.zhangk.babysitter.service.babysitter.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -9,11 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.zhangk.babysitter.controller.web.BaseController.PageResult;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Babysitter;
+import com.zhangk.babysitter.entity.BabysitterImage;
 import com.zhangk.babysitter.entity.BabysitterOrder;
+import com.zhangk.babysitter.entity.County;
+import com.zhangk.babysitter.entity.PromotionInfo;
+import com.zhangk.babysitter.entity.RecommendInfo;
+import com.zhangk.babysitter.entity.RestInfo;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
+import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 import com.zhangk.babysitter.utils.common.Pagination;
+import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
 
 @Service
@@ -106,5 +116,184 @@ public class BabysitterServiceImpl implements BabysitterService {
 			return null;
 		BabysitterView view = new BabysitterView(babysitter);
 		return view;
+	}
+
+	public Babysitter getBabysitter(String guid) {
+		return dao.getResultByGUID(Babysitter.class, guid);
+	}
+
+	public void deleteBabysitterImage(String imageGuid) {
+		dao.delete(BabysitterImage.class, imageGuid);
+	}
+
+	public void addBabysitterImage(BabysitterImage image) {
+		dao.add(image);
+	}
+
+	public RecommendInfo getNewBabysitterRecommend(String countyGuid) {
+		String hql = "from RecommendInfo r where r.county.guid = ? order by r.createDate desc";
+		List<RecommendInfo> infos = dao.getListResultByHQL(RecommendInfo.class,
+				hql, countyGuid);
+		if (infos == null || infos.size() == 0)
+			return null;
+		return infos.get(0);
+	}
+
+	@Transactional
+	public void addRecommendInfo(RecommendInfo info) {
+		dao.add(info);
+	}
+
+	public List<BabysitterView> getExpectedBabysitter(String countyGuid,
+			String expectedDate) {
+		List<BabysitterView> result = new ArrayList<BabysitterView>();
+		String hql = "from Babysitter b where b.county.guid=?";
+		List<Babysitter> babysitters = dao.getListResultByHQL(Babysitter.class,
+				hql, countyGuid);
+		Map<String, Date> dates = ExpectedDateCreate
+				.getExpectedDate(expectedDate);
+		for (Babysitter babysitter : babysitters) {
+			if (ExpectedDateCreate.checkBabysitterOrder(babysitter, dates)) {
+				result.add(babysitter.view());
+			}
+		}
+		return result;
+	}
+
+	public long getBabysitterCountByCounty(String countyGuid) {
+		String hql = "select count(b.id) from Babysitter b where b.county.guid = ?";
+		long count = dao.getSingleResultByHQL(Long.class, hql, countyGuid);
+		return count;
+	}
+
+	@Transactional
+	public PageResult register(String telephone, String password, String name,
+			String cardNo, String countyGuid, String verifyCode, PageResult res) {
+		County county = dao.getResultByGUID(County.class, countyGuid);
+		if (county == null) {
+			res.put("code", ResultInfo.COUNTY_NULL.getCode());
+			res.put("msg", ResultInfo.COUNTY_NULL.getCode());
+			return res;
+		}
+		// 验证code
+		// String hql =
+		// "from CheckCode t where t.ovld = true and mobilePhone=? and type=?";
+		// CheckCode DBcode = dao.getSingleResultByHQL(CheckCode.class, hql,
+		// telephone, CheckCodeService.REGISTER);
+		//
+		// if (DBcode != null && verifyCode.equals(DBcode.getCode())) {
+		// DBcode.setOvld(false);
+		// dao.update(DBcode);
+
+		Babysitter babysitter = Babysitter.getInstance();
+		babysitter.setMobilePhone(telephone);
+		babysitter.setPassword(password);
+		babysitter.setName(name);
+		babysitter.setCardNo(cardNo);
+		babysitter.setCounty(county);
+		dao.add(babysitter);
+		res.put("result", babysitter.view());
+		// } else {
+		// res.put("code", ResultInfo.CHECK_CODE_ERROR.getCode());
+		// res.put("msg", ResultInfo.CHECK_CODE_ERROR.getCode());
+		// return res;
+		// }
+		return res;
+	}
+
+	public PageResult login(String telephone, String password, PageResult res) {
+		String hql = "from Babysitter b where b.ovld = true and telephone = ?";
+		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql,
+				telephone);
+		if (babysitter == null || !password.equals(babysitter.getPassword())) {
+			res.put("code", ResultInfo.VALID_USER_PASS.getCode());
+			res.put("msg", ResultInfo.VALID_USER_PASS.getMsg());
+			return res;
+		}
+		res.put("result", babysitter.view());
+		return res;
+	}
+
+	@Transactional
+	public PageResult changePass(String telephone, String password,
+			String code, PageResult res) {
+		// 验证code
+		// String hql =
+		// "from CheckCode t where t.ovld = true and mobilePhone=? and type=?";
+		// CheckCode DBcode = dao.getSingleResultByHQL(CheckCode.class, hql,
+		// telephone, CheckCodeService.CHANGE_PASS);
+		//
+		// if (DBcode != null && verifyCode.equals(DBcode.getCode())) {
+		// DBcode.setOvld(false);
+		// dao.update(DBcode);
+		String hql = "from Babysitter b where b.ovld = true and telephone = ?";
+		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql,
+				telephone);
+		if (babysitter == null) {
+			res.put("code", ResultInfo.BABYSITTER_NULL.getCode());
+			res.put("msg", ResultInfo.BABYSITTER_NULL.getMsg());
+			return res;
+		}
+		babysitter.setPassword(password);
+		babysitter.setUpdateDate(new Date());
+		dao.update(babysitter);
+		res.put("result", babysitter.view());
+		// } else {
+		// res.put("code", ResultInfo.CHECK_CODE_ERROR.getCode());
+		// res.put("msg", ResultInfo.CHECK_CODE_ERROR.getCode());
+		// return res;
+		// }
+		return res;
+	}
+
+	@Transactional
+	public RestInfo addRestInfo(String guid, Date beginDate, Date endDate,
+			String memo) {
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
+		if (babysitter == null)
+			return null;
+		RestInfo info = RestInfo.getInstance();
+		info.setRestBeginDate(beginDate);
+		info.setRestEndDate(endDate);
+		info.setMemo(memo);
+		info.setBabysitter(babysitter);
+		dao.add(info);
+		return info;
+	}
+
+	@Transactional
+	public PageResult addLowerSalary(String guid, String money, PageResult res) {
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
+		if (babysitter == null) {
+			res.put("code", ResultInfo.BABYSITTER_NULL.getCode());
+			res.put("msg", ResultInfo.BABYSITTER_NULL.getMsg());
+			return res;
+		}
+		babysitter.setLowerSalary(Long.parseLong(money));
+		dao.update(babysitter);
+		return res;
+	}
+
+	@Transactional
+	public PageResult joinPromotion(String guid, String promotionGuid,
+			PageResult res) {
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
+		if (babysitter == null) {
+			res.put("code", ResultInfo.BABYSITTER_NULL.getCode());
+			res.put("msg", ResultInfo.BABYSITTER_NULL.getMsg());
+			return res;
+		}
+		PromotionInfo info = dao.getResultByGUID(PromotionInfo.class,
+				promotionGuid);
+		if (info == null) {
+			res.put("code", ResultInfo.PROMOTION_NULL.getCode());
+			res.put("msg", ResultInfo.PROMOTION_NULL.getMsg());
+			return res;
+		}
+		List<PromotionInfo> infos = babysitter.getPromotions();
+		infos.add(info);
+		babysitter.setPromotions(infos);
+		dao.update(babysitter);
+		return res;
 	}
 }

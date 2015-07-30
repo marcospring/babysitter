@@ -11,7 +11,7 @@ public interface CountyService {
 
 	County getCounty(String guid);
 
-	County getCount(long id);
+	County getCounty(long id);
 
 	void deleteCounty(long id);
 

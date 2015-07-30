@@ -28,6 +28,9 @@ public class PromotionInfo implements Serializable {
 	private Date updateDate;
 	private String title;
 	private String memo;
+	private int isCheck;
+	private Date beginDate;
+	private Date endDate;
 	private String url;
 	private List<Babysitter> babysitters;
 
@@ -106,12 +109,32 @@ public class PromotionInfo implements Serializable {
 		this.babysitters = babysitters;
 	}
 
+	public Date getBeginDate() {
+		return beginDate;
+	}
+
+	public void setBeginDate(Date beginDate) {
+		this.beginDate = beginDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
+
 	public PromotionView view() {
-		PromotionView view = new PromotionView();
-		view.setGuid(getGuid());
-		view.setTitle(getTitle());
-		view.setMemo(getMemo());
-		return view;
+		return new PromotionView(this);
+	}
+
+	public int getIsCheck() {
+		return isCheck;
+	}
+
+	public void setIsCheck(int isCheck) {
+		this.isCheck = isCheck;
 	}
 
 	public static PromotionInfo getInstance() {

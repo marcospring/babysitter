@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zhangk.babysitter.controller.web.BaseController;
+import com.zhangk.babysitter.entity.CheckCode;
 import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.FeedBack;
 import com.zhangk.babysitter.entity.Image;
+import com.zhangk.babysitter.service.common.CheckCodeService;
 import com.zhangk.babysitter.service.common.CountyService;
 import com.zhangk.babysitter.service.common.FeedBackService;
 import com.zhangk.babysitter.service.common.ImageService;
@@ -31,6 +33,8 @@ public class CommonController extends BaseController {
 	private CountyLevelService levelService;
 	@Autowired
 	private FeedBackService feedbackService;
+	@Autowired
+	private CheckCodeService codeService;
 
 	@ResponseBody
 	@RequestMapping("/countyList")
@@ -67,6 +71,14 @@ public class CommonController extends BaseController {
 		feedback.setMessage(msg);
 		feedback.setTelephone(telephone);
 		feedbackService.addFeedBack(feedback);
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/code")
+	public PageResult getCode(String telephone, int type) {
+		CheckCode code = codeService.addCheckCode(telephone, type);
+		res.put("result", code);
 		return res;
 	}
 }

@@ -2,20 +2,21 @@ package com.zhangk.babysitter.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.CredentialView;
 
 @Entity
-@Table(name = "babysitter_dic_credential")
-public class Credential implements Serializable {
+@Table(name = "babysitter_credential")
+public class BabysitterCredential implements Serializable {
 	/**
 	 *
 	 */
@@ -25,9 +26,9 @@ public class Credential implements Serializable {
 	private String guid;
 	private Date createDate;
 	private Date updateDate;
-	private String name;
-	private int credentialType;
-	private List<BabysitterCredential> babysitters;
+	private int ischeck;
+	private Babysitter babysitter;
+	private Credential credential;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,33 +72,45 @@ public class Credential implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public String getName() {
-		return name;
+	public int getIscheck() {
+		return ischeck;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setIscheck(int ischeck) {
+		this.ischeck = ischeck;
 	}
 
-	@OneToMany(mappedBy = "credential")
-	public List<BabysitterCredential> getBabysitters() {
-		return babysitters;
+	@ManyToOne
+	@JoinColumn(name = "babysitter_id")
+	public Babysitter getBabysitter() {
+		return babysitter;
 	}
 
-	public void setBabysitters(List<BabysitterCredential> babysitters) {
-		this.babysitters = babysitters;
+	public void setBabysitter(Babysitter babysitter) {
+		this.babysitter = babysitter;
 	}
 
-	public int getCredentialType() {
-		return credentialType;
+	@ManyToOne
+	@JoinColumn(name = "credential_id")
+	public Credential getCredential() {
+		return credential;
 	}
 
-	public void setCredentialType(int credentialType) {
-		this.credentialType = credentialType;
+	public void setCredential(Credential credential) {
+		this.credential = credential;
 	}
 
-	public static Credential getInstance() {
-		Credential o = new Credential();
+	public CredentialView view() {
+		CredentialView view = new CredentialView();
+		view.setName(getCredential().getName());
+		view.setGuid(getGuid());
+		view.setCheck(getIscheck());
+		view.setCredentialType(getCredential().getCredentialType());
+		return view;
+	}
+
+	public static BabysitterCredential getInstance() {
+		BabysitterCredential o = new BabysitterCredential();
 		o.setOvld(true);
 		o.setGuid(GUIDCreator.GUID());
 		o.setCreateDate(new Date());

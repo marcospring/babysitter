@@ -16,4 +16,7 @@ public class Constants {
 	// 订单结束
 	public static final int ORDER_OVER = 6;
 
+	public static final int PASS = 1;
+	public static final int NO_PASS = 0;
+
 }

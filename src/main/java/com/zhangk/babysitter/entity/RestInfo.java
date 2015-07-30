@@ -2,20 +2,22 @@ package com.zhangk.babysitter.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.RestInfoView;
 
 @Entity
-@Table(name = "babysitter_dic_credential")
-public class Credential implements Serializable {
+@Table(name = "babysitter_restinfo")
+public class RestInfo implements Serializable {
+
 	/**
 	 *
 	 */
@@ -25,9 +27,11 @@ public class Credential implements Serializable {
 	private String guid;
 	private Date createDate;
 	private Date updateDate;
-	private String name;
-	private int credentialType;
-	private List<BabysitterCredential> babysitters;
+	private Date restBeginDate;
+	private Date restEndDate;
+	private int isCheck;
+	private Babysitter babysitter;
+	private String memo;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -71,33 +75,54 @@ public class Credential implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public String getName() {
-		return name;
+	public Date getRestBeginDate() {
+		return restBeginDate;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setRestBeginDate(Date restBeginDate) {
+		this.restBeginDate = restBeginDate;
 	}
 
-	@OneToMany(mappedBy = "credential")
-	public List<BabysitterCredential> getBabysitters() {
-		return babysitters;
+	public Date getRestEndDate() {
+		return restEndDate;
 	}
 
-	public void setBabysitters(List<BabysitterCredential> babysitters) {
-		this.babysitters = babysitters;
+	public void setRestEndDate(Date restEndDate) {
+		this.restEndDate = restEndDate;
 	}
 
-	public int getCredentialType() {
-		return credentialType;
+	public String getMemo() {
+		return memo;
 	}
 
-	public void setCredentialType(int credentialType) {
-		this.credentialType = credentialType;
+	public void setMemo(String memo) {
+		this.memo = memo;
 	}
 
-	public static Credential getInstance() {
-		Credential o = new Credential();
+	@ManyToOne
+	@JoinColumn(name = "babysitter_id")
+	public Babysitter getBabysitter() {
+		return babysitter;
+	}
+
+	public void setBabysitter(Babysitter babysitter) {
+		this.babysitter = babysitter;
+	}
+
+	public int getIsCheck() {
+		return isCheck;
+	}
+
+	public void setIsCheck(int isCheck) {
+		this.isCheck = isCheck;
+	}
+
+	public RestInfoView view() {
+		return new RestInfoView(this);
+	}
+
+	public static RestInfo getInstance() {
+		RestInfo o = new RestInfo();
 		o.setOvld(true);
 		o.setGuid(GUIDCreator.GUID());
 		o.setCreateDate(new Date());

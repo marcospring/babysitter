@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.BabysitterView;
 
 @Entity
 @Table(name = "babysister_babysister")
@@ -41,11 +42,15 @@ public class Babysitter implements Serializable {
 	private CustomerManager manager;
 	private County county;
 	private CountyLevel level;
-	private List<Credential> credentials;
+	private String cardNo;
+	private long lowerSalary;
+	private List<BabysitterCredential> credentials;
 	private List<PromotionInfo> promotions;
 	private List<BabysitterOrder> orders;
 	private List<BabysitterImage> images;
 	private List<BabysitterEvaluate> evaluates;
+	private List<RecommendInfo> recommends;
+	private List<RestInfo> restInfos;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -141,15 +146,14 @@ public class Babysitter implements Serializable {
 		this.level = level;
 	}
 
-	@ManyToMany
-	@JoinTable(name = "babysitter_credential", joinColumns = @JoinColumn(name = "babysitter_id"), inverseJoinColumns = @JoinColumn(name = "credential_id"))
-	public List<Credential> getCredentials() {
+	@OneToMany(mappedBy = "babysitter")
+	public List<BabysitterCredential> getCredentials() {
 		if (credentials == null)
-			credentials = new ArrayList<Credential>();
+			credentials = new ArrayList<BabysitterCredential>();
 		return credentials;
 	}
 
-	public void setCredentials(List<Credential> credentials) {
+	public void setCredentials(List<BabysitterCredential> credentials) {
 		this.credentials = credentials;
 	}
 
@@ -177,10 +181,6 @@ public class Babysitter implements Serializable {
 
 	public void setManager(CustomerManager manager) {
 		this.manager = manager;
-	}
-
-	public static long getSerialversionuid() {
-		return serialVersionUID;
 	}
 
 	@ManyToMany
@@ -221,6 +221,44 @@ public class Babysitter implements Serializable {
 
 	public void setEvaluates(List<BabysitterEvaluate> evaluates) {
 		this.evaluates = evaluates;
+	}
+
+	@ManyToMany(mappedBy = "babysitters")
+	public List<RecommendInfo> getRecommends() {
+		return recommends;
+	}
+
+	public void setRecommends(List<RecommendInfo> recommends) {
+		this.recommends = recommends;
+	}
+
+	public BabysitterView view() {
+		return new BabysitterView(this);
+	}
+
+	public String getCardNo() {
+		return cardNo;
+	}
+
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+
+	@OneToMany(mappedBy = "babysitter")
+	public List<RestInfo> getRestInfos() {
+		return restInfos;
+	}
+
+	public void setRestInfos(List<RestInfo> restInfos) {
+		this.restInfos = restInfos;
+	}
+
+	public long getLowerSalary() {
+		return lowerSalary;
+	}
+
+	public void setLowerSalary(long lowerSalary) {
+		this.lowerSalary = lowerSalary;
 	}
 
 	public static Babysitter getInstance() {

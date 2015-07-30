@@ -6,8 +6,9 @@ public interface CheckCodeService {
 	int REGISTER = 1;
 	int PUBLISH_ORDER = 2;
 	int LOGIN = 3;
+	int CHANGE_PASS = 4;
 
-	void addCheckCode(CheckCode code);
+	CheckCode addCheckCode(String telephone, int type);
 
 	boolean updateCheckCode(String mobilePhone, String code, int type);
 }

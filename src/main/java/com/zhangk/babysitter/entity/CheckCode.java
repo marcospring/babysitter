@@ -9,6 +9,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.zhangk.babysitter.utils.common.GUIDCreator;
+
 @Entity
 @Table(name = "babysitter_checkcode")
 public class CheckCode implements Serializable {
@@ -91,4 +93,12 @@ public class CheckCode implements Serializable {
 		this.mobilePhone = mobilePhone;
 	}
 
+	public static CheckCode getInstance() {
+		CheckCode o = new CheckCode();
+		o.setOvld(true);
+		o.setGuid(GUIDCreator.GUID());
+		o.setCreateDate(new Date());
+		o.setUpdateDate(new Date());
+		return o;
+	}
 }

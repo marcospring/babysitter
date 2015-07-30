@@ -13,6 +13,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.zhangk.babysitter.utils.common.GUIDCreator;
+
 @Entity
 @Table(name = "babysitter_images")
 public class BabysitterImage implements Serializable {
@@ -103,5 +105,14 @@ public class BabysitterImage implements Serializable {
 		view.put("name", getName());
 		view.put("url", getUrl());
 		return view;
+	}
+
+	public static BabysitterImage getInstance() {
+		BabysitterImage o = new BabysitterImage();
+		o.setOvld(true);
+		o.setGuid(GUIDCreator.GUID());
+		o.setCreateDate(new Date());
+		o.setUpdateDate(new Date());
+		return o;
 	}
 }
