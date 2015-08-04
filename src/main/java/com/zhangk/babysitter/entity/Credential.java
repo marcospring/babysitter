@@ -27,6 +27,7 @@ public class Credential implements Serializable {
 	private Date updateDate;
 	private String name;
 	private int credentialType;
+	private int score;
 	private List<BabysitterCredential> babysitters;
 
 	@Id
@@ -94,6 +95,14 @@ public class Credential implements Serializable {
 
 	public void setCredentialType(int credentialType) {
 		this.credentialType = credentialType;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 	public static Credential getInstance() {

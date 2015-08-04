@@ -2,25 +2,18 @@ package com.zhangk.babysitter.entity;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
 import com.zhangk.babysitter.utils.common.GUIDCreator;
-import com.zhangk.babysitter.utils.mapper.JsonDateSerializer;
 
 @Entity
-@Table(name = "babysitter_county")
-public class County implements Serializable {
+@Table(name = "babysitter_number_record")
+public class NumberRecord implements Serializable {
 	/**
 	 *
 	 */
@@ -30,10 +23,9 @@ public class County implements Serializable {
 	private String guid;
 	private Date createDate;
 	private Date updateDate;
-	private String name;
-	private String shortName;
-	private County parent;
-	private List<County> children;
+	private Date recordDate;
+	private long number;
+	private int type;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -61,7 +53,6 @@ public class County implements Serializable {
 		this.guid = guid;
 	}
 
-	@JsonSerialize(using = JsonDateSerializer.class)
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -70,7 +61,6 @@ public class County implements Serializable {
 		this.createDate = createDate;
 	}
 
-	@JsonSerialize(using = JsonDateSerializer.class)
 	public Date getUpdateDate() {
 		return updateDate;
 	}
@@ -79,43 +69,32 @@ public class County implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public String getName() {
-		return name;
+	public Date getRecordDate() {
+		return recordDate;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setRecordDate(Date recordDate) {
+		this.recordDate = recordDate;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "parent_id")
-	public County getParent() {
-		return parent;
+	public long getNumber() {
+		return number;
 	}
 
-	public void setParent(County parent) {
-		this.parent = parent;
+	public void setNumber(long number) {
+		this.number = number;
 	}
 
-	@OneToMany(mappedBy = "parent")
-	public List<County> getChildren() {
-		return children;
+	public int getType() {
+		return type;
 	}
 
-	public void setChildren(List<County> children) {
-		this.children = children;
+	public void setType(int type) {
+		this.type = type;
 	}
 
-	public String getShortName() {
-		return shortName;
-	}
-
-	public void setShortName(String shortName) {
-		this.shortName = shortName;
-	}
-
-	public static County getInstance() {
-		County o = new County();
+	public static NumberRecord getInstance() {
+		NumberRecord o = new NumberRecord();
 		o.setOvld(true);
 		o.setGuid(GUIDCreator.GUID());
 		o.setCreateDate(new Date());

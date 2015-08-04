@@ -20,7 +20,7 @@ import com.zhangk.babysitter.utils.common.GUIDCreator;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
 
 @Entity
-@Table(name = "babysister_babysister")
+@Table(name = "babysitter_babysitter")
 public class Babysitter implements Serializable {
 
 	/**
@@ -39,10 +39,12 @@ public class Babysitter implements Serializable {
 	private String mobilePhone;
 	private String headUrl;
 	private long score;
+	private long credentialScore;
 	private CustomerManager manager;
 	private County county;
 	private CountyLevel level;
 	private String cardNo;
+	private String IdentificationNo;
 	private long lowerSalary;
 	private List<BabysitterCredential> credentials;
 	private List<PromotionInfo> promotions;
@@ -198,6 +200,8 @@ public class Babysitter implements Serializable {
 
 	@OneToMany(mappedBy = "babysitter")
 	public List<BabysitterOrder> getOrders() {
+		if (orders == null)
+			orders = new ArrayList<BabysitterOrder>();
 		return orders;
 	}
 
@@ -207,6 +211,8 @@ public class Babysitter implements Serializable {
 
 	@OneToMany(mappedBy = "babysitter")
 	public List<BabysitterImage> getImages() {
+		if (images == null)
+			images = new ArrayList<BabysitterImage>();
 		return images;
 	}
 
@@ -216,6 +222,8 @@ public class Babysitter implements Serializable {
 
 	@OneToMany(mappedBy = "babysitter")
 	public List<BabysitterEvaluate> getEvaluates() {
+		if (evaluates == null)
+			evaluates = new ArrayList<BabysitterEvaluate>();
 		return evaluates;
 	}
 
@@ -225,6 +233,8 @@ public class Babysitter implements Serializable {
 
 	@ManyToMany(mappedBy = "babysitters")
 	public List<RecommendInfo> getRecommends() {
+		if (recommends == null)
+			recommends = new ArrayList<RecommendInfo>();
 		return recommends;
 	}
 
@@ -246,6 +256,8 @@ public class Babysitter implements Serializable {
 
 	@OneToMany(mappedBy = "babysitter")
 	public List<RestInfo> getRestInfos() {
+		if (restInfos == null)
+			restInfos = new ArrayList<RestInfo>();
 		return restInfos;
 	}
 
@@ -259,6 +271,22 @@ public class Babysitter implements Serializable {
 
 	public void setLowerSalary(long lowerSalary) {
 		this.lowerSalary = lowerSalary;
+	}
+
+	public long getCredentialScore() {
+		return credentialScore;
+	}
+
+	public void setCredentialScore(long credentialScore) {
+		this.credentialScore = credentialScore;
+	}
+
+	public String getIdentificationNo() {
+		return IdentificationNo;
+	}
+
+	public void setIdentificationNo(String identificationNo) {
+		IdentificationNo = identificationNo;
 	}
 
 	public static Babysitter getInstance() {

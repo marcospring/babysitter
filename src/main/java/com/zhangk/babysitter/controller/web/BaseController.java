@@ -75,6 +75,12 @@ public class BaseController {
 			return "0".equals(get("code").toString());
 		}
 
+		public void setResult(ResultInfo info) {
+			this.remove("result");
+			this.put("code", info.getCode());
+			this.put("msg", info.getMsg());
+		}
+
 		public void login(UserInfo userinfo) {
 			request.getSession(true).setAttribute(Constants.SESSION_USER,
 					userinfo);

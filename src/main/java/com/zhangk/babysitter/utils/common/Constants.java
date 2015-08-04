@@ -15,8 +15,25 @@ public class Constants {
 	public static final int OUT_ORDER = 5;
 	// 订单结束
 	public static final int ORDER_OVER = 6;
-
+	// 审核是否通过
 	public static final int PASS = 1;
 	public static final int NO_PASS = 0;
+	// 是否已读
+	public static final int READ = 1;
+	public static final int NON_READ = 0;
+	// 图片主域
+	public static final String IMG_DOMAIN = PropertiesUtils.getString(
+			"domain.image", "http://www.babysitter.com/babysitter");
+	// 头像
+	public static final String URL_HEAD = PropertiesUtils.getString("url.head",
+			"/resource/user/head/");
+	// 生活照
+	public static final String URL_LIFE = PropertiesUtils.getString("url.life",
+			"/resource/user/life/");
+	// 证件
+	public static final String URL_CARD = PropertiesUtils.getString("url.card",
+			"/resource/user/card/");
 
+	public static final int ORDER_ID = 1;
+	public static final int BABYSITTER_ID = 2;
 }

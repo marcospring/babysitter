@@ -11,12 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.zhangk.babysitter.utils.common.GUIDCreator;
-import com.zhangk.babysitter.viewmodel.BabysitterImageView;
-
 @Entity
-@Table(name = "babysitter_images")
-public class BabysitterImage implements Serializable {
+@Table(name = "babysitter_notice")
+public class CompanyNotice implements Serializable {
 	/**
 	 *
 	 */
@@ -26,9 +23,10 @@ public class BabysitterImage implements Serializable {
 	private String guid;
 	private Date createDate;
 	private Date updateDate;
-	private String url;
-	private String name;
 	private Babysitter babysitter;
+	private String title;
+	private String memo;
+	private int sate;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -72,22 +70,6 @@ public class BabysitterImage implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	@ManyToOne
 	@JoinColumn(name = "babysitter_id")
 	public Babysitter getBabysitter() {
@@ -98,17 +80,28 @@ public class BabysitterImage implements Serializable {
 		this.babysitter = babysitter;
 	}
 
-	public BabysitterImageView view() {
-		return new BabysitterImageView(this);
-
+	public String getMemo() {
+		return memo;
 	}
 
-	public static BabysitterImage getInstance() {
-		BabysitterImage o = new BabysitterImage();
-		o.setOvld(true);
-		o.setGuid(GUIDCreator.GUID());
-		o.setCreateDate(new Date());
-		o.setUpdateDate(new Date());
-		return o;
+	public void setMemo(String memo) {
+		this.memo = memo;
 	}
+
+	public int getSate() {
+		return sate;
+	}
+
+	public void setSate(int sate) {
+		this.sate = sate;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 }

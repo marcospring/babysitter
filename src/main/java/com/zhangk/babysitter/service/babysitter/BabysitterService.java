@@ -3,6 +3,8 @@ package com.zhangk.babysitter.service.babysitter;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.zhangk.babysitter.controller.web.BaseController.PageResult;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterImage;
@@ -67,4 +69,10 @@ public interface BabysitterService {
 	PageResult addLowerSalary(String guid, String money, PageResult res);
 
 	PageResult joinPromotion(String guid, String promotionGuid, PageResult res);
+
+	PageResult updateHeadImage(String guid, HttpServletRequest request,
+			PageResult res);
+
+	PageResult addLifeImage(String guid, HttpServletRequest request,
+			PageResult res);
 }

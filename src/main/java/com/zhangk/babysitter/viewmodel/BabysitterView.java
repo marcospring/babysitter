@@ -2,7 +2,6 @@ package com.zhangk.babysitter.viewmodel;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterCredential;
@@ -11,6 +10,7 @@ import com.zhangk.babysitter.entity.BabysitterImage;
 import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.entity.PromotionInfo;
 import com.zhangk.babysitter.entity.RestInfo;
+import com.zhangk.babysitter.utils.common.Constants;
 
 public class BabysitterView {
 	private String guid;
@@ -27,16 +27,20 @@ public class BabysitterView {
 	private List<BabysitterOrderView> orders;
 	private List<RestInfoView> restInfos;
 	private List<BabysitterEvaluateView> evaluates;
-	private List<Map<String, String>> images;
+	private List<BabysitterImageView> images;
 
 	public BabysitterView(Babysitter babysitter) {
 		setGuid(babysitter.getGuid());
 		setHeadUrl(babysitter.getHeadUrl());
-		setPrice(babysitter.getLevel().getMoney());
+		setPrice(babysitter.getLevel() != null ? babysitter.getLevel()
+				.getMoney() : 0);
+		setCardNo(babysitter.getCardNo());
 		setName(babysitter.getName());
-		setLevel(babysitter.getLevel().getLevel().getName());
+		setLevel(babysitter.getLevel() != null ? babysitter.getLevel()
+				.getLevel().getName() : "无");
 		setScore(babysitter.getScore());
-		setOrderCount(babysitter.getOrders().size());
+		setOrderCount(babysitter.getOrders() != null ? babysitter.getOrders()
+				.size() : 0);
 		setCredentials(getCredentialView(babysitter.getCredentials()));
 		setPromotions(getPromotionView(babysitter.getPromotions()));
 		setImages(getImageView(babysitter.getImages()));
@@ -47,7 +51,7 @@ public class BabysitterView {
 
 	private List<RestInfoView> getRestView(List<RestInfo> restInfos) {
 		List<RestInfoView> result = new ArrayList<RestInfoView>();
-		for (RestInfoView info : restInfos) {
+		for (RestInfo info : restInfos) {
 			result.add(info.view());
 		}
 		return result;
@@ -70,8 +74,8 @@ public class BabysitterView {
 		return result;
 	}
 
-	private List<Map<String, String>> getImageView(List<BabysitterImage> images) {
-		List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+	private List<BabysitterImageView> getImageView(List<BabysitterImage> images) {
+		List<BabysitterImageView> result = new ArrayList<BabysitterImageView>();
 		for (BabysitterImage img : images) {
 			result.add(img.view());
 		}
@@ -108,7 +112,7 @@ public class BabysitterView {
 	}
 
 	public String getHeadUrl() {
-		return headUrl;
+		return Constants.IMG_DOMAIN + headUrl;
 	}
 
 	public void setHeadUrl(String headUrl) {
@@ -179,11 +183,11 @@ public class BabysitterView {
 		this.promotions = promotions;
 	}
 
-	public List<Map<String, String>> getImages() {
+	public List<BabysitterImageView> getImages() {
 		return images;
 	}
 
-	public void setImages(List<Map<String, String>> images) {
+	public void setImages(List<BabysitterImageView> images) {
 		this.images = images;
 	}
 

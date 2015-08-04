@@ -2,14 +2,17 @@ package com.zhangk.babysitter.service.babysitter.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.zhangk.babysitter.controller.web.BaseController.PageResult;
 import com.zhangk.babysitter.dao.BaseDao;
@@ -21,9 +24,12 @@ import com.zhangk.babysitter.entity.PromotionInfo;
 import com.zhangk.babysitter.entity.RecommendInfo;
 import com.zhangk.babysitter.entity.RestInfo;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
+import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
+import com.zhangk.babysitter.utils.common.UploadFileUtils;
+import com.zhangk.babysitter.viewmodel.BabysitterImageView;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
 
 @Service
@@ -169,30 +175,49 @@ public class BabysitterServiceImpl implements BabysitterService {
 	@Transactional
 	public PageResult register(String telephone, String password, String name,
 			String cardNo, String countyGuid, String verifyCode, PageResult res) {
-		County county = dao.getResultByGUID(County.class, countyGuid);
-		if (county == null) {
-			res.put("code", ResultInfo.COUNTY_NULL.getCode());
-			res.put("msg", ResultInfo.COUNTY_NULL.getCode());
-			return res;
-		}
-		// 验证code
-		// String hql =
-		// "from CheckCode t where t.ovld = true and mobilePhone=? and type=?";
-		// CheckCode DBcode = dao.getSingleResultByHQL(CheckCode.class, hql,
-		// telephone, CheckCodeService.REGISTER);
-		//
-		// if (DBcode != null && verifyCode.equals(DBcode.getCode())) {
-		// DBcode.setOvld(false);
-		// dao.update(DBcode);
+		try {
+			String hql = "from Babysitter b where b.ovld = true and b.mobilePhone=?";
 
-		Babysitter babysitter = Babysitter.getInstance();
-		babysitter.setMobilePhone(telephone);
-		babysitter.setPassword(password);
-		babysitter.setName(name);
-		babysitter.setCardNo(cardNo);
-		babysitter.setCounty(county);
-		dao.add(babysitter);
-		res.put("result", babysitter.view());
+			Babysitter valideBabysitter = dao.getSingleResultByHQL(
+					Babysitter.class, hql, telephone);
+			if (valideBabysitter == null) {
+				County county = dao.getResultByGUID(County.class, countyGuid);
+				if (county == null) {
+					res.put("code", ResultInfo.COUNTY_NULL.getCode());
+					res.put("msg", ResultInfo.COUNTY_NULL.getMsg());
+					res.remove("result");
+					return res;
+				}
+				// 验证code
+				// String hql =
+				// "from CheckCode t where t.ovld = true and mobilePhone=? and type=?";
+				// CheckCode DBcode = dao.getSingleResultByHQL(CheckCode.class,
+				// hql,
+				// telephone, CheckCodeService.REGISTER);
+				//
+				// if (DBcode != null && verifyCode.equals(DBcode.getCode())) {
+				// DBcode.setOvld(false);
+				// dao.update(DBcode);
+				Babysitter babysitter = Babysitter.getInstance();
+				babysitter.setMobilePhone(telephone);
+				babysitter.setPassword(password);
+				babysitter.setName(name);
+				babysitter.setCardNo(cardNo);
+				babysitter.setIdentificationNo(cardNo);
+				babysitter.setCounty(county);
+				dao.add(babysitter);
+				res.put("code", ResultInfo.SUCCESS.getCode());
+				res.put("msg", ResultInfo.SUCCESS.getMsg());
+				res.put("result", babysitter.view());
+			} else {
+				res.put("code", ResultInfo.EXIST_USER.getCode());
+				res.put("msg", ResultInfo.EXIST_USER.getMsg());
+				res.remove("result");
+				return res;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		// } else {
 		// res.put("code", ResultInfo.CHECK_CODE_ERROR.getCode());
 		// res.put("msg", ResultInfo.CHECK_CODE_ERROR.getCode());
@@ -202,15 +227,23 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	public PageResult login(String telephone, String password, PageResult res) {
-		String hql = "from Babysitter b where b.ovld = true and telephone = ?";
-		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql,
-				telephone);
-		if (babysitter == null || !password.equals(babysitter.getPassword())) {
-			res.put("code", ResultInfo.VALID_USER_PASS.getCode());
-			res.put("msg", ResultInfo.VALID_USER_PASS.getMsg());
-			return res;
+		try {
+			String hql = "from Babysitter b where b.ovld = true and b.mobilePhone = ?";
+			Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class,
+					hql, telephone);
+			if (babysitter == null
+					|| !password.equals(babysitter.getPassword())) {
+				res.put("code", ResultInfo.VALID_USER_PASS.getCode());
+				res.put("msg", ResultInfo.VALID_USER_PASS.getMsg());
+				res.remove("result");
+				return res;
+			}
+			res.put("code", ResultInfo.SUCCESS.getCode());
+			res.put("msg", ResultInfo.SUCCESS.getMsg());
+			res.put("result", babysitter.view());
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		res.put("result", babysitter.view());
 		return res;
 	}
 
@@ -294,6 +327,70 @@ public class BabysitterServiceImpl implements BabysitterService {
 		infos.add(info);
 		babysitter.setPromotions(infos);
 		dao.update(babysitter);
+		return res;
+	}
+
+	@Transactional
+	public PageResult updateHeadImage(String guid, HttpServletRequest request,
+			PageResult res) {
+		UploadFileUtils fileUtil = UploadFileUtils.newInstance();
+		fileUtil.setRequest(request);
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
+		if (babysitter != null) {
+			List<MultipartFile> files = fileUtil.getFiles();
+			if (files != null && files.size() > 0) {
+				MultipartFile file = files.get(0);
+				String url = fileUtil.getFileUrl(file, Constants.URL_HEAD,
+						babysitter.getGuid());
+				babysitter.setHeadUrl(url);
+				dao.update(babysitter);
+				Map<String, String> result = new HashMap<String, String>();
+				result.put("headurl", babysitter.getHeadUrl());
+				result.put("domain", Constants.IMG_DOMAIN);
+				res.put("result", result);
+			} else {
+				res.setResult(ResultInfo.FILE_NULL);
+				return res;
+			}
+		} else {
+			res.setResult(ResultInfo.BABYSITTER_NULL);
+			return res;
+		}
+		return res;
+	}
+
+	@Transactional
+	public PageResult addLifeImage(String guid, HttpServletRequest request,
+			PageResult res) {
+		UploadFileUtils fileUtil = UploadFileUtils.newInstance();
+		fileUtil.setRequest(request);
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
+		if (babysitter != null) {
+			List<MultipartFile> files = fileUtil.getFiles();
+			List<BabysitterImageView> images = new ArrayList<BabysitterImageView>();
+			if (files != null && files.size() > 0) {
+				for (MultipartFile file : files) {
+					BabysitterImage image = BabysitterImage.getInstance();
+					String url = fileUtil.getFileUrl(file, Constants.URL_LIFE,
+							image.getGuid());
+					image.setBabysitter(babysitter);
+					image.setUrl(url);
+					dao.add(image);
+					images.add(image.view());
+				}
+			} else {
+				res.setResult(ResultInfo.FILE_NULL);
+				return res;
+			}
+			Map<String, Object> result = new HashMap<String, Object>();
+			result.put("images", images);
+			result.put("domain", Constants.IMG_DOMAIN);
+			res.setResult(ResultInfo.SUCCESS);
+			res.put("result", result);
+		} else {
+			res.setResult(ResultInfo.BABYSITTER_NULL);
+			return res;
+		}
 		return res;
 	}
 }

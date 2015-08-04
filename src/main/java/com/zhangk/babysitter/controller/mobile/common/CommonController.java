@@ -77,6 +77,9 @@ public class CommonController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/code")
 	public PageResult getCode(String telephone, int type) {
+		if (StringUtils.isEmpty(telephone) || type == 0)
+			return getErrRes(ResultInfo.INF_EMPTY);
+
 		CheckCode code = codeService.addCheckCode(telephone, type);
 		res.put("result", code);
 		return res;

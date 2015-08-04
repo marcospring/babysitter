@@ -7,8 +7,8 @@ public enum ResultInfo {
 			1003, "月嫂订单不存在"), VALID_USER_PASS(1004, "用户名或密码错误"), EMPLOYER_NULL(
 			1005, "雇主不存在"), SERVICE_ORDER_NULL(1006, "雇主订单不存在"), RECOMMEND_NULL(
 			1007, "推荐信息不存在"), COUNTY_NULL(1007, "城市不存在"), DATE_FORMAT_ERROR(
-			1008, "日期格式化错误"), PROMOTION_NULL(1009, "活动信息不存在"), SUCCESS(0,
-			"操作成功");
+			1008, "日期格式化错误"), PROMOTION_NULL(1009, "活动信息不存在"), EXIST_USER(1010,
+			"用户已存在"), FILE_NULL(1011, "上传文件为空"), SUCCESS(0, "操作成功");
 
 	private int code;
 	private String msg;

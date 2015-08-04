@@ -24,8 +24,7 @@ public class PropertiesUtils {
 
 	private static final String DEFAULT_ENCODING = "UTF-8";
 
-	private static String[] resourcesPaths = new String[] {
-			"/config.properties", "/api.properties" };
+	private static String[] resourcesPaths = new String[] { "/config.properties" };
 
 	private static Log log = LogFactory.getLog(PropertiesUtils.class);
 
