@@ -84,15 +84,19 @@ public class UserInfoData {
 		List<County> list = new ArrayList<County>();
 		County beijing = County.getInstance();
 		beijing.setName("北京");
+		beijing.setShortName("BJ");
 		list.add(beijing);
 		County shanghai = County.getInstance();
 		shanghai.setName("上海");
+		shanghai.setShortName("SH");
 		list.add(shanghai);
 		County guangzhou = County.getInstance();
 		guangzhou.setName("广州");
+		guangzhou.setShortName("GZ");
 		list.add(guangzhou);
 		County shenzhen = County.getInstance();
 		shenzhen.setName("深圳");
+		shenzhen.setShortName("SZ");
 		list.add(shenzhen);
 		return list;
 	}

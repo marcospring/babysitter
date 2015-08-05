@@ -26,15 +26,12 @@ public class PromotinServiceImpl implements PromotionService {
 		dao.add(info);
 	}
 
-	public Pagination<PromotionInfo> getPagePromotionInfo(
-			Pagination<PromotionInfo> page) {
-		String hql = "from PromotionInfo p where ovld = trye and isCheck = ?";
-		String countHql = "select count(p.id) from PromotionInfo p where ovld = trye and isCheck = ?";
+	public Pagination<PromotionInfo> getPagePromotionInfo(Pagination<PromotionInfo> page) {
+		String hql = "from PromotionInfo p where ovld = true and isCheck = ?";
+		String countHql = "select count(p.id) from PromotionInfo p where ovld = true and isCheck = ?";
 
-		Pagination<PromotionInfo> p = dao.getPageResult(PromotionInfo.class,
-				hql, page.getPageNo(), page.getPageSize(), Constants.PASS);
-		Long count = dao.getSingleResultByHQL(Long.class, countHql,
-				Constants.PASS);
+		Pagination<PromotionInfo> p = dao.getPageResult(PromotionInfo.class, hql, page.getPageNo(), page.getPageSize(), Constants.PASS);
+		Long count = dao.getSingleResultByHQL(Long.class, countHql, Constants.PASS);
 		p.setResultSize(count);
 		return p;
 	}
@@ -49,9 +46,8 @@ public class PromotinServiceImpl implements PromotionService {
 
 	public List<PromotionView> getAllPromotion() {
 		List<PromotionView> result = new ArrayList<PromotionView>();
-		String hql = "from PromotionInfo where ovld = 1 and isCheck =?";
-		List<PromotionInfo> preResult = dao.getListResultByHQL(
-				PromotionInfo.class, hql, Constants.PASS);
+		String hql = "from PromotionInfo where ovld = true and isCheck =?";
+		List<PromotionInfo> preResult = dao.getListResultByHQL(PromotionInfo.class, hql, Constants.PASS);
 		for (PromotionInfo info : preResult) {
 			result.add(info.view());
 		}

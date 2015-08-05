@@ -11,14 +11,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zhangk.babysitter.controller.web.BaseController;
 import com.zhangk.babysitter.entity.Babysitter;
+import com.zhangk.babysitter.entity.CompanyNotice;
 import com.zhangk.babysitter.entity.RecommendInfo;
 import com.zhangk.babysitter.entity.RestInfo;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
+import com.zhangk.babysitter.service.common.NoticeService;
 import com.zhangk.babysitter.service.common.PromotionService;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
+import com.zhangk.babysitter.viewmodel.CompanyNoticeView;
 import com.zhangk.babysitter.viewmodel.PromotionView;
 import com.zhangk.babysitter.viewmodel.RecommendInfoView;
 
@@ -30,15 +33,15 @@ public class BabysitterController extends BaseController {
 	private BabysitterService babysitterService;
 	@Autowired
 	private PromotionService proService;
+	@Autowired
+	private NoticeService noticeService;
 
 	@ResponseBody
 	@RequestMapping("/babysitterList")
-	public PageResult areaBabysitters(String countyGuid,
-			Pagination<BabysitterView> page, String name, String orderStr) {
+	public PageResult areaBabysitters(String countyGuid, Pagination<BabysitterView> page, String name, String orderStr) {
 		if (StringUtils.isEmpty(countyGuid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		page = babysitterService.getMobileBabysitters(countyGuid, page, name,
-				orderStr);
+		page = babysitterService.getMobileBabysitters(countyGuid, page, name, orderStr);
 		res.put("result", page);
 		return res;
 	}
@@ -58,27 +61,22 @@ public class BabysitterController extends BaseController {
 	public PageResult getRecommond(String countyGuid) {
 		if (StringUtils.isEmpty(countyGuid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		RecommendInfo info = babysitterService
-				.getNewBabysitterRecommend(countyGuid);
+		RecommendInfo info = babysitterService.getNewBabysitterRecommend(countyGuid);
 		if (info == null)
 			return getErrRes(ResultInfo.RECOMMEND_NULL);
 		RecommendInfoView view = info.view();
-		view.setBabysitterCount(babysitterService
-				.getBabysitterCountByCounty(countyGuid));
+		view.setBabysitterCount(babysitterService.getBabysitterCountByCounty(countyGuid));
 		res.put("result", view);
 		return res;
 	}
 
 	@ResponseBody
 	@RequestMapping("/register")
-	public PageResult register(String telephone, String password, String name,
-			String cardNo, String countyGuid, String verifyCode) {
-		if (StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password)
-				|| StringUtils.isEmpty(name) || StringUtils.isEmpty(cardNo)
+	public PageResult register(String telephone, String password, String name, String identificationNo, String countyGuid, String verifyCode) {
+		if (StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password) || StringUtils.isEmpty(name) || StringUtils.isEmpty(identificationNo)
 				|| StringUtils.isEmpty(countyGuid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		PageResult result = babysitterService.register(telephone, password,
-				name, cardNo, countyGuid, verifyCode, res);
+		PageResult result = babysitterService.register(telephone, password, name, identificationNo, countyGuid, verifyCode, res);
 		return result;
 	}
 
@@ -93,13 +91,10 @@ public class BabysitterController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/changepass")
-	public PageResult changePassword(String telephone, String code,
-			String password) {
-		if (StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password)
-				|| StringUtils.isEmpty(code))
+	public PageResult changePassword(String telephone, String code, String password) {
+		if (StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password) || StringUtils.isEmpty(code))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		PageResult result = babysitterService.changePass(telephone, password,
-				code, res);
+		PageResult result = babysitterService.changePass(telephone, password, code, res);
 		return result;
 	}
 
@@ -115,10 +110,8 @@ public class BabysitterController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/addRest")
-	public PageResult addRest(String guid, String beginDate, String endDate,
-			String memo) {
-		if (StringUtils.isEmpty(guid) || StringUtils.isEmpty(beginDate)
-				|| StringUtils.isEmpty(endDate))
+	public PageResult addRest(String guid, String beginDate, String endDate, String memo) {
+		if (StringUtils.isEmpty(guid) || StringUtils.isEmpty(beginDate) || StringUtils.isEmpty(endDate))
 			return getErrRes(ResultInfo.INF_EMPTY);
 		Date beginDated = null;
 		Date endDated = null;
@@ -131,8 +124,7 @@ public class BabysitterController extends BaseController {
 			res.put("msg", ResultInfo.DATE_FORMAT_ERROR.getMsg());
 			return res;
 		}
-		RestInfo info = babysitterService.addRestInfo(guid, beginDated,
-				endDated, memo);
+		RestInfo info = babysitterService.addRestInfo(guid, beginDated, endDated, memo);
 		if (info == null)
 			return getResult(ResultInfo.BABYSITTER_NULL);
 
@@ -163,5 +155,31 @@ public class BabysitterController extends BaseController {
 			return getErrRes(ResultInfo.INF_EMPTY);
 		res = babysitterService.joinPromotion(guid, promotionGuid, res);
 		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/notice")
+	public PageResult getCompanyNotice(String guid, Pagination<CompanyNotice> page) {
+		if (StringUtils.isEmpty(guid))
+			return getResult(ResultInfo.INF_EMPTY);
+		Pagination<CompanyNoticeView> pa = noticeService.getPaginationNotice(page, guid);
+		res.put("result", pa);
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/readNotice")
+	public PageResult readNotice(String guid) {
+		if (StringUtils.isEmpty(guid))
+			return getErrRes();
+		return noticeService.readedNotice(guid, getResult());
+	}
+
+	@ResponseBody
+	@RequestMapping("/nonReadCount")
+	public PageResult nonReadNoticeCount(String guid) {
+		if (StringUtils.isEmpty(guid))
+			return getErrRes(ResultInfo.INF_EMPTY);
+		return noticeService.getNONReadNoticeCount(guid, getResult());
 	}
 }

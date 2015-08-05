@@ -17,6 +17,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
 import com.zhangk.babysitter.utils.mapper.JsonDateSerializer;
+import com.zhangk.babysitter.viewmodel.CountyView;
 
 @Entity
 @Table(name = "babysitter_county")
@@ -112,6 +113,10 @@ public class County implements Serializable {
 
 	public void setShortName(String shortName) {
 		this.shortName = shortName;
+	}
+
+	public CountyView view() {
+		return new CountyView(this);
 	}
 
 	public static County getInstance() {

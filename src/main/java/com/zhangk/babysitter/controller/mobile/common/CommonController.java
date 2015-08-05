@@ -1,5 +1,6 @@
 package com.zhangk.babysitter.controller.mobile.common;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.zhangk.babysitter.service.common.ImageService;
 import com.zhangk.babysitter.service.level.CountyLevelService;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.viewmodel.CountyLevelView;
+import com.zhangk.babysitter.viewmodel.CountyView;
 
 @Controller("mobileCommonController")
 @RequestMapping("/mobile/common")
@@ -40,7 +42,11 @@ public class CommonController extends BaseController {
 	@RequestMapping("/countyList")
 	public PageResult getCountyList() {
 		List<County> list = countyService.getCountyList();
-		res.put("result", list);
+		List<CountyView> listView = new ArrayList<CountyView>();
+		for (County county : list) {
+			listView.add(county.view());
+		}
+		res.put("result", listView);
 		return res;
 	}
 
@@ -81,7 +87,7 @@ public class CommonController extends BaseController {
 			return getErrRes(ResultInfo.INF_EMPTY);
 
 		CheckCode code = codeService.addCheckCode(telephone, type);
-		res.put("result", code);
+		res.put("result", code.view());
 		return res;
 	}
 }

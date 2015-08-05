@@ -11,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.CompanyNoticeView;
+
 @Entity
 @Table(name = "babysitter_notice")
 public class CompanyNotice implements Serializable {
@@ -26,7 +29,7 @@ public class CompanyNotice implements Serializable {
 	private Babysitter babysitter;
 	private String title;
 	private String memo;
-	private int sate;
+	private int state;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -88,12 +91,12 @@ public class CompanyNotice implements Serializable {
 		this.memo = memo;
 	}
 
-	public int getSate() {
-		return sate;
+	public int getState() {
+		return state;
 	}
 
-	public void setSate(int sate) {
-		this.sate = sate;
+	public void setState(int state) {
+		this.state = state;
 	}
 
 	public String getTitle() {
@@ -104,4 +107,16 @@ public class CompanyNotice implements Serializable {
 		this.title = title;
 	}
 
+	public CompanyNoticeView view() {
+		return new CompanyNoticeView(this);
+	}
+
+	public static CompanyNotice getInstance() {
+		CompanyNotice o = new CompanyNotice();
+		o.setOvld(true);
+		o.setGuid(GUIDCreator.GUID());
+		o.setCreateDate(new Date());
+		o.setUpdateDate(new Date());
+		return o;
+	}
 }

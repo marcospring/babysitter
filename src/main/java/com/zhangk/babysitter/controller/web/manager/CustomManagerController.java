@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.zhangk.babysitter.controller.web.BaseController;
 import com.zhangk.babysitter.entity.CustomerManager;
+import com.zhangk.babysitter.service.common.NoticeService;
 import com.zhangk.babysitter.service.manager.CustomerManagerService;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 
@@ -16,6 +17,8 @@ public class CustomManagerController extends BaseController {
 
 	@Autowired
 	private CustomerManagerService managerService;
+	@Autowired
+	private NoticeService noticeService;
 
 	@RequestMapping("/login")
 	public PageResult login(String username, String password) {
@@ -29,4 +32,5 @@ public class CustomManagerController extends BaseController {
 		res.login(manager);
 		return res;
 	}
+
 }

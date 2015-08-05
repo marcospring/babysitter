@@ -2,7 +2,10 @@ package com.zhangk.babysitter.viewmodel;
 
 import java.util.Date;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import com.zhangk.babysitter.entity.CompanyNotice;
+import com.zhangk.babysitter.utils.mapper.JsonDateSerializer;
 
 public class CompanyNoticeView {
 	private String guid;
@@ -17,7 +20,10 @@ public class CompanyNoticeView {
 
 	public CompanyNoticeView(CompanyNotice notice) {
 		setGuid(notice.getGuid());
-		setCreateDate(createDate);
+		setCreateDate(notice.getCreateDate());
+		setTitle(notice.getTitle());
+		setMemo(notice.getMemo());
+		setState(notice.getState());
 	}
 
 	public String getGuid() {
@@ -28,6 +34,7 @@ public class CompanyNoticeView {
 		this.guid = guid;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -50,6 +57,14 @@ public class CompanyNoticeView {
 
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
 	}
 
 }

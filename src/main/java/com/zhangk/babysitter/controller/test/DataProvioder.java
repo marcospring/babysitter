@@ -28,6 +28,7 @@ import com.zhangk.babysitter.service.babysitter.BabysitterService;
 import com.zhangk.babysitter.service.common.CountyService;
 import com.zhangk.babysitter.service.common.CredentialService;
 import com.zhangk.babysitter.service.common.ImageService;
+import com.zhangk.babysitter.service.common.NoticeService;
 import com.zhangk.babysitter.service.common.PromotionService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.service.level.CountyLevelService;
@@ -67,6 +68,8 @@ public class DataProvioder extends BaseController {
 	private ImageService imageService;
 	@Autowired
 	private CustomerManagerService managerService;
+	@Autowired
+	private NoticeService noticeService;
 
 	@ResponseBody
 	@RequestMapping("/userData")
@@ -206,13 +209,11 @@ public class DataProvioder extends BaseController {
 		UserInfoData userData = new UserInfoData();
 		List<Babysitter> list = userData.initBabysitterData();
 		List<Credential> cres = credentialService.getCredentials();
-		List<PromotionInfo> infos = promotionService.getPagePromotionInfo(
-				new Pagination<PromotionInfo>()).getResult();
+		List<PromotionInfo> infos = promotionService.getPagePromotionInfo(new Pagination<PromotionInfo>()).getResult();
 		for (Babysitter babysitter : list) {
 			babysitter.setLevel(userData.getRandomLevel());
 			babysitter.setHeadUrl("/head/babysitter/head.jpg");
-			babysitter.setCounty(countyService
-					.getCounty("13189F35478B4E01BD6F1F057C20CA4B"));
+			babysitter.setCounty(countyService.getCounty("F14588C19EBA4D1FAE26156AB188E3D8"));
 			// babysitter.setCredentials(cres);
 			babysitter.setPromotions(infos);
 			babyService.addBabysitter(babysitter);
@@ -367,8 +368,7 @@ public class DataProvioder extends BaseController {
 	public PageResult managerData() {
 		UserInfoData userData = new UserInfoData();
 		CustomerManager manager = userData.initManagerData();
-		manager.setCounty(countyService
-				.getCounty("13189F35478B4E01BD6F1F057C20CA4B"));
+		manager.setCounty(countyService.getCounty("13189F35478B4E01BD6F1F057C20CA4B"));
 		List<Babysitter> babysitters = babyService.BabysitterList();
 		manager.setBabysitters(babysitters);
 		manager.setTelephone("15111311131");
@@ -394,4 +394,10 @@ public class DataProvioder extends BaseController {
 		return res;
 	}
 
+	@ResponseBody
+	@RequestMapping("/addNotice")
+	public PageResult addNotice() {
+		noticeService.addNotice("测试", "这是一个通知的测试内容", "D2BE42629FD34A16A58530236EA93043");
+		return res;
+	}
 }

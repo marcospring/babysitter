@@ -17,6 +17,10 @@ public class BaseController {
 
 	protected PageResult res = new PageResult();
 
+	protected PageResult getResult() {
+		return new PageResult();
+	}
+
 	protected PageResult getResult(ResultInfo info) {
 		return new PageResult(info);
 	}
@@ -82,13 +86,11 @@ public class BaseController {
 		}
 
 		public void login(UserInfo userinfo) {
-			request.getSession(true).setAttribute(Constants.SESSION_USER,
-					userinfo);
+			request.getSession(true).setAttribute(Constants.SESSION_USER, userinfo);
 		}
 
 		public void login(CustomerManager manager) {
-			request.getSession(true).setAttribute(Constants.SESSION_MANAGER,
-					manager);
+			request.getSession(true).setAttribute(Constants.SESSION_MANAGER, manager);
 		}
 
 		public void logout() {

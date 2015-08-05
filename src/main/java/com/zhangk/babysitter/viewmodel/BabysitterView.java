@@ -3,6 +3,8 @@ package com.zhangk.babysitter.viewmodel;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.util.StringUtils;
+
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterCredential;
 import com.zhangk.babysitter.entity.BabysitterEvaluate;
@@ -18,6 +20,7 @@ public class BabysitterView {
 	private long price;
 	private String name;
 	private String cardNo;
+	private String identificationNo;
 	private String level;
 	private long score;
 	private int orderCount;
@@ -32,15 +35,13 @@ public class BabysitterView {
 	public BabysitterView(Babysitter babysitter) {
 		setGuid(babysitter.getGuid());
 		setHeadUrl(babysitter.getHeadUrl());
-		setPrice(babysitter.getLevel() != null ? babysitter.getLevel()
-				.getMoney() : 0);
+		setPrice(babysitter.getLevel() != null ? babysitter.getLevel().getMoney() : 0);
 		setCardNo(babysitter.getCardNo());
+		setIdentificationNo(babysitter.getIdentificationNo());
 		setName(babysitter.getName());
-		setLevel(babysitter.getLevel() != null ? babysitter.getLevel()
-				.getLevel().getName() : "无");
+		setLevel(babysitter.getLevel() != null ? babysitter.getLevel().getLevel().getName() : "无");
 		setScore(babysitter.getScore());
-		setOrderCount(babysitter.getOrders() != null ? babysitter.getOrders()
-				.size() : 0);
+		setOrderCount(babysitter.getOrders() != null ? babysitter.getOrders().size() : 0);
 		setCredentials(getCredentialView(babysitter.getCredentials()));
 		setPromotions(getPromotionView(babysitter.getPromotions()));
 		setImages(getImageView(babysitter.getImages()));
@@ -57,8 +58,7 @@ public class BabysitterView {
 		return result;
 	}
 
-	private List<BabysitterEvaluateView> getEvaluate(
-			List<BabysitterEvaluate> evaluates) {
+	private List<BabysitterEvaluateView> getEvaluate(List<BabysitterEvaluate> evaluates) {
 		List<BabysitterEvaluateView> result = new ArrayList<BabysitterEvaluateView>();
 		for (BabysitterEvaluate info : evaluates) {
 			result.add(info.view());
@@ -90,8 +90,7 @@ public class BabysitterView {
 		return result;
 	}
 
-	private List<CredentialView> getCredentialView(
-			List<BabysitterCredential> credentials) {
+	private List<CredentialView> getCredentialView(List<BabysitterCredential> credentials) {
 		List<CredentialView> result = new ArrayList<CredentialView>();
 		for (BabysitterCredential credential : credentials) {
 			result.add(credential.view());
@@ -112,7 +111,7 @@ public class BabysitterView {
 	}
 
 	public String getHeadUrl() {
-		return Constants.IMG_DOMAIN + headUrl;
+		return StringUtils.isEmpty(headUrl) ? "" : Constants.IMG_DOMAIN + "/" + headUrl;
 	}
 
 	public void setHeadUrl(String headUrl) {
@@ -213,6 +212,14 @@ public class BabysitterView {
 
 	public void setRestInfos(List<RestInfoView> restInfos) {
 		this.restInfos = restInfos;
+	}
+
+	public String getIdentificationNo() {
+		return identificationNo;
+	}
+
+	public void setIdentificationNo(String identificationNo) {
+		this.identificationNo = identificationNo;
 	}
 
 }

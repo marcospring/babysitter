@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.CheckCodeView;
 
 @Entity
 @Table(name = "babysitter_checkcode")
@@ -91,6 +92,10 @@ public class CheckCode implements Serializable {
 
 	public void setMobilePhone(String mobilePhone) {
 		this.mobilePhone = mobilePhone;
+	}
+
+	public CheckCodeView view() {
+		return new CheckCodeView(this);
 	}
 
 	public static CheckCode getInstance() {

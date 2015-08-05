@@ -9,7 +9,4 @@ public interface NumberRecordService {
 
 	NumberRecord getOrderNewNumber(Date recordDate);
 
-	void updateBabysitterNumber(String guid, long number);
-
-	void updateOrderNumber(String guid, long number);
 }
