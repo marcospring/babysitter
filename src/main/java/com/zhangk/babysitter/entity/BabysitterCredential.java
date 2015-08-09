@@ -101,11 +101,8 @@ public class BabysitterCredential implements Serializable {
 	}
 
 	public CredentialView view() {
-		CredentialView view = new CredentialView();
-		view.setName(getCredential().getName());
-		view.setGuid(getGuid());
-		view.setCheck(getIscheck());
-		view.setCredentialType(getCredential().getCredentialType());
+		CredentialView view = new CredentialView(this);
+
 		return view;
 	}
 

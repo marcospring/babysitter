@@ -4,7 +4,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zhangk.babysitter.controller.web.BaseController;
+import com.zhangk.babysitter.controller.BaseController;
 
 @Controller
 public class ErrorController extends BaseController {

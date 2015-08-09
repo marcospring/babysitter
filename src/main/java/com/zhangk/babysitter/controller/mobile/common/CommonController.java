@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zhangk.babysitter.controller.web.BaseController;
+import com.zhangk.babysitter.controller.BaseController;
 import com.zhangk.babysitter.entity.CheckCode;
 import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.FeedBack;
@@ -85,8 +85,8 @@ public class CommonController extends BaseController {
 	public PageResult getCode(String telephone, int type) {
 		if (StringUtils.isEmpty(telephone) || type == 0)
 			return getErrRes(ResultInfo.INF_EMPTY);
-
-		CheckCode code = codeService.addCheckCode(telephone, type);
+		telephone = telephone.replace(" ", "");
+		CheckCode code = codeService.addCheckCode(telephone.trim(), type);
 		res.put("result", code.view());
 		return res;
 	}

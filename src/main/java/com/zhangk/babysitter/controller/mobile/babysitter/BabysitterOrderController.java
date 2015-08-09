@@ -6,7 +6,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zhangk.babysitter.controller.web.BaseController;
+import com.zhangk.babysitter.controller.BaseController;
 import com.zhangk.babysitter.service.babysitter.BabysitterOrderService;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 

@@ -46,6 +46,12 @@ public class Babysitter implements Serializable {
 	private String cardNo;
 	private String IdentificationNo;
 	private long lowerSalary;
+	private String bankCardNo;
+	private String bankName;
+	private String bankUserName;
+	private String nativePlace;
+	private Date birthday;
+	private String introduce;
 	private List<BabysitterCredential> credentials;
 	private List<PromotionInfo> promotions;
 	private List<BabysitterOrder> orders;
@@ -287,6 +293,54 @@ public class Babysitter implements Serializable {
 
 	public void setIdentificationNo(String identificationNo) {
 		IdentificationNo = identificationNo;
+	}
+
+	public String getBankCardNo() {
+		return bankCardNo;
+	}
+
+	public void setBankCardNo(String bankCardNo) {
+		this.bankCardNo = bankCardNo;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getBankUserName() {
+		return bankUserName;
+	}
+
+	public void setBankUserName(String bankUserName) {
+		this.bankUserName = bankUserName;
+	}
+
+	public String getNativePlace() {
+		return nativePlace;
+	}
+
+	public void setNativePlace(String nativePlace) {
+		this.nativePlace = nativePlace;
+	}
+
+	public Date getBirthday() {
+		return birthday;
+	}
+
+	public void setBirthday(Date birthday) {
+		this.birthday = birthday;
+	}
+
+	public String getIntroduce() {
+		return introduce;
+	}
+
+	public void setIntroduce(String introduce) {
+		this.introduce = introduce;
 	}
 
 	public static Babysitter getInstance() {

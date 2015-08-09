@@ -10,7 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zhangk.babysitter.controller.web.BaseController;
+import com.zhangk.babysitter.controller.BaseController;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.utils.common.UploadFileUtils;
@@ -31,7 +31,7 @@ public class uploadController extends BaseController {
 		fileUtil.setRequest(request);
 		if (StringUtils.isEmpty(guid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		res = babysitterService.updateHeadImage(guid, request, res);
+		res = babysitterService.updateHeadImage(guid, request, getResult());
 		return res;
 	}
 
@@ -41,7 +41,7 @@ public class uploadController extends BaseController {
 			throws IllegalStateException, IOException {
 		if (StringUtils.isEmpty(guid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		res = babysitterService.addLifeImage(guid, request, res);
+		res = babysitterService.addLifeImage(guid, request, getResult());
 		return res;
 	}
 }

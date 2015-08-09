@@ -25,6 +25,7 @@ public class BabysitterOrder implements Serializable {
 	private long id;
 	private boolean ovld;
 	private String guid;
+	private String orderId;
 	private Date createDate;
 	private Date updateDate;
 	private int state;
@@ -33,6 +34,8 @@ public class BabysitterOrder implements Serializable {
 	private long orderPrice;
 	private Babysitter babysitter;
 	private Employer employer;
+	private String evaluation;
+	private int score;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -129,13 +132,31 @@ public class BabysitterOrder implements Serializable {
 	}
 
 	public BabysitterOrderView view() {
-		BabysitterOrderView view = new BabysitterOrderView();
-		view.setGuid(guid);
-		view.setBeginDate(serviceBeginDate);
-		view.setEndDate(serviceEndDate);
-		view.setPrice(String.valueOf(orderPrice));
-		view.setEmployerName(employer.getUsername());
-		return view;
+		return new BabysitterOrderView(this);
+	}
+
+	public String getEvaluation() {
+		return evaluation;
+	}
+
+	public void setEvaluation(String evaluation) {
+		this.evaluation = evaluation;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
+	}
+
+	public String getOrderId() {
+		return orderId;
+	}
+
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
 	}
 
 	public static BabysitterOrder getInstance() {

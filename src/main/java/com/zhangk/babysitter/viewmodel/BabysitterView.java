@@ -1,18 +1,19 @@
 package com.zhangk.babysitter.viewmodel;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.util.StringUtils;
 
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterCredential;
-import com.zhangk.babysitter.entity.BabysitterEvaluate;
 import com.zhangk.babysitter.entity.BabysitterImage;
 import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.entity.PromotionInfo;
 import com.zhangk.babysitter.entity.RestInfo;
 import com.zhangk.babysitter.utils.common.Constants;
+import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 
 public class BabysitterView {
 	private String guid;
@@ -24,30 +25,52 @@ public class BabysitterView {
 	private String level;
 	private long score;
 	private int orderCount;
+	private String bankName;
+	private String bankCardNo;
+	private String bankUserName;
+	private CountyView county;
+	private String nativePlace;
+	private int age;
+	private String introduce;
 
 	private List<CredentialView> credentials;
 	private List<PromotionView> promotions;
 	private List<BabysitterOrderView> orders;
 	private List<RestInfoView> restInfos;
-	private List<BabysitterEvaluateView> evaluates;
+	// private List<BabysitterEvaluateView> evaluates;
 	private List<BabysitterImageView> images;
 
 	public BabysitterView(Babysitter babysitter) {
 		setGuid(babysitter.getGuid());
 		setHeadUrl(babysitter.getHeadUrl());
-		setPrice(babysitter.getLevel() != null ? babysitter.getLevel().getMoney() : 0);
+		setPrice(babysitter.getLevel() != null ? babysitter.getLevel()
+				.getMoney() : 0);
 		setCardNo(babysitter.getCardNo());
 		setIdentificationNo(babysitter.getIdentificationNo());
 		setName(babysitter.getName());
-		setLevel(babysitter.getLevel() != null ? babysitter.getLevel().getLevel().getName() : "无");
+		setLevel(babysitter.getLevel() != null ? babysitter.getLevel()
+				.getLevel().getName() : "无");
 		setScore(babysitter.getScore());
-		setOrderCount(babysitter.getOrders() != null ? babysitter.getOrders().size() : 0);
+		setOrderCount(babysitter.getOrders() != null ? babysitter.getOrders()
+				.size() : 0);
 		setCredentials(getCredentialView(babysitter.getCredentials()));
 		setPromotions(getPromotionView(babysitter.getPromotions()));
 		setImages(getImageView(babysitter.getImages()));
 		setOrders(getOrderView(babysitter.getOrders()));
 		setRestInfos(getRestView(babysitter.getRestInfos()));
-		setEvaluates(getEvaluate(babysitter.getEvaluates()));
+		setBankCardNo(babysitter.getCardNo());
+		setBankName(babysitter.getBankName());
+		setBankUserName(babysitter.getBankUserName());
+		setCounty(babysitter.getCounty().view());
+		setNativePlace(babysitter.getNativePlace());
+		setAge(getTrueAge(babysitter.getBirthday()));
+		setIntroduce(babysitter.getIntroduce());
+		// setEvaluates(getEvaluate(babysitter.getEvaluates()));
+	}
+
+	private int getTrueAge(Date birthday) {
+		int months = ExpectedDateCreate.monthsBetween(birthday, new Date());
+		return months / 12;
 	}
 
 	private List<RestInfoView> getRestView(List<RestInfo> restInfos) {
@@ -58,13 +81,15 @@ public class BabysitterView {
 		return result;
 	}
 
-	private List<BabysitterEvaluateView> getEvaluate(List<BabysitterEvaluate> evaluates) {
-		List<BabysitterEvaluateView> result = new ArrayList<BabysitterEvaluateView>();
-		for (BabysitterEvaluate info : evaluates) {
-			result.add(info.view());
-		}
-		return result;
-	}
+	// private List<BabysitterEvaluateView> getEvaluate(
+	// List<BabysitterEvaluate> evaluates) {
+	// List<BabysitterEvaluateView> result = new
+	// ArrayList<BabysitterEvaluateView>();
+	// for (BabysitterEvaluate info : evaluates) {
+	// result.add(info.view());
+	// }
+	// return result;
+	// }
 
 	private List<BabysitterOrderView> getOrderView(List<BabysitterOrder> orders) {
 		List<BabysitterOrderView> result = new ArrayList<BabysitterOrderView>();
@@ -90,7 +115,8 @@ public class BabysitterView {
 		return result;
 	}
 
-	private List<CredentialView> getCredentialView(List<BabysitterCredential> credentials) {
+	private List<CredentialView> getCredentialView(
+			List<BabysitterCredential> credentials) {
 		List<CredentialView> result = new ArrayList<CredentialView>();
 		for (BabysitterCredential credential : credentials) {
 			result.add(credential.view());
@@ -111,7 +137,8 @@ public class BabysitterView {
 	}
 
 	public String getHeadUrl() {
-		return StringUtils.isEmpty(headUrl) ? "" : Constants.IMG_DOMAIN + "/" + headUrl;
+		return StringUtils.isEmpty(headUrl) ? "" : Constants.IMG_DOMAIN + "/"
+				+ headUrl;
 	}
 
 	public void setHeadUrl(String headUrl) {
@@ -198,13 +225,13 @@ public class BabysitterView {
 		this.orders = orders;
 	}
 
-	public List<BabysitterEvaluateView> getEvaluates() {
-		return evaluates;
-	}
-
-	public void setEvaluates(List<BabysitterEvaluateView> evaluates) {
-		this.evaluates = evaluates;
-	}
+	// public List<BabysitterEvaluateView> getEvaluates() {
+	// return evaluates;
+	// }
+	//
+	// public void setEvaluates(List<BabysitterEvaluateView> evaluates) {
+	// this.evaluates = evaluates;
+	// }
 
 	public List<RestInfoView> getRestInfos() {
 		return restInfos;
@@ -220,6 +247,62 @@ public class BabysitterView {
 
 	public void setIdentificationNo(String identificationNo) {
 		this.identificationNo = identificationNo;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getBankCardNo() {
+		return bankCardNo;
+	}
+
+	public void setBankCardNo(String bankCardNo) {
+		this.bankCardNo = bankCardNo;
+	}
+
+	public String getBankUserName() {
+		return bankUserName;
+	}
+
+	public void setBankUserName(String bankUserName) {
+		this.bankUserName = bankUserName;
+	}
+
+	public CountyView getCounty() {
+		return county;
+	}
+
+	public void setCounty(CountyView county) {
+		this.county = county;
+	}
+
+	public String getNativePlace() {
+		return nativePlace;
+	}
+
+	public void setNativePlace(String nativePlace) {
+		this.nativePlace = nativePlace;
+	}
+
+	public int getAge() {
+		return age;
+	}
+
+	public void setAge(int age) {
+		this.age = age;
+	}
+
+	public String getIntroduce() {
+		return introduce;
+	}
+
+	public void setIntroduce(String introduce) {
+		this.introduce = introduce;
 	}
 
 }

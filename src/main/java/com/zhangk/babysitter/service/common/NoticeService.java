@@ -1,6 +1,6 @@
 package com.zhangk.babysitter.service.common;
 
-import com.zhangk.babysitter.controller.web.BaseController.PageResult;
+import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.entity.CompanyNotice;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.viewmodel.CompanyNoticeView;

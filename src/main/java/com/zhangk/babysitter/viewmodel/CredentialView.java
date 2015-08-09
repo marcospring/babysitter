@@ -1,10 +1,23 @@
 package com.zhangk.babysitter.viewmodel;
 
+import com.zhangk.babysitter.entity.BabysitterCredential;
+
 public class CredentialView {
 	private String guid;
 	private String name;
 	private int check;
 	private int credentialType;
+
+	public CredentialView() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public CredentialView(BabysitterCredential credential) {
+		setName(credential.getCredential().getName());
+		setGuid(credential.getGuid());
+		setCheck(credential.getIscheck());
+		setCredentialType(credential.getCredential().getCredentialType());
+	}
 
 	public String getGuid() {
 		return guid;

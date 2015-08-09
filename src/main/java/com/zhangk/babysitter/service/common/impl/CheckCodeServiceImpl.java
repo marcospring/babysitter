@@ -25,12 +25,14 @@ public class CheckCodeServiceImpl implements CheckCodeService {
 			DBcode.setOvld(false);
 			dao.update(DBcode);
 		}
+		String code = CheckCodeUtil.code();
 		DBcode = CheckCode.getInstance();
 		DBcode.setMobilePhone(telephone);
 		DBcode.setType(type);
-		DBcode.setCode(String.valueOf(CheckCodeUtil.code()));
+		DBcode.setCode(code);
 		dao.add(DBcode);
 		// 发短信
+		CheckCodeUtil.sendMessage(telephone, code, "5");
 		//
 		return DBcode;
 	}

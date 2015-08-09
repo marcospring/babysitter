@@ -1,5 +1,8 @@
 package com.zhangk.babysitter.service.exployer;
 
+import java.util.List;
+
+import com.zhangk.babysitter.entity.ServiceOrder;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 
 public interface ServiceOrderService {
@@ -8,4 +11,6 @@ public interface ServiceOrderService {
 
 	ResultInfo addBabysitterOrderEvaluate(String employGuid, String orderGuid,
 			String babysitterGuid, String msg, String score);
+
+	List<ServiceOrder> orderList(String mobile);
 }

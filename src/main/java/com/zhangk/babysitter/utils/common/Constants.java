@@ -36,4 +36,21 @@ public class Constants {
 
 	public static final int ORDER_ID = 1;
 	public static final int BABYSITTER_ID = 2;
+
+	public static final String CODE_DOMAIN = PropertiesUtils.getString(
+			"code.domain", "sandboxapp.cloopen.com");
+	public static final String CODE_PORT = PropertiesUtils.getString(
+			"code.port", "8883");
+	public static final String CODE_ACCOUNT = PropertiesUtils.getString(
+			"code.account", "8a48b5514ecd7fa8014edcde010a15c1");
+	public static final String CODE_AUTH = PropertiesUtils.getString(
+			"code.auth", "b820805e71984068a021377b3822a798");
+	public static final String CODE_APPID = PropertiesUtils.getString(
+			"code.appid", "8a48b5514ecd7fa8014edcde557015c4");
+	public static final String MSG_TEMPLATE = PropertiesUtils.getString(
+			"code.template", "1");
+
+	public static final int CREDENTIAL_TYPE_CREDENTIAL = 1;
+	public static final int CREDENTIAL_TYPE_PROFESSIONAL = 2;
+
 }

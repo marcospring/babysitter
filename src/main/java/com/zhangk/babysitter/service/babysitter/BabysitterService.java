@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.zhangk.babysitter.controller.web.BaseController.PageResult;
+import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterImage;
 import com.zhangk.babysitter.entity.BabysitterOrder;
@@ -75,4 +75,7 @@ public interface BabysitterService {
 
 	PageResult addLifeImage(String guid, HttpServletRequest request,
 			PageResult res);
+
+	PageResult updateBankCard(String guid, String bankName, String bankCardNo,
+			String bankUserName, PageResult result);
 }

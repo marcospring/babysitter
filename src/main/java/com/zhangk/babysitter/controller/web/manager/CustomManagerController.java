@@ -5,7 +5,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.zhangk.babysitter.controller.web.BaseController;
+import com.zhangk.babysitter.controller.BaseController;
 import com.zhangk.babysitter.entity.CustomerManager;
 import com.zhangk.babysitter.service.common.NoticeService;
 import com.zhangk.babysitter.service.manager.CustomerManagerService;

@@ -9,7 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.zhangk.babysitter.controller.web.BaseController;
+import com.zhangk.babysitter.controller.BaseController;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.CompanyNotice;
 import com.zhangk.babysitter.entity.RecommendInfo;
@@ -38,10 +38,12 @@ public class BabysitterController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/babysitterList")
-	public PageResult areaBabysitters(String countyGuid, Pagination<BabysitterView> page, String name, String orderStr) {
+	public PageResult areaBabysitters(String countyGuid,
+			Pagination<BabysitterView> page, String name, String orderStr) {
 		if (StringUtils.isEmpty(countyGuid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		page = babysitterService.getMobileBabysitters(countyGuid, page, name, orderStr);
+		page = babysitterService.getMobileBabysitters(countyGuid, page, name,
+				orderStr);
 		res.put("result", page);
 		return res;
 	}
@@ -61,22 +63,32 @@ public class BabysitterController extends BaseController {
 	public PageResult getRecommond(String countyGuid) {
 		if (StringUtils.isEmpty(countyGuid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		RecommendInfo info = babysitterService.getNewBabysitterRecommend(countyGuid);
+		RecommendInfo info = babysitterService
+				.getNewBabysitterRecommend(countyGuid);
 		if (info == null)
 			return getErrRes(ResultInfo.RECOMMEND_NULL);
 		RecommendInfoView view = info.view();
-		view.setBabysitterCount(babysitterService.getBabysitterCountByCounty(countyGuid));
+		view.setBabysitterCount(babysitterService
+				.getBabysitterCountByCounty(countyGuid));
 		res.put("result", view);
 		return res;
 	}
 
 	@ResponseBody
 	@RequestMapping("/register")
-	public PageResult register(String telephone, String password, String name, String identificationNo, String countyGuid, String verifyCode) {
-		if (StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password) || StringUtils.isEmpty(name) || StringUtils.isEmpty(identificationNo)
+	public PageResult register(String telephone, String password, String name,
+			String identificationNo, String countyGuid, String verifyCode) {
+		if (StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password)
+				|| StringUtils.isEmpty(name)
+				|| StringUtils.isEmpty(identificationNo)
 				|| StringUtils.isEmpty(countyGuid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		PageResult result = babysitterService.register(telephone, password, name, identificationNo, countyGuid, verifyCode, res);
+		// Pattern reg15 = Pattern
+		// .compile("^[1-9]\\d{7}((0\\[1-9])|(1[0-2]))(([0\\[1-9]|1\\d|2\\d])|3[0-1])\\d{2}([0-9]|x|X){1}$");
+		// Pattern reg18 = Pattern
+		// .compile("^[1-9]\\d{5}[1-9]\\d{3}((0\\[1-9]))|((1[0-2]))(([0\\[1-9]|1\\d|2\\d])|3[0-1])\\d{3}([0-9]|x|X){1}$");
+		PageResult result = babysitterService.register(telephone, password,
+				name, identificationNo, countyGuid, verifyCode, getResult());
 		return result;
 	}
 
@@ -85,16 +97,20 @@ public class BabysitterController extends BaseController {
 	public PageResult login(String telephone, String password) {
 		if (StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		PageResult result = babysitterService.login(telephone, password, res);
+		PageResult result = babysitterService.login(telephone, password,
+				getResult());
 		return result;
 	}
 
 	@ResponseBody
 	@RequestMapping("/changepass")
-	public PageResult changePassword(String telephone, String code, String password) {
-		if (StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password) || StringUtils.isEmpty(code))
+	public PageResult changePassword(String telephone, String code,
+			String password) {
+		if (StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password)
+				|| StringUtils.isEmpty(code))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		PageResult result = babysitterService.changePass(telephone, password, code, res);
+		PageResult result = babysitterService.changePass(telephone, password,
+				code, getResult());
 		return result;
 	}
 
@@ -110,8 +126,10 @@ public class BabysitterController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/addRest")
-	public PageResult addRest(String guid, String beginDate, String endDate, String memo) {
-		if (StringUtils.isEmpty(guid) || StringUtils.isEmpty(beginDate) || StringUtils.isEmpty(endDate))
+	public PageResult addRest(String guid, String beginDate, String endDate,
+			String memo) {
+		if (StringUtils.isEmpty(guid) || StringUtils.isEmpty(beginDate)
+				|| StringUtils.isEmpty(endDate))
 			return getErrRes(ResultInfo.INF_EMPTY);
 		Date beginDated = null;
 		Date endDated = null;
@@ -124,7 +142,8 @@ public class BabysitterController extends BaseController {
 			res.put("msg", ResultInfo.DATE_FORMAT_ERROR.getMsg());
 			return res;
 		}
-		RestInfo info = babysitterService.addRestInfo(guid, beginDated, endDated, memo);
+		RestInfo info = babysitterService.addRestInfo(guid, beginDated,
+				endDated, memo);
 		if (info == null)
 			return getResult(ResultInfo.BABYSITTER_NULL);
 
@@ -144,7 +163,7 @@ public class BabysitterController extends BaseController {
 	public PageResult addLowerSalary(String guid, String money) {
 		if (StringUtils.isEmpty(guid) || StringUtils.isEmpty(money))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		res = babysitterService.addLowerSalary(guid, money, res);
+		res = babysitterService.addLowerSalary(guid, money, getResult());
 		return res;
 	}
 
@@ -153,16 +172,18 @@ public class BabysitterController extends BaseController {
 	public PageResult joinPromotion(String guid, String promotionGuid) {
 		if (StringUtils.isEmpty(guid) || StringUtils.isEmpty(promotionGuid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		res = babysitterService.joinPromotion(guid, promotionGuid, res);
+		res = babysitterService.joinPromotion(guid, promotionGuid, getResult());
 		return res;
 	}
 
 	@ResponseBody
 	@RequestMapping("/notice")
-	public PageResult getCompanyNotice(String guid, Pagination<CompanyNotice> page) {
+	public PageResult getCompanyNotice(String guid,
+			Pagination<CompanyNotice> page) {
 		if (StringUtils.isEmpty(guid))
 			return getResult(ResultInfo.INF_EMPTY);
-		Pagination<CompanyNoticeView> pa = noticeService.getPaginationNotice(page, guid);
+		Pagination<CompanyNoticeView> pa = noticeService.getPaginationNotice(
+				page, guid);
 		res.put("result", pa);
 		return res;
 	}
@@ -181,5 +202,18 @@ public class BabysitterController extends BaseController {
 		if (StringUtils.isEmpty(guid))
 			return getErrRes(ResultInfo.INF_EMPTY);
 		return noticeService.getNONReadNoticeCount(guid, getResult());
+	}
+
+	@ResponseBody
+	@RequestMapping("/updateBankCard")
+	public PageResult updateBankCard(String guid, String bankName,
+			String bankCardNo, String bankUserName) {
+		if (StringUtils.isEmpty(bankName) || StringUtils.isEmpty(bankCardNo)
+				|| StringUtils.isEmpty(bankUserName)) {
+			return getErrRes(ResultInfo.INF_EMPTY);
+		}
+		res = babysitterService.updateBankCard(guid, bankName, bankCardNo,
+				bankUserName, getResult());
+		return res;
 	}
 }

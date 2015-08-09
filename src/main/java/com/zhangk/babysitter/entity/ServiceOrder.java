@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
 @Entity
 @Table(name = "babysitter_service_order")
@@ -134,6 +135,10 @@ public class ServiceOrder implements Serializable {
 
 	public void setMobilePhone(String mobilePhone) {
 		this.mobilePhone = mobilePhone;
+	}
+
+	public ServiceOrderView view() {
+		return new ServiceOrderView(this);
 	}
 
 	public static ServiceOrder getInstance() {
