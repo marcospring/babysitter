@@ -78,4 +78,8 @@ public interface BabysitterService {
 
 	PageResult updateBankCard(String guid, String bankName, String bankCardNo,
 			String bankUserName, PageResult result);
+
+	PageResult addOrder(String guid, String beginDate, String endDate,
+			String price, String address, String employerName,
+			String telephone, PageResult res);
 }

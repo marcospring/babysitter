@@ -1,6 +1,7 @@
 package com.zhangk.babysitter.viewmodel;
 
 import com.zhangk.babysitter.entity.BabysitterCredential;
+import com.zhangk.babysitter.utils.common.Constants;
 
 public class CredentialView {
 	private String guid;
@@ -13,10 +14,12 @@ public class CredentialView {
 	}
 
 	public CredentialView(BabysitterCredential credential) {
-		setName(credential.getCredential().getName());
+		setName(credential.getCredential() == null ? "无" : credential
+				.getCredential().getName());
 		setGuid(credential.getGuid());
 		setCheck(credential.getIscheck());
-		setCredentialType(credential.getCredential().getCredentialType());
+		setCredentialType(credential.getCredential() == null ? Constants.CREDENTIAL_TYPE_CREDENTIAL
+				: credential.getCredential().getCredentialType());
 	}
 
 	public String getGuid() {

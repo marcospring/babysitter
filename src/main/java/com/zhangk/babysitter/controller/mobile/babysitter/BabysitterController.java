@@ -44,7 +44,8 @@ public class BabysitterController extends BaseController {
 			return getErrRes(ResultInfo.INF_EMPTY);
 		page = babysitterService.getMobileBabysitters(countyGuid, page, name,
 				orderStr);
-		res.put("result", page);
+		PageResult pres = getResult(ResultInfo.SUCCESS);
+		pres.put("result", page);
 		return res;
 	}
 
@@ -54,7 +55,8 @@ public class BabysitterController extends BaseController {
 		if (StringUtils.isEmpty(guid))
 			return getErrRes(ResultInfo.INF_EMPTY);
 		BabysitterView view = babysitterService.getBabysitterView(guid);
-		res.put("result", view);
+		PageResult pres = getResult(ResultInfo.SUCCESS);
+		pres.put("result", view);
 		return res;
 	}
 
@@ -70,7 +72,8 @@ public class BabysitterController extends BaseController {
 		RecommendInfoView view = info.view();
 		view.setBabysitterCount(babysitterService
 				.getBabysitterCountByCounty(countyGuid));
-		res.put("result", view);
+		PageResult pres = getResult(ResultInfo.SUCCESS);
+		pres.put("result", view);
 		return res;
 	}
 
@@ -120,7 +123,8 @@ public class BabysitterController extends BaseController {
 		if (StringUtils.isEmpty(guid))
 			return getErrRes(ResultInfo.INF_EMPTY);
 		Babysitter babysitter = babysitterService.getBabysitter(guid);
-		res.put("result", babysitter.view().getCredentials());
+		PageResult pres = getResult(ResultInfo.SUCCESS);
+		pres.put("result", babysitter.view().getCredentials());
 		return res;
 	}
 
@@ -215,5 +219,19 @@ public class BabysitterController extends BaseController {
 		res = babysitterService.updateBankCard(guid, bankName, bankCardNo,
 				bankUserName, getResult());
 		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/addOrder")
+	public PageResult addOrder(String guid, String beginDate, String endDate,
+			String price, String address, String employerName, String telephone) {
+		if (StringUtils.isEmpty(beginDate) || StringUtils.isEmpty(endDate)
+				|| StringUtils.isEmpty(price) || StringUtils.isEmpty(address)
+				|| StringUtils.isEmpty(employerName)
+				|| StringUtils.isEmpty(telephone))
+			return getErrRes(ResultInfo.INF_EMPTY);
+
+		return babysitterService.addOrder(guid, beginDate, endDate, price,
+				address, employerName, telephone, res);
 	}
 }

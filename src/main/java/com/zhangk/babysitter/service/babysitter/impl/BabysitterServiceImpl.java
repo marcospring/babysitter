@@ -1,6 +1,7 @@
 package com.zhangk.babysitter.service.babysitter.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -20,12 +21,15 @@ import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterImage;
 import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.entity.County;
+import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.entity.NumberRecord;
 import com.zhangk.babysitter.entity.PromotionInfo;
 import com.zhangk.babysitter.entity.RecommendInfo;
 import com.zhangk.babysitter.entity.RestInfo;
+import com.zhangk.babysitter.exception.CheckErrorException;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
 import com.zhangk.babysitter.service.common.NumberRecordService;
+import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 import com.zhangk.babysitter.utils.common.Pagination;
@@ -40,6 +44,8 @@ public class BabysitterServiceImpl implements BabysitterService {
 	private BaseDao dao;
 	@Autowired
 	private NumberRecordService recordService;
+	@Autowired
+	private EmployerService employerService;
 
 	public List<Babysitter> BabysitterList() {
 		String hql = "from Babysitter r ";
@@ -422,5 +428,61 @@ public class BabysitterServiceImpl implements BabysitterService {
 			result.setResult(ResultInfo.BAD_REQUEST);
 		}
 		return result;
+	}
+
+	public PageResult addOrder(String guid, String beginDate, String endDate,
+			String price, String address, String employerName,
+			String telephone, PageResult res) {
+		try {
+			// boolean flag = codeService.updateCheckCode(mobile, checkCode,
+			// CheckCodeService.PUBLISH_ORDER);
+			// if (!flag) {
+			// throw new CheckErrorException();
+			// }
+			Employer employer = employerService.getEmployerByMobile(telephone);
+			// County county = dao.getResultByGUID(County.class, countyGuid);
+			if (employer == null) {
+				employer = Employer.getInstance();
+				employer.setMobilePhone(telephone.replace(" ", ""));
+				// employer.setCounty(county);
+				employer.setAddress(address);
+				employer.setUsername(employerName);
+				employerService.addEmployer(employer);
+			}
+			Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
+			if (babysitter == null) {
+				res.setResult(ResultInfo.BABYSITTER_NULL);
+				return res;
+			}
+			BabysitterOrder order = BabysitterOrder.getInstance();
+			order.setEmployer(employer);
+			order.setOrderPrice(Long.valueOf(price));
+			order.setBabysitter(babysitter);
+			order.setState(Constants.NEW_ORDER);
+			order.setOrderId(createOrderId());
+			order.setServiceBeginDate(ExpectedDateCreate.parseDate(beginDate));
+			order.setServiceEndDate(ExpectedDateCreate.parseDate(endDate));
+			dao.add(order);
+		} catch (CheckErrorException e) {
+			res.setResult(ResultInfo.CHECK_CODE_ERROR);
+			return res;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		res.setResult(ResultInfo.SUCCESS);
+		return res;
+	}
+
+	private String createOrderId() {
+		StringBuffer orderId = new StringBuffer("Y");
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH) + 1;
+		String monthStr = month < 10 ? "0" + month : month + "";
+		String yearStr = String.valueOf(year).substring(2, 4);
+		NumberRecord record = recordService.getOrderNewNumber(c.getTime());
+		orderId.append(yearStr).append(monthStr).append(record.getNumber());
+		return orderId.toString();
 	}
 }

@@ -19,11 +19,13 @@ public class BabysitterView {
 	private String guid;
 	private String headUrl;
 	private long price;
+	private long lowerSalary;
 	private String name;
 	private String cardNo;
 	private String identificationNo;
 	private String level;
 	private long score;
+	private long credentialScore;
 	private int orderCount;
 	private String bankName;
 	private String bankCardNo;
@@ -65,10 +67,14 @@ public class BabysitterView {
 		setNativePlace(babysitter.getNativePlace());
 		setAge(getTrueAge(babysitter.getBirthday()));
 		setIntroduce(babysitter.getIntroduce());
+		setCredentialScore(babysitter.getCredentialScore());
+		setLowerSalary(babysitter.getLowerSalary());
 		// setEvaluates(getEvaluate(babysitter.getEvaluates()));
 	}
 
 	private int getTrueAge(Date birthday) {
+		if (birthday == null)
+			return 0;
 		int months = ExpectedDateCreate.monthsBetween(birthday, new Date());
 		return months / 12;
 	}
@@ -303,6 +309,22 @@ public class BabysitterView {
 
 	public void setIntroduce(String introduce) {
 		this.introduce = introduce;
+	}
+
+	public long getCredentialScore() {
+		return credentialScore;
+	}
+
+	public void setCredentialScore(long credentialScore) {
+		this.credentialScore = credentialScore;
+	}
+
+	public long getLowerSalary() {
+		return lowerSalary;
+	}
+
+	public void setLowerSalary(long lowerSalary) {
+		this.lowerSalary = lowerSalary;
 	}
 
 }
