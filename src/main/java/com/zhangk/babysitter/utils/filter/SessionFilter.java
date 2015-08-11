@@ -21,11 +21,8 @@ public class SessionFilter extends OncePerRequestFilter {
 	private Logger logger = LoggerFactory.getLogger(SessionFilter.class);
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request,
-			HttpServletResponse response, FilterChain filterChain)
-			throws ServletException, IOException {
-		String[] notFilter = new String[] { "login.html", "dataProvider",
-				"error", "mobile", "file", "wechat" };
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+		String[] notFilter = new String[] { "login", "dataProvider", "error", "mobile", "file", "wechat" };
 		String uri = request.getRequestURI();
 		boolean doFilter = true;
 		for (String s : notFilter) {
@@ -35,8 +32,7 @@ public class SessionFilter extends OncePerRequestFilter {
 			}
 		}
 		if (doFilter) {
-			UserInfo user = (UserInfo) request.getSession().getAttribute(
-					Constants.SESSION_USER);
+			UserInfo user = (UserInfo) request.getSession().getAttribute(Constants.SESSION_USER);
 			if (user == null) {
 				boolean isAjaxRequest = isAjaxRequest(request);
 				if (isAjaxRequest) {
@@ -47,7 +43,7 @@ public class SessionFilter extends OncePerRequestFilter {
 					out.print(msg);
 				}
 				logger.info("{}请求没有登陆。", uri);
-				response.sendRedirect(request.getContextPath() + "/index.jsp");
+				response.sendRedirect(request.getContextPath() + "/login.jsp");
 			} else {
 				filterChain.doFilter(request, response);
 			}

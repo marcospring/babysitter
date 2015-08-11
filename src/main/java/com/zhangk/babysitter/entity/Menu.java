@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.MenuView;
 
 @Entity
 @Table(name = "babysitter_menu")
@@ -129,5 +130,9 @@ public class Menu implements Serializable {
 		o.setCreateDate(new Date());
 		o.setUpdateDate(new Date());
 		return o;
+	}
+
+	public MenuView view() {
+		return new MenuView(this);
 	}
 }

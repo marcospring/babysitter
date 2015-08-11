@@ -1,0 +1,13 @@
+body {font-family:'Arial Normal','Arial';font-size:13px;}
+
+div, input, select, form {margin:0;padding:0;}
+input, select, option {font-size: 13px !important;}
+select {width:auto;min-width:140px;height:25px;}
+.header {background:#A1C4E4 url('../images/topback.gif') repeat-x;height:60px;width:100%;}
+.toptitle {position:absolute;left:20px;color:#fff;font-size:16px;font-weight:bold;}
+
+.bg1 {padding:5px 5px;background:#ddd;}
+form .one {padding:5px 0;overflow:hidden;}
+form .one .name{float:left;width:105px;text-align:right;line-height:30px;}
+form input{font-size:14px;margin:0;height:30px;}
+form table td{text-align:center;padding:3px 25px;}

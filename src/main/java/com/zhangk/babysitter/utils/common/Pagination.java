@@ -15,6 +15,11 @@ public class Pagination<T> {
 		// TODO Auto-generated constructor stub
 	}
 
+	public Pagination(int pageNo, int pageSize) {
+		this.pageNo = pageNo;
+		this.pageSize = pageSize;
+	}
+
 	public Pagination(List<T> result, int pageNo, int pageSize) {
 		this.result = result;
 		this.pageNo = pageNo;
@@ -51,8 +56,7 @@ public class Pagination<T> {
 	}
 
 	public long getPageCount() {
-		pageCount = resultSize > 0 ? (resultSize % pageSize == 0 ? resultSize
-				/ pageSize : resultSize / pageSize + 1) : 0;
+		pageCount = resultSize > 0 ? (resultSize % pageSize == 0 ? resultSize / pageSize : resultSize / pageSize + 1) : 0;
 		return pageCount;
 	}
 
@@ -102,15 +106,13 @@ public class Pagination<T> {
 		return pageStrBuilder;
 	}
 
-	private void buildPageList(StringBuilder pageStrBuilder, int frount,
-			int endMinus) {
+	private void buildPageList(StringBuilder pageStrBuilder, int frount, int endMinus) {
 		if (getPageNo() < frount) {
 			for (int i = 1; i <= frount; i++) {
 				buildPage(pageStrBuilder, i);
 			}
 			pageStrBuilder.append("<li><a>...</a></li>");
-		} else if (getPageNo() >= frount
-				&& getPageNo() < getPageCount() - endMinus) {
+		} else if (getPageNo() >= frount && getPageNo() < getPageCount() - endMinus) {
 			for (int i = 1; i < 3; i++) {
 				buildPage(pageStrBuilder, i);
 			}
@@ -131,64 +133,25 @@ public class Pagination<T> {
 	}
 
 	private void buildNext(StringBuilder pageStrBuilder) {
-		pageStrBuilder
-				.append("<li><a href=\"")
-				.append(getRequestUri())
-				.append("?pageNo=")
-				.append(getPageNo() + 1 > getPageCount() ? getPageCount()
-						: getPageNo() + 1)
-				.append("&pageSize=")
-				.append(getPageSize())
-				.append("\" aria-label=\"Next\"> ")
-				.append("<i class=\"glyphicon glyphicon-forward\"></i></a></li>");
-		pageStrBuilder
-				.append("<li><a href=\"")
-				.append(getRequestUri())
-				.append("?pageNo=")
-				.append(getPageCount())
-				.append("&pageSize=")
-				.append(getPageSize())
-				.append("\" aria-label=\"Next\"> ")
-				.append("<i class=\"glyphicon glyphicon-fast-forward\"></i></a></li>");
+		pageStrBuilder.append("<li><a href=\"").append(getRequestUri()).append("?pageNo=").append(getPageNo() + 1 > getPageCount() ? getPageCount() : getPageNo() + 1)
+				.append("&pageSize=").append(getPageSize()).append("\" aria-label=\"Next\"> ").append("<i class=\"glyphicon glyphicon-forward\"></i></a></li>");
+		pageStrBuilder.append("<li><a href=\"").append(getRequestUri()).append("?pageNo=").append(getPageCount()).append("&pageSize=").append(getPageSize())
+				.append("\" aria-label=\"Next\"> ").append("<i class=\"glyphicon glyphicon-fast-forward\"></i></a></li>");
 	}
 
 	private void buildPrevious(StringBuilder pageStrBuilder) {
-		pageStrBuilder
-				.append("<li><a href=\"")
-				.append(getRequestUri())
-				.append("?pageNo=")
-				.append(1)
-				.append("&pageSize=")
-				.append(getPageSize())
-				.append("\"> ")
+		pageStrBuilder.append("<li><a href=\"").append(getRequestUri()).append("?pageNo=").append(1).append("&pageSize=").append(getPageSize()).append("\"> ")
 				.append("<i class=\"glyphicon glyphicon-fast-backward\"></i></a></li>");
-		pageStrBuilder
-				.append("<li><a href=\"")
-				.append(getRequestUri())
-				.append("?pageNo=")
-				.append(getPageNo() - 1 <= 0 ? 1 : getPageNo() - 1)
-				.append("&pageSize=")
-				.append(getPageSize())
-				.append("\"> ")
-				.append("<i class=\"glyphicon glyphicon-backward\"></i></a></li>");
+		pageStrBuilder.append("<li><a href=\"").append(getRequestUri()).append("?pageNo=").append(getPageNo() - 1 <= 0 ? 1 : getPageNo() - 1).append("&pageSize=")
+				.append(getPageSize()).append("\"> ").append("<i class=\"glyphicon glyphicon-backward\"></i></a></li>");
 	}
 
 	private void buildPage(StringBuilder pageStrBuilder, int i) {
 		if (getPageNo() == i) {
-			pageStrBuilder
-					.append("<li class=\"active\"><a href=\"")
-					.append(getRequestUri())
-					.append("?pageNo=")
-					.append(i)
-					.append("&pageSize=")
-					.append(getPageSize())
-					.append("\">")
-					.append(i)
-					.append("<span class=\"sr-only\">(current)</span></a></li>");
+			pageStrBuilder.append("<li class=\"active\"><a href=\"").append(getRequestUri()).append("?pageNo=").append(i).append("&pageSize=").append(getPageSize()).append("\">")
+					.append(i).append("<span class=\"sr-only\">(current)</span></a></li>");
 		} else {
-			pageStrBuilder.append("<li><a href=\"").append(getRequestUri())
-					.append("?pageNo=").append(i).append("&pageSize=")
-					.append(getPageSize()).append("\">").append(i)
+			pageStrBuilder.append("<li><a href=\"").append(getRequestUri()).append("?pageNo=").append(i).append("&pageSize=").append(getPageSize()).append("\">").append(i)
 					.append("</a></li>");
 		}
 	}

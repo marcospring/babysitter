@@ -15,6 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.UserInfoView;
 
 @Entity
 @Table(name = "babysitter_user")
@@ -110,6 +111,10 @@ public class UserInfo implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public UserInfoView view() {
+		return new UserInfoView(this);
 	}
 
 	public static UserInfo getInstance() {

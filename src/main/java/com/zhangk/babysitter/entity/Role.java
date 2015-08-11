@@ -15,6 +15,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.RoleView;
 
 @Entity
 @Table(name = "babysitter_role")
@@ -115,6 +116,10 @@ public class Role implements Serializable {
 
 	public void setManagers(List<CustomerManager> managers) {
 		this.managers = managers;
+	}
+
+	public RoleView view() {
+		return new RoleView(this);
 	}
 
 	public static Role getInstance() {

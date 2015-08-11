@@ -4,11 +4,12 @@ import java.util.List;
 
 import com.zhangk.babysitter.entity.Role;
 import com.zhangk.babysitter.utils.common.Pagination;
+import com.zhangk.babysitter.viewmodel.RoleView;
 
 public interface RoleService {
 	List<Role> roleList();
 
-	Pagination<Role> getPageRoleList(Pagination<Role> page);
+	Pagination<RoleView> getPageRoleList(Pagination<Role> page);
 
 	void addRole(Role role);
 
@@ -17,5 +18,7 @@ public interface RoleService {
 	void updateRole(Role role);
 
 	Role getRole(long id);
+
+	void grant(long id, long[] resourceTreeIds);
 
 }
