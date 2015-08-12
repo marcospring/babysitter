@@ -1,5 +1,6 @@
 package com.zhangk.babysitter.service.common.impl;
 
+import java.util.Calendar;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -8,9 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.zhangk.babysitter.dao.BaseDao;
+import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.NumberRecord;
 import com.zhangk.babysitter.service.common.NumberRecordService;
 import com.zhangk.babysitter.utils.common.Constants;
+import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 
 @Service
 public class NumberRecordServiceImpl implements NumberRecordService {
@@ -45,7 +48,7 @@ public class NumberRecordServiceImpl implements NumberRecordService {
 	}
 
 	@Transactional
-	public NumberRecord getOrderNewNumber(int recordDate) {
+	public NumberRecord getOrderNewNumber(String recordDate) {
 		NumberRecord record = null;
 		String hql = "from NumberRecord r where r.ovld = true and r.type =? and r.recordDate = ? order by r.number desc";
 		List<NumberRecord> listRecord = dao.getListResultByHQL(
@@ -71,6 +74,28 @@ public class NumberRecordServiceImpl implements NumberRecordService {
 		return record;
 	}
 
+	public String createOrderId() {
+		StringBuffer orderId = new StringBuffer("Y");
+		Calendar c = Calendar.getInstance();
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH) + 1;
+		String monthStr = month < 10 ? "0" + month : month + "";
+		String yearStr = String.valueOf(year).substring(2, 4);
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		NumberRecord record = getOrderNewNumber(ExpectedDateCreate.formatDate(c
+				.getTime()));
+		orderId.append(yearStr).append(monthStr).append(record.getNumber());
+		return orderId.toString();
+	}
+
+	public String getCardNo(County county) {
+		String shortName = county.getShortName();
+		StringBuffer cardNo = new StringBuffer(shortName);
+		NumberRecord record = getBabysitterNewNumber();
+		cardNo.append(record.getNumber());
+		return cardNo.toString();
+	}
+
 	private long getNumber(long number) {
 		String numStr = String.valueOf(number);
 		char chars[] = numStr.toCharArray();
@@ -85,4 +110,5 @@ public class NumberRecordServiceImpl implements NumberRecordService {
 		}
 		return Long.valueOf(new String(chars));
 	}
+
 }

@@ -23,7 +23,7 @@ public class NumberRecord implements Serializable {
 	private String guid;
 	private Date createDate;
 	private Date updateDate;
-	private int recordDate;
+	private String recordDate;
 	private long number;
 	private int type;
 
@@ -69,11 +69,11 @@ public class NumberRecord implements Serializable {
 		this.updateDate = updateDate;
 	}
 
-	public int getRecordDate() {
+	public String getRecordDate() {
 		return recordDate;
 	}
 
-	public void setRecordDate(int recordDate) {
+	public void setRecordDate(String recordDate) {
 		this.recordDate = recordDate;
 	}
 

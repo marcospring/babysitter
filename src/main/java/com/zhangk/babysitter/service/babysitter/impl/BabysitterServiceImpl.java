@@ -1,7 +1,6 @@
 package com.zhangk.babysitter.service.babysitter.impl;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,7 +9,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 
-import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +23,6 @@ import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.CountyLevel;
 import com.zhangk.babysitter.entity.Employer;
-import com.zhangk.babysitter.entity.NumberRecord;
 import com.zhangk.babysitter.entity.PromotionInfo;
 import com.zhangk.babysitter.entity.RecommendInfo;
 import com.zhangk.babysitter.entity.RestInfo;
@@ -56,10 +53,12 @@ public class BabysitterServiceImpl implements BabysitterService {
 		return list;
 	}
 
-
+	public Pagination<Babysitter> getPageBabysitterList(
+			Pagination<Babysitter> page) {
 		String hql = "from Babysitter r";
 		String countHql = "select count(r.id) from Babysitter r";
 
+		Pagination<Babysitter> p = dao.getPageResult(Babysitter.class, hql,
 				page.getPageNo(), page.getPageSize());
 		Long count = dao.getSingleResultByHQL(Long.class, countHql);
 		p.setResultSize(count);
@@ -85,6 +84,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		return dao.getResultById(Babysitter.class, id);
 	}
 
+	public Pagination<BabysitterOrder> getPageOrderList(
 			Pagination<BabysitterOrder> page, String name) {
 		String hql = "from BabysitterOrder r ";
 		String countHql = "select count(r.id) from BabysitterOrder r ";
@@ -93,7 +93,9 @@ public class BabysitterServiceImpl implements BabysitterService {
 			countHql = "select count(r.id) from BabysitterOrder r where r.babysitter.name like ?";
 			name = "'%" + name + "%'";
 		}
-				page.getPageSize(), name)
+		Pagination<BabysitterOrder> p = dao.getPageResult(
+				BabysitterOrder.class, hql, page.getPageNo(),
+				page.getPageSize(), name);
 		Long count = dao.getSingleResultByHQL(Long.class, countHql, name);
 		p.setResultSize(count);
 		return p;
@@ -104,10 +106,12 @@ public class BabysitterServiceImpl implements BabysitterService {
 		dao.add(order);
 	}
 
-
-	public Pagination<BabysitterView> getManageBabysitters(Pagination<Babysitter> page, String countyId, String name, String levelid, String telephone, String cardNo) {
+	public Pagination<BabysitterView> getManageBabysitters(
+			Pagination<Babysitter> page, String countyId, String name,
+			String levelid, String telephone, String cardNo) {
 		List<Object> params = new ArrayList<Object>();
-		StringBuffer hql = new StringBuffer("from Babysitter r where ovld = true ");
+		StringBuffer hql = new StringBuffer(
+				"from Babysitter r where ovld = true ");
 		if (!StringUtils.isEmpty(countyId) && !"0".equals(countyId)) {
 			hql.append(" and r.county.id = ? ");
 			params.add(Long.valueOf(countyId));
@@ -134,16 +138,20 @@ public class BabysitterServiceImpl implements BabysitterService {
 		for (int i = 0; i < objParams.length; i++) {
 			objParams[i] = params.get(i);
 		}
-		Pagination<Babysitter> p = dao.getPageResultObjectParams(Babysitter.class, hql.toString(), page.getPageNo(), page.getPageSize(), objParams);
+		Pagination<Babysitter> p = dao.getPageResultObjectParams(
+				Babysitter.class, hql.toString(), page.getPageNo(),
+				page.getPageSize(), objParams);
 		List<Babysitter> list = p.getResult();
 		List<BabysitterView> viewList = new ArrayList<BabysitterView>();
 		for (Babysitter babysitter : list) {
 			BabysitterView view = new BabysitterView(babysitter);
 			viewList.add(view);
 		}
-	
-		Pagination<BabysitterView> pa = new Pagination<BabysitterView>(viewList, p.getPageNo(), p.getPageSize());
-		Long count = dao.getSingleResultByHQLObjectParams(Long.class, countHql.toString(), objParams);
+
+		Pagination<BabysitterView> pa = new Pagination<BabysitterView>(
+				viewList, p.getPageNo(), p.getPageSize());
+		Long count = dao.getSingleResultByHQLObjectParams(Long.class,
+				countHql.toString(), objParams);
 		pa.setResultSize(count);
 		return pa;
 	}
@@ -152,7 +160,9 @@ public class BabysitterServiceImpl implements BabysitterService {
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
 		if (babysitter == null)
 			return null;
-		BabysitterView view = new BabysitterView(babysitter);
+		BabysitterView view = babysitter.view();
+		view.setOrderCountIndex(getOrderCountIndex(view.getId()));
+		view.setScoreIndex(getScoreCountIndex(view.getScore()));
 		return view;
 	}
 
@@ -170,6 +180,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 
 	public RecommendInfo getNewBabysitterRecommend(String countyGuid) {
 		String hql = "from RecommendInfo r where r.county.guid = ? order by r.createDate desc";
+		List<RecommendInfo> infos = dao.getListResultByHQL(RecommendInfo.class,
 				hql, countyGuid);
 		if (infos == null || infos.size() == 0)
 			return null;
@@ -181,11 +192,14 @@ public class BabysitterServiceImpl implements BabysitterService {
 		dao.add(info);
 	}
 
+	public List<BabysitterView> getExpectedBabysitter(String countyGuid,
 			String expectedDate) {
 		List<BabysitterView> result = new ArrayList<BabysitterView>();
 		String hql = "from Babysitter b where b.county.guid=?";
-
-
+		List<Babysitter> babysitters = dao.getListResultByHQL(Babysitter.class,
+				hql, countyGuid);
+		Map<String, Date> dates = ExpectedDateCreate
+				.getExpectedDate(expectedDate);
 		for (Babysitter babysitter : babysitters) {
 			if (ExpectedDateCreate.checkBabysitterOrder(babysitter, dates)) {
 				result.add(babysitter.view());
@@ -201,10 +215,12 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
+	public PageResult register(String telephone, String password, String name,
 			String cardNo, String countyGuid, String verifyCode, PageResult res) {
 		try {
 			String hql = "from Babysitter b where b.ovld = true and b.mobilePhone=?";
 
+			Babysitter valideBabysitter = dao.getSingleResultByHQL(
 					Babysitter.class, hql, telephone);
 			if (valideBabysitter == null) {
 				County county = dao.getResultByGUID(County.class, countyGuid);
@@ -228,7 +244,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 				babysitter.setMobilePhone(telephone);
 				babysitter.setPassword(password);
 				babysitter.setName(name);
-				babysitter.setCardNo(getCardNo(county));
+				babysitter.setCardNo(recordService.getCardNo(county));
 				babysitter.setIdentificationNo(cardNo);
 				babysitter.setCounty(county);
 				dao.add(babysitter);
@@ -252,17 +268,12 @@ public class BabysitterServiceImpl implements BabysitterService {
 		return res;
 	}
 
-	private String getCardNo(County county) {
-		String shortName = county.getShortName();
-		StringBuffer cardNo = new StringBuffer(shortName);
-		NumberRecord record = recordService.getBabysitterNewNumber();
-		cardNo.append(record.getNumber());
-		return cardNo.toString();
-	}
-
 	public PageResult login(String telephone, String password, PageResult res) {
 		try {
 			String hql = "from Babysitter b where b.ovld = true and b.mobilePhone = ?";
+			Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class,
+					hql, telephone);
+			if (babysitter == null
 					|| !password.equals(babysitter.getPassword())) {
 				res.put("code", ResultInfo.VALID_USER_PASS.getCode());
 				res.put("msg", ResultInfo.VALID_USER_PASS.getMsg());
@@ -279,6 +290,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
+	public PageResult changePass(String telephone, String password,
 			String code, PageResult res) {
 		// 验证code
 		// String hql =
@@ -290,6 +302,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		// DBcode.setOvld(false);
 		// dao.update(DBcode);
 		String hql = "from Babysitter b where b.ovld = true and telephone = ?";
+		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql,
 				telephone);
 		if (babysitter == null) {
 			res.put("code", ResultInfo.BABYSITTER_NULL.getCode());
@@ -309,6 +322,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
+	public RestInfo addRestInfo(String guid, Date beginDate, Date endDate,
 			String memo) {
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
 		if (babysitter == null)
@@ -336,6 +350,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
+	public PageResult joinPromotion(String guid, String promotionGuid,
 			PageResult res) {
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
 		if (babysitter == null) {
@@ -343,6 +358,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			res.put("msg", ResultInfo.BABYSITTER_NULL.getMsg());
 			return res;
 		}
+		PromotionInfo info = dao.getResultByGUID(PromotionInfo.class,
 				promotionGuid);
 		if (info == null) {
 			res.put("code", ResultInfo.PROMOTION_NULL.getCode());
@@ -357,6 +373,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
+	public PageResult updateHeadImage(String guid, HttpServletRequest request,
 			PageResult res) {
 		UploadFileUtils fileUtil = UploadFileUtils.newInstance();
 		fileUtil.setRequest(request);
@@ -365,6 +382,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			List<MultipartFile> files = fileUtil.getFiles();
 			if (files != null && files.size() > 0) {
 				MultipartFile file = files.get(0);
+				String url = fileUtil.getFileUrl(file, Constants.URL_HEAD,
 						babysitter.getGuid());
 				babysitter.setHeadUrl(url);
 				dao.update(babysitter);
@@ -384,6 +402,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
+	public PageResult addLifeImage(String guid, HttpServletRequest request,
 			PageResult res) {
 		UploadFileUtils fileUtil = UploadFileUtils.newInstance();
 		fileUtil.setRequest(request);
@@ -394,6 +413,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			if (files != null && files.size() > 0) {
 				for (MultipartFile file : files) {
 					BabysitterImage image = BabysitterImage.getInstance();
+					String url = fileUtil.getFileUrl(file, Constants.URL_LIFE,
 							image.getGuid());
 					image.setBabysitter(babysitter);
 					image.setUrl(url);
@@ -417,6 +437,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
+	public PageResult updateBankCard(String guid, String bankName,
 			String bankCardNo, String bankUserName, PageResult result) {
 		try {
 			Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
@@ -433,6 +454,9 @@ public class BabysitterServiceImpl implements BabysitterService {
 		return result;
 	}
 
+	@Transactional
+	public PageResult addOrder(String guid, String beginDate, String endDate,
+			String price, String address, String employerName,
 			String telephone, PageResult res) {
 		try {
 			// boolean flag = codeService.updateCheckCode(mobile, checkCode,
@@ -460,7 +484,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			order.setOrderPrice(Long.valueOf(price));
 			order.setBabysitter(babysitter);
 			order.setState(Constants.NEW_ORDER);
-			order.setOrderId(createOrderId());
+			order.setOrderId(recordService.createOrderId());
 			order.setServiceBeginDate(ExpectedDateCreate.parseDate(beginDate));
 			order.setServiceEndDate(ExpectedDateCreate.parseDate(endDate));
 			dao.add(order);
@@ -474,15 +498,155 @@ public class BabysitterServiceImpl implements BabysitterService {
 		return res;
 	}
 
-	private String createOrderId() {
-		StringBuffer orderId = new StringBuffer("Y");
-		Calendar c = Calendar.getInstance();
-		int year = c.get(Calendar.YEAR);
-		int month = c.get(Calendar.MONTH) + 1;
-		String monthStr = month < 10 ? "0" + month : month + "";
-		String yearStr = String.valueOf(year).substring(2, 4);
-		NumberRecord record = recordService.getOrderNewNumber(month);
-		orderId.append(yearStr).append(monthStr).append(record.getNumber());
-		return orderId.toString();
+	@Transactional
+	public ResultInfo manageAddBabysitter(String name, String password,
+			String identificationNo, long lowerSalary, String mobilePhone,
+			long countyId, long levelId, String birthday, String nativePlace,
+			String introduce) {
+		String hql = "from Babysitter t where ovld = true and t.mobilePhone = ?";
+		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql,
+				mobilePhone);
+		if (babysitter != null)
+			return ResultInfo.BABYSITTER_NOT_NULL;
+		babysitter = Babysitter.getInstance();
+		babysitter.setName(name);
+		babysitter.setPassword(password);
+		babysitter.setIdentificationNo(identificationNo);
+		babysitter.setLowerSalary(lowerSalary);
+		babysitter.setMobilePhone(mobilePhone);
+		babysitter.setCounty(dao.getResultById(County.class, countyId));
+		babysitter.setLevel(dao.getResultById(CountyLevel.class, levelId));
+		try {
+			babysitter.setBirthday(ExpectedDateCreate.parseDate(birthday));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		babysitter.setNativePlace(nativePlace);
+		babysitter.setIntroduce(introduce);
+		dao.add(babysitter);
+		return ResultInfo.SUCCESS;
+	}
+
+	@Transactional
+	public ResultInfo manageUpdateBabysitter(String id, String name,
+			String password, String identificationNo, long lowerSalary,
+			String mobilePhone, long countyId, long levelId, String birthday,
+			String nativePlace, String introduce) {
+		long idl = Long.valueOf(id);
+		Babysitter babysitter = dao.getResultById(Babysitter.class, idl);
+		if (babysitter == null)
+			return ResultInfo.BABYSITTER_NULL;
+		if (!StringUtils.isEmpty(name))
+			babysitter.setName(name);
+		if (!StringUtils.isEmpty(password))
+			babysitter.setName(name);
+		if (!StringUtils.isEmpty(identificationNo))
+			babysitter.setName(name);
+		if (lowerSalary != 0)
+			babysitter.setName(name);
+		if (!StringUtils.isEmpty(mobilePhone))
+			babysitter.setName(name);
+		if (!StringUtils.isEmpty(birthday))
+			babysitter.setName(name);
+		if (!StringUtils.isEmpty(nativePlace))
+			babysitter.setName(name);
+		if (!StringUtils.isEmpty(introduce))
+			babysitter.setName(name);
+		if (countyId != 0) {
+			County county = dao.getResultById(County.class, countyId);
+			if (county != null)
+				babysitter.setCounty(county);
+		}
+		if (levelId != 0) {
+			CountyLevel level = dao.getResultById(CountyLevel.class, levelId);
+			if (level != null)
+				babysitter.setLevel(level);
+		}
+		babysitter.setUpdateDate(new Date());
+		dao.update(babysitter);
+		return ResultInfo.SUCCESS;
+	}
+
+	@SuppressWarnings("unchecked")
+	public PageResult orderScore(PageResult result, String countyGuid) {
+		County county = dao.getResultByGUID(County.class, countyGuid);
+		if (county == null) {
+			result.setResult(ResultInfo.COUNTY_NULL);
+			return result;
+		}
+		long countyId = county.getId();
+		String sql = "select babysitter_id bid,count(t.id) counter from babysitter_babysitter_order t join babysitter_babysitter t1 on t.babysitter_id = t1.id where t1.county_id =? and t.state >=5  group by babysitter_id order by count(t.id) desc limit 10;";
+		List<Object[]> list = dao.getSession().createSQLQuery(sql)
+				.addScalar("bid", LongType.INSTANCE)
+				.addScalar("counter", LongType.INSTANCE).setLong(0, countyId)
+				.list();
+		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+		int index = 1;
+		for (Object[] o : list) {
+			long bid = Long.valueOf(o[0].toString());
+			long count = Long.valueOf(o[1].toString());
+			BabysitterView view = dao.getResultById(Babysitter.class, bid)
+					.view();
+			Map<String, Object> m = new HashMap<String, Object>();
+			m.put("headUrl", view.getHeadUrl());
+			m.put("name", view.getName());
+			m.put("cardNo", view.getCardNo());
+			m.put("orderCount", count);
+			m.put("index", index);
+			resultList.add(m);
+			index++;
+		}
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", resultList);
+		return result;
+	}
+
+	@SuppressWarnings("unchecked")
+	public PageResult scoreSort(PageResult result, String countyGuid) {
+		County county = dao.getResultByGUID(County.class, countyGuid);
+		if (county == null) {
+			result.setResult(ResultInfo.COUNTY_NULL);
+			return result;
+		}
+		long countyId = county.getId();
+		String sql = "select * from babysitter_babysitter t where t.county_id = ? order by t.score desc limit 10";
+		List<Babysitter> list = dao.getSession().createSQLQuery(sql)
+				.addEntity(Babysitter.class).setLong(0, countyId).list();
+		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
+		int index = 1;
+		for (Babysitter babysitter : list) {
+			BabysitterView view = babysitter.view();
+			Map<String, Object> m = new HashMap<String, Object>();
+			m.put("headUrl", view.getHeadUrl());
+			m.put("name", view.getName());
+			m.put("cardNo", view.getCardNo());
+			m.put("score", view.getScore());
+			m.put("index", index);
+			resultList.add(m);
+			index++;
+		}
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", resultList);
+		return result;
+	}
+
+	private long getOrderCountIndex(long babysitterId) {
+		String sql = "select count(t.id) counter from babysitter_babysitter_order t where t.babysitter_id=? and state >=5";
+		long counter = (Long) dao.getSession().createSQLQuery(sql)
+				.addScalar("counter", LongType.INSTANCE)
+				.setLong(0, babysitterId).uniqueResult();
+		String indexSql = "select count(t.bid) counter from (select babysitter_id bid from babysitter_babysitter_order t  group by babysitter_id having(count(t.id)>?)) t;";
+		long index = (Long) dao.getSession().createSQLQuery(indexSql)
+				.addScalar("counter", LongType.INSTANCE).setLong(0, counter)
+				.uniqueResult();
+		return index + 1;
+	}
+
+	private long getScoreCountIndex(long score) {
+		String sql = "select count(t.id) counter from babysitter_babysitter t where t.score> ?";
+		long index = (Long) dao.getSession().createSQLQuery(sql)
+				.addScalar("counter", LongType.INSTANCE).setLong(0, score)
+				.uniqueResult();
+		return index + 1;
 	}
 }

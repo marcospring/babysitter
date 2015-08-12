@@ -36,6 +36,8 @@ public class BabysitterView {
 	private String nativePlace;
 	private int age;
 	private String introduce;
+	private long orderCountIndex;
+	private long scoreIndex;
 
 	private List<CredentialView> credentials;
 	private List<PromotionView> promotions;
@@ -48,13 +50,16 @@ public class BabysitterView {
 		setId(babysitter.getId());
 		setGuid(babysitter.getGuid());
 		setHeadUrl(babysitter.getHeadUrl());
+		setPrice(babysitter.getLevel() != null ? babysitter.getLevel()
 				.getMoney() : 0);
 		setCardNo(babysitter.getCardNo());
 		setMobilePhone(babysitter.getMobilePhone());
 		setIdentificationNo(babysitter.getIdentificationNo());
 		setName(babysitter.getName());
-				.getLevel().getName() : "无")
+		setLevel(babysitter.getLevel() != null ? babysitter.getLevel()
+				.getLevel().getName() : "无");
 		setScore(babysitter.getScore());
+		setOrderCount(babysitter.getOrders() != null ? babysitter.getOrders()
 				.size() : 0);
 		setCredentials(getCredentialView(babysitter.getCredentials()));
 		setPromotions(getPromotionView(babysitter.getPromotions()));
@@ -122,6 +127,7 @@ public class BabysitterView {
 		return result;
 	}
 
+	private List<CredentialView> getCredentialView(
 			List<BabysitterCredential> credentials) {
 		List<CredentialView> result = new ArrayList<CredentialView>();
 		for (BabysitterCredential credential : credentials) {
@@ -144,7 +150,8 @@ public class BabysitterView {
 
 	public String getHeadUrl() {
 		return StringUtils.isEmpty(headUrl) ? "" : Constants.IMG_DOMAIN
-				+ headUrl;	}
+				+ headUrl;
+	}
 
 	public void setHeadUrl(String headUrl) {
 		this.headUrl = headUrl;
@@ -340,6 +347,22 @@ public class BabysitterView {
 
 	public void setMobilePhone(String mobilePhone) {
 		this.mobilePhone = mobilePhone;
+	}
+
+	public long getOrderCountIndex() {
+		return orderCountIndex;
+	}
+
+	public void setOrderCountIndex(long orderCountIndex) {
+		this.orderCountIndex = orderCountIndex;
+	}
+
+	public long getScoreIndex() {
+		return scoreIndex;
+	}
+
+	public void setScoreIndex(long scoreIndex) {
+		this.scoreIndex = scoreIndex;
 	}
 
 }
