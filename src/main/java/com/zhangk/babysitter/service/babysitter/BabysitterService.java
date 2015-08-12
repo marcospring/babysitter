@@ -12,6 +12,7 @@ import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.entity.RecommendInfo;
 import com.zhangk.babysitter.entity.RestInfo;
 import com.zhangk.babysitter.utils.common.Pagination;
+import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
 
 public interface BabysitterService {
@@ -33,13 +34,11 @@ public interface BabysitterService {
 
 	Babysitter getBabysitter(String guid);
 
-	Pagination<BabysitterOrder> getPageOrderList(
-			Pagination<BabysitterOrder> page, String name);
+	Pagination<BabysitterOrder> getPageOrderList(Pagination<BabysitterOrder> page, String name);
 
 	void addOrder(BabysitterOrder order);
 
-	Pagination<BabysitterView> getMobileBabysitters(String countyGuid,
-			Pagination<BabysitterView> page, String name, String orderStr);
+	Pagination<BabysitterView> getManageBabysitters(Pagination<Babysitter> page, String countyId, String name, String levelid, String telephone, String cardNo);
 
 	BabysitterView getBabysitterView(String guid);
 
@@ -51,18 +50,15 @@ public interface BabysitterService {
 
 	void addRecommendInfo(RecommendInfo info);
 
-	List<BabysitterView> getExpectedBabysitter(String countyGuid,
-			String expectedDate);
+	List<BabysitterView> getExpectedBabysitter(String countyGuid, String expectedDate);
 
 	long getBabysitterCountByCounty(String countyGuid);
 
-	PageResult register(String telephone, String password, String name,
-			String cardNo, String countyGuid, String verifyCode, PageResult res);
+	PageResult register(String telephone, String password, String name, String cardNo, String countyGuid, String verifyCode, PageResult res);
 
 	PageResult login(String telephone, String password, PageResult res);
 
-	PageResult changePass(String telephone, String password, String code,
-			PageResult res);
+	PageResult changePass(String telephone, String password, String code, PageResult res);
 
 	RestInfo addRestInfo(String guid, Date beginDate, Date endDate, String memo);
 
@@ -70,16 +66,18 @@ public interface BabysitterService {
 
 	PageResult joinPromotion(String guid, String promotionGuid, PageResult res);
 
-	PageResult updateHeadImage(String guid, HttpServletRequest request,
-			PageResult res);
+	PageResult updateHeadImage(String guid, HttpServletRequest request, PageResult res);
 
-	PageResult addLifeImage(String guid, HttpServletRequest request,
-			PageResult res);
+	PageResult addLifeImage(String guid, HttpServletRequest request, PageResult res);
 
-	PageResult updateBankCard(String guid, String bankName, String bankCardNo,
-			String bankUserName, PageResult result);
+	PageResult updateBankCard(String guid, String bankName, String bankCardNo, String bankUserName, PageResult result);
 
-	PageResult addOrder(String guid, String beginDate, String endDate,
-			String price, String address, String employerName,
-			String telephone, PageResult res);
+	PageResult addOrder(String guid, String beginDate, String endDate, String price, String address, String employerName, String telephone, PageResult res);
+
+	ResultInfo manageAddBabysitter(String name, String password, String identificationNo, long lowerSalary, String mobilePhone, long countyId, long levelId, String birthday,
+			String nativePlace, String introduce);
+
+	ResultInfo manageUpdateBabysitter(String id, String name, String password, String identificationNo, long lowerSalary, String mobilePhone, long countyId, long levelId,
+			String birthday, String nativePlace, String introduce);
+
 }

@@ -36,7 +36,6 @@ public class NoticeServiceImpl implements NoticeService {
 		Pagination<CompanyNoticeView> pa = new Pagination<CompanyNoticeView>(views, notices.getPageNo(), notices.getPageSize());
 		long count = dao.getSingleResultByHQL(Long.class, countHql, guid);
 		pa.setResultSize(count);
-		pa.setPageStr("");
 		return pa;
 	}
 

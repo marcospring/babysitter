@@ -16,11 +16,13 @@ import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 
 public class BabysitterView {
+	private long id;
 	private String guid;
 	private String headUrl;
 	private long price;
 	private long lowerSalary;
 	private String name;
+	private String mobilePhone;
 	private String cardNo;
 	private String identificationNo;
 	private String level;
@@ -43,24 +45,23 @@ public class BabysitterView {
 	private List<BabysitterImageView> images;
 
 	public BabysitterView(Babysitter babysitter) {
+		setId(babysitter.getId());
 		setGuid(babysitter.getGuid());
 		setHeadUrl(babysitter.getHeadUrl());
-		setPrice(babysitter.getLevel() != null ? babysitter.getLevel()
-				.getMoney() : 0);
+		setPrice(babysitter.getLevel() != null ? babysitter.getLevel().getMoney() : 0);
 		setCardNo(babysitter.getCardNo());
+		setMobilePhone(babysitter.getMobilePhone());
 		setIdentificationNo(babysitter.getIdentificationNo());
 		setName(babysitter.getName());
-		setLevel(babysitter.getLevel() != null ? babysitter.getLevel()
-				.getLevel().getName() : "无");
+		setLevel(babysitter.getLevel() != null ? babysitter.getLevel().getLevel().getName() : "无");
 		setScore(babysitter.getScore());
-		setOrderCount(babysitter.getOrders() != null ? babysitter.getOrders()
-				.size() : 0);
+		setOrderCount(babysitter.getOrders() != null ? babysitter.getOrders().size() : 0);
 		setCredentials(getCredentialView(babysitter.getCredentials()));
 		setPromotions(getPromotionView(babysitter.getPromotions()));
 		setImages(getImageView(babysitter.getImages()));
 		setOrders(getOrderView(babysitter.getOrders()));
 		setRestInfos(getRestView(babysitter.getRestInfos()));
-		setBankCardNo(babysitter.getCardNo());
+		setBankCardNo(babysitter.getBankCardNo());
 		setBankName(babysitter.getBankName());
 		setBankUserName(babysitter.getBankUserName());
 		setCounty(babysitter.getCounty().view());
@@ -121,8 +122,7 @@ public class BabysitterView {
 		return result;
 	}
 
-	private List<CredentialView> getCredentialView(
-			List<BabysitterCredential> credentials) {
+	private List<CredentialView> getCredentialView(List<BabysitterCredential> credentials) {
 		List<CredentialView> result = new ArrayList<CredentialView>();
 		for (BabysitterCredential credential : credentials) {
 			result.add(credential.view());
@@ -143,8 +143,7 @@ public class BabysitterView {
 	}
 
 	public String getHeadUrl() {
-		return StringUtils.isEmpty(headUrl) ? "" : Constants.IMG_DOMAIN + "/"
-				+ headUrl;
+		return StringUtils.isEmpty(headUrl) ? "" : Constants.IMG_DOMAIN + "/" + headUrl;
 	}
 
 	public void setHeadUrl(String headUrl) {
@@ -325,6 +324,22 @@ public class BabysitterView {
 
 	public void setLowerSalary(long lowerSalary) {
 		this.lowerSalary = lowerSalary;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getMobilePhone() {
+		return mobilePhone;
+	}
+
+	public void setMobilePhone(String mobilePhone) {
+		this.mobilePhone = mobilePhone;
 	}
 
 }

@@ -167,4 +167,53 @@ public class BaseDaoImpl implements BaseDao {
 		}
 		return list;
 	}
+
+	@SuppressWarnings("unchecked")
+	public <T> List<T> getListResultByHQLObjectParams(Class<T> clazz, String hql, Object[] param) throws RuntimeException {
+		List<T> list = null;
+		try {
+			Session session = getSession();
+			log.info("[执行HQL：{}]", hql);
+			Query query = session.createQuery(hql);
+			list = query.list();
+		} catch (RuntimeException e) {
+			log.error("[执行basedao#{}出错：{}]", "getListResultByHQL", e.getMessage());
+			throw e;
+		}
+		return list;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> Pagination<T> getPageResultObjectParams(Class<T> clazz, String hql, int pageNo, int pageSize, Object[] param) throws RuntimeException {
+		List<T> list = null;
+		Pagination<T> page;
+		try {
+			Session session = getSession();
+			log.info("[执行HQL：{}]", hql);
+			Query query = session.createQuery(hql);
+			buildParam(query, param);
+			list = query.setFirstResult((pageNo - 1) * pageSize).setMaxResults(pageSize).list();
+			page = new Pagination<T>(list, pageNo, pageSize);
+		} catch (RuntimeException e) {
+			log.error("[执行basedao#{}出错：{}]", "getPageResult", e.getMessage());
+			throw e;
+		}
+		return page;
+	}
+
+	public <T> T getSingleResultByHQLObjectParams(Class<T> clazz, String hql, Object[] param) throws RuntimeException {
+		T result;
+		try {
+			Session session = getSession();
+			log.info("[执行HQL：{}]", hql);
+			Query query = session.createQuery(hql);
+			buildParam(query, param);
+			result = clazz.cast(query.uniqueResult());
+
+		} catch (RuntimeException e) {
+			log.error("[执行basedao#{}出错：{}]", "getSingleResultByHQL", e.getMessage());
+			throw e;
+		}
+		return result;
+	}
 }

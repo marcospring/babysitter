@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.CountyLevelView;
 
 @Entity
 @Table(name = "babysitter_county_level")
@@ -106,6 +107,10 @@ public class CountyLevel implements Serializable {
 
 	public void setScore(long score) {
 		this.score = score;
+	}
+
+	public CountyLevelView view() {
+		return new CountyLevelView(this);
 	}
 
 	public static CountyLevel getInstance() {

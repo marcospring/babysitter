@@ -12,7 +12,7 @@
 <!-- 引入my97 -->
 <script src="${pageContext.request.contextPath}/static/component/My97DatePicker/WdatePicker.js" type="text/javascript" charset="utf-8"></script>
 <!-- 引入bootstrap样式 -->
-<link href="${pageContext.request.contextPath}/static/component/bootstrap-2.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen">
+<%-- <link href="${pageContext.request.contextPath}/static/component/bootstrap-2.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen"> --%>
 <!-- 引入EasyUI -->
 <link id="easyuiTheme" rel="stylesheet" href="${pageContext.request.contextPath}/static/component/jquery-easyui-1.3.3/themes/<c:out value="${cookie.easyuiThemeName.value}" default="default"/>/easyui.css" type="text/css">
 <link rel="stylesheet" href="${pageContext.request.contextPath}/static/component/jquery-easyui-1.3.3/themes/icon.css" type="text/css">

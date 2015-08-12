@@ -1,5 +1,6 @@
 package com.zhangk.babysitter.service.common.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.service.common.CountyService;
+import com.zhangk.babysitter.viewmodel.CountyView;
 
 @Service
 public class CountyServiceImpl implements CountyService {
@@ -51,6 +53,15 @@ public class CountyServiceImpl implements CountyService {
 	@Transactional
 	public void updateCounty(County county) {
 		dao.update(county);
+	}
+
+	public List<CountyView> getCountyViewList() {
+		List<County> list = getCountyList();
+		List<CountyView> views = new ArrayList<CountyView>();
+		for (County county : list) {
+			views.add(county.view());
+		}
+		return views;
 	}
 
 }

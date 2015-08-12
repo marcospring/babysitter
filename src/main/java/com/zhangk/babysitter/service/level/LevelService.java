@@ -14,4 +14,5 @@ public interface LevelService {
 	void updateLevel(Level level);
 
 	Level getLevel(long id);
+
 }
