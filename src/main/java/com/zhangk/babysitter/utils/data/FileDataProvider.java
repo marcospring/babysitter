@@ -9,7 +9,8 @@ import java.util.Random;
 
 public class FileDataProvider {
 
-	private static StringBuffer BASE_PATH = new StringBuffer("E:\\workEleven\\babysitter\\data\\");
+	private static StringBuffer BASE_PATH = new StringBuffer(
+			"E:\\stsWorkSpace\\babysitter\\data\\");
 
 	private static String USER_NAME = "username.txt";
 	private static String NAME = "name.txt";
@@ -68,7 +69,9 @@ public class FileDataProvider {
 	}
 
 	private BufferedReader initFile(String fileName) throws IOException {
-		BASE_PATH.replace(BASE_PATH.lastIndexOf("\\") + 1, BASE_PATH.length(), "");
-		return new BufferedReader(new FileReader(BASE_PATH.append(fileName).toString()));
+		BASE_PATH.replace(BASE_PATH.lastIndexOf("\\") + 1, BASE_PATH.length(),
+				"");
+		return new BufferedReader(new FileReader(BASE_PATH.append(fileName)
+				.toString()));
 	}
 }

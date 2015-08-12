@@ -48,14 +48,14 @@ public class BabysitterView {
 		setId(babysitter.getId());
 		setGuid(babysitter.getGuid());
 		setHeadUrl(babysitter.getHeadUrl());
-		setPrice(babysitter.getLevel() != null ? babysitter.getLevel().getMoney() : 0);
+				.getMoney() : 0);
 		setCardNo(babysitter.getCardNo());
 		setMobilePhone(babysitter.getMobilePhone());
 		setIdentificationNo(babysitter.getIdentificationNo());
 		setName(babysitter.getName());
-		setLevel(babysitter.getLevel() != null ? babysitter.getLevel().getLevel().getName() : "无");
+				.getLevel().getName() : "无")
 		setScore(babysitter.getScore());
-		setOrderCount(babysitter.getOrders() != null ? babysitter.getOrders().size() : 0);
+				.size() : 0);
 		setCredentials(getCredentialView(babysitter.getCredentials()));
 		setPromotions(getPromotionView(babysitter.getPromotions()));
 		setImages(getImageView(babysitter.getImages()));
@@ -122,7 +122,7 @@ public class BabysitterView {
 		return result;
 	}
 
-	private List<CredentialView> getCredentialView(List<BabysitterCredential> credentials) {
+			List<BabysitterCredential> credentials) {
 		List<CredentialView> result = new ArrayList<CredentialView>();
 		for (BabysitterCredential credential : credentials) {
 			result.add(credential.view());
@@ -143,8 +143,8 @@ public class BabysitterView {
 	}
 
 	public String getHeadUrl() {
-		return StringUtils.isEmpty(headUrl) ? "" : Constants.IMG_DOMAIN + "/" + headUrl;
-	}
+		return StringUtils.isEmpty(headUrl) ? "" : Constants.IMG_DOMAIN
+				+ headUrl;	}
 
 	public void setHeadUrl(String headUrl) {
 		this.headUrl = headUrl;

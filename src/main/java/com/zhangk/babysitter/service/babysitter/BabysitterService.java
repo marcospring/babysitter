@@ -34,11 +34,11 @@ public interface BabysitterService {
 
 	Babysitter getBabysitter(String guid);
 
-	Pagination<BabysitterOrder> getPageOrderList(Pagination<BabysitterOrder> page, String name);
+
 
 	void addOrder(BabysitterOrder order);
 
-	Pagination<BabysitterView> getManageBabysitters(Pagination<Babysitter> page, String countyId, String name, String levelid, String telephone, String cardNo);
+			Pagination<BabysitterView> page, String name, String orderStr);
 
 	BabysitterView getBabysitterView(String guid);
 
@@ -50,15 +50,15 @@ public interface BabysitterService {
 
 	void addRecommendInfo(RecommendInfo info);
 
-	List<BabysitterView> getExpectedBabysitter(String countyGuid, String expectedDate);
+			String expectedDate);
 
 	long getBabysitterCountByCounty(String countyGuid);
 
-	PageResult register(String telephone, String password, String name, String cardNo, String countyGuid, String verifyCode, PageResult res);
+			String cardNo, String countyGuid, String verifyCode, PageResult res);
 
 	PageResult login(String telephone, String password, PageResult res);
 
-	PageResult changePass(String telephone, String password, String code, PageResult res);
+			PageResult res);
 
 	RestInfo addRestInfo(String guid, Date beginDate, Date endDate, String memo);
 
@@ -66,13 +66,13 @@ public interface BabysitterService {
 
 	PageResult joinPromotion(String guid, String promotionGuid, PageResult res);
 
-	PageResult updateHeadImage(String guid, HttpServletRequest request, PageResult res);
+			PageResult res);
 
-	PageResult addLifeImage(String guid, HttpServletRequest request, PageResult res);
+			PageResult res);
 
-	PageResult updateBankCard(String guid, String bankName, String bankCardNo, String bankUserName, PageResult result);
+			String bankUserName, PageResult result);
 
-	PageResult addOrder(String guid, String beginDate, String endDate, String price, String address, String employerName, String telephone, PageResult res);
+			String telephone, PageResult res);
 
 	ResultInfo manageAddBabysitter(String name, String password, String identificationNo, long lowerSalary, String mobilePhone, long countyId, long levelId, String birthday,
 			String nativePlace, String introduce);
@@ -80,4 +80,8 @@ public interface BabysitterService {
 	ResultInfo manageUpdateBabysitter(String id, String name, String password, String identificationNo, long lowerSalary, String mobilePhone, long countyId, long levelId,
 			String birthday, String nativePlace, String introduce);
 
+
+	PageResult orderScore(PageResult result);
+
+	PageResult scoreSort(PageResult result);
 }

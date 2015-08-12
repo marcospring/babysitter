@@ -1,6 +1,5 @@
 package com.zhangk.babysitter.service.common.impl;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -23,7 +22,8 @@ public class NumberRecordServiceImpl implements NumberRecordService {
 	public NumberRecord getBabysitterNewNumber() {
 		NumberRecord record = null;
 		String hql = "from NumberRecord r where r.ovld = true and type =? order by r.number desc";
-		List<NumberRecord> listRecord = dao.getListResultByHQL(NumberRecord.class, hql, Constants.BABYSITTER_ID);
+		List<NumberRecord> listRecord = dao.getListResultByHQL(
+				NumberRecord.class, hql, Constants.BABYSITTER_ID);
 		if (listRecord == null || listRecord.size() == 0) {
 			record = NumberRecord.getInstance();
 			record.setNumber(11111);
@@ -45,10 +45,11 @@ public class NumberRecordServiceImpl implements NumberRecordService {
 	}
 
 	@Transactional
-	public NumberRecord getOrderNewNumber(Date recordDate) {
+	public NumberRecord getOrderNewNumber(int recordDate) {
 		NumberRecord record = null;
 		String hql = "from NumberRecord r where r.ovld = true and r.type =? and r.recordDate = ? order by r.number desc";
-		List<NumberRecord> listRecord = dao.getListResultByHQL(NumberRecord.class, hql, Constants.BABYSITTER_ID, recordDate);
+		List<NumberRecord> listRecord = dao.getListResultByHQL(
+				NumberRecord.class, hql, Constants.ORDER_ID, recordDate);
 		if (listRecord == null || listRecord.size() == 0) {
 			record = NumberRecord.getInstance();
 			record.setRecordDate(recordDate);

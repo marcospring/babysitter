@@ -35,4 +35,6 @@ public interface BaseDao {
 
 	<T> Pagination<T> getPageResultObjectParams(Class<T> clazz, String hql, int pageNo, int pageSize, Object[] param) throws RuntimeException;
 
+	<T> List<T> getResultListBySql(Class<T> clazz, String sql);
+
 }
