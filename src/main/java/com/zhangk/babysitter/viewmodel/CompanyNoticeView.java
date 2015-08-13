@@ -11,6 +11,7 @@ public class CompanyNoticeView {
 	private String guid;
 	private Date createDate;
 	private String memo;
+	private String babysitterName;
 	private String title;
 	private int state;
 
@@ -21,6 +22,7 @@ public class CompanyNoticeView {
 	public CompanyNoticeView(CompanyNotice notice) {
 		setGuid(notice.getGuid());
 		setCreateDate(notice.getCreateDate());
+		setBabysitterName(notice.getBabysitter().getName());
 		setTitle(notice.getTitle());
 		setMemo(notice.getMemo());
 		setState(notice.getState());
@@ -65,6 +67,14 @@ public class CompanyNoticeView {
 
 	public void setState(int state) {
 		this.state = state;
+	}
+
+	public String getBabysitterName() {
+		return babysitterName;
+	}
+
+	public void setBabysitterName(String babysitterName) {
+		this.babysitterName = babysitterName;
 	}
 
 }

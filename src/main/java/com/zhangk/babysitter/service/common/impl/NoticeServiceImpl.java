@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.dao.BaseDao;
@@ -67,5 +68,54 @@ public class NoticeServiceImpl implements NoticeService {
 		Long count = dao.getSingleResultByHQL(Long.class, hql, guid, Constants.NON_READ);
 		res.put("result", count == null ? 0 : count.longValue());
 		return res;
+	}
+
+	@Transactional
+	public ResultInfo addNotices(String title, String memo, String ids) {
+		if (StringUtils.isEmpty(ids))
+			return ResultInfo.INF_EMPTY;
+		String[] idsStr = ids.split(",");
+		if (idsStr == null || idsStr.length == 0)
+			return ResultInfo.INF_EMPTY;
+		for (String id : idsStr) {
+			long idl = Long.valueOf(id);
+			Babysitter babysitter = dao.getResultById(Babysitter.class, idl);
+			CompanyNotice notice = CompanyNotice.getInstance();
+			notice.setState(Constants.NON_READ);
+			notice.setTitle(title);
+			notice.setMemo(memo);
+			notice.setBabysitter(babysitter);
+			dao.add(notice);
+		}
+		return ResultInfo.SUCCESS;
+	}
+
+	public Pagination<CompanyNoticeView> getManageNotices(Pagination<CompanyNotice> notices, String name) {
+		List<Object> params = new ArrayList<Object>();
+		StringBuffer hql = new StringBuffer("from CompanyNotice r where ovld = true ");
+
+		if (!StringUtils.isEmpty(name)) {
+			hql.append(" and r.babysitter.name like ? ");
+			params.add("%" + name + "%");
+		}
+
+		StringBuffer countHql = new StringBuffer(" select count(r.id) ");
+		countHql.append(hql);
+		Object[] objParams = new Object[params.size()];
+		for (int i = 0; i < objParams.length; i++) {
+			objParams[i] = params.get(i);
+		}
+		Pagination<CompanyNotice> p = dao.getPageResultObjectParams(CompanyNotice.class, hql.toString(), notices.getPageNo(), notices.getPageSize(), objParams);
+		List<CompanyNotice> list = p.getResult();
+		List<CompanyNoticeView> viewList = new ArrayList<CompanyNoticeView>();
+		for (CompanyNotice notice : list) {
+			CompanyNoticeView view = notice.view();
+			viewList.add(view);
+		}
+
+		Pagination<CompanyNoticeView> pa = new Pagination<CompanyNoticeView>(viewList, p.getPageNo(), p.getPageSize());
+		Long count = dao.getSingleResultByHQLObjectParams(Long.class, countHql.toString(), objParams);
+		pa.setResultSize(count);
+		return pa;
 	}
 }

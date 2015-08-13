@@ -3,16 +3,23 @@
 <script type="text/javascript">
 	$(function() {
 		$.extend($.fn.validatebox.defaults.rules, {    
-		    chapterValid: {    
+		    numberValid: {    
 		        validator: function(value){    
-		        	var re =new RegExp("^[A-Za-z0-9]+$");
+		        	var re =new RegExp("^[0-9]+$");
 		            return re.test(value);
 		        },    
 		        message: '必须为英文字母与数字的组合'   
 		    }    
 		}); 
-		
-		var url = '${vo.id}' ? '${pageContext.request.contextPath}/manage/user/edit.html' : '${pageContext.request.contextPath}/manage/user/add.html';
+		$.fn.datebox.defaults.formatter = function(date){
+			var y = date.getFullYear();
+			var m = date.getMonth()+1;
+			var d = date.getDate();
+			return y+'-'+(m < 10 ? ("0" + m) : m)+'-'+d;
+		}
+
+
+		var url = '${vo.id}' ? '${pageContext.request.contextPath}/manage/babysitter/edit.html' : '${pageContext.request.contextPath}/manage/babysitter/add.html';
 		$('#form').form({
 			url : url,
 			onSubmit : function() {
@@ -37,6 +44,29 @@
 				}
 			}
 		});
+		$('#countyId').combobox({    
+		    url:'${pageContext.request.contextPath}/manage/county/comboList.html',    
+		    valueField:'id',
+		    editable:false, 
+		    textField:'name',
+		    onSelect: function(rec){    
+	            var url = '${pageContext.request.contextPath}/manage/countyLevel/comboList.html?countyid='+rec.id;  
+	            $('#levelId').combobox('reload', url);   
+	            $('#levelId').combobox('select', '');
+	        }
+		});  
+		$('#levelId').combobox({   
+			url: '${pageContext.request.contextPath}/manage/countyLevel/comboList.html?countyid='+'${vo.county.id}',
+		    valueField:'id', 
+		    editable:false,    
+		    textField:'name'
+		});  
+		 $('#countyId').combobox('setValue', '${vo.county.id}');
+		 $('#levelId').combobox('setValue', '${vo.level.id}');
+		$('#birthday').datebox({    
+		    required:true,
+		    editable:false
+		}); 
 	});
 </script>
 <div class="easyui-layout" data-options="fit:true,border:false">
@@ -45,33 +75,44 @@
 			<input type="hidden" name="id" value="${vo.id}"/>
 			<table class="table table-hover table-condensed" style="font-size:14px;">
 				<tr>
-					<th>用户名</th>
-					<td><input name="username" type="text" placeholder="请输入用户名" class="easyui-validatebox span2" data-options="required:true,validType:'chapterValid'" value="${vo.username}"></td>
-                    <th>密码</th>
-                    <td><input name="password" type="text" placeholder="请输入密码"  class="easyui-validatebox span2" data-options="required:true" value="${vo.password}"></td>
+					<td style="text-align:right;">用户名称</td>
+					<td style="text-align:left;"><input name="name" type="text" placeholder="请输入姓名" class="easyui-validatebox span2" data-options="required:true" value="${vo.name}"></td>
+                    </tr>
+				<tr>
+				<td style="text-align:right;">密码</td>
+                    <td style="text-align:left;"><input name="password" type="text" placeholder="请输入密码"  class="easyui-validatebox span2" data-options="required:true" value="${vo.password}"></td>
 				</tr>
 				<tr>
-					<th>用户名称</th>
-					<td><input name="name" type="text" placeholder="请输用户名称" class="easyui-validatebox span2" data-options="required:true" value="${vo.name}"></td>
-                    <th></th>
-                    <td></td>
-				</tr>
-				
+					<td style="text-align:right;">最低薪水</td>
+					<td style="text-align:left;"><input name="lowerSalary" type="text" placeholder="请输用户名称" class="easyui-validatebox span2" data-options="required:true" value="${vo.lowerSalary}"></td>
+                  </tr>
+                   <tr>
+                     <td style="text-align:right;">移动电话</td>
+                    <td style="text-align:left;"><input name="mobilePhone" type="text" placeholder="请输电话号码" class="easyui-numberbox" data-options="required:true" value="${vo.mobilePhone}"></td>
+                    </tr>
 				<tr>
-					<th>用户角色</th>
-					<td colspan="4">
-						<c:forEach var="role" items="${roles}" varStatus="s">
-							 <c:if test="${s.index%4==0}"><br/></c:if>
-							 <c:choose>
-								 <c:when test="${role.checked == 0}">
-									<input name="roleids" value="${role.id}" type="checkbox" style="margin-top:-4px;"/>${role.name}
-								</c:when>
-								 <c:when test="${role.checked == 1}">
-									<input name="roleids" value="${role.id}" type="checkbox" checked="checked" style="margin-top:-4px;"/>${role.name}
-								</c:when>
-							</c:choose>
-						</c:forEach>
-					</td>
+					<td style="text-align:right;">城市</td>
+					<td style="text-align:left;"><input id="countyId" name="countyId" ></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">级别</td>
+					<td style="text-align:left;"><input id="levelId" name="levelId"></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">身份证号</td>
+					<td style="text-align:left;"><input name="identificationNo" type="text" placeholder="请输电话号码" class="easyui-validatebox span2" data-options="required:true" value="${vo.identificationNo}"></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">生日</td>
+					<td style="text-align:left;"><input name="birthday" id="birthday" type="text" placeholder="请输电话号码" value="${vo.birthday}"></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">籍贯</td>
+					<td style="text-align:left;"><input name="nativePlace" type="text" placeholder="请输籍贯" class="easyui-validatebox span2" value="${vo.nativePlace}"></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">简介</td>
+					<td style="text-align:left;"><textarea name="introduce"  placeholder="请输简介" class="easyui-validatebox" >${vo.introduce}</textarea></td>
 				</tr>
 				
 			</table>

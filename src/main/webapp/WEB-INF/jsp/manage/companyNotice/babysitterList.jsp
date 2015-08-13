@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>月嫂管理</title>
+<title>发送消息</title>
 <jsp:include page="/inc.jsp"></jsp:include>
 <script type="text/javascript">
 	var dataGrid;
@@ -11,7 +11,7 @@
 		dataGrid = $('#dataGrid')
 				.datagrid(
 						{
-							url : '${pageContext.request.contextPath}/manage/babysitter/list.html',
+							url : '${pageContext.request.contextPath}/manage/companyNotice/list.html',
 							fit : true,
 							fitColumns : true,
 							border : false,
@@ -23,8 +23,10 @@
 							checkOnSelect : false,
 							selectOnCheck : false,
 							singleSelect : true,
-							frozenColumns : [ [ {
-								field : 'id',
+							frozenColumns : [ [ 
+							 { field: 'ck', 
+								 checkbox: true 
+							 },  {field : 'id',
 								title : '编号',
 								width : 50
 							}, {
@@ -132,112 +134,25 @@
 		});  
 	});
 
-	function deleteFun(id) {
-		if (id == undefined) {//点击右键菜单才会触发这个
-			var rows = dataGrid.datagrid('getSelections');
-			id = rows[0].id;
-		} else {//点击操作里面的删除图标会触发这个
-			dataGrid.datagrid('unselectAll').datagrid('uncheckAll');
-		}
-		parent.$.messager
-				.confirm(
-						'询问',
-						'您是否要删除当前用户？',
-						function(b) {
-							if (b) {
-								var currentUserId = '${sessionUser.id}';/*当前登录用户的ID*/
-								parent.$.messager.progress({
-									title : '提示',
-									text : '数据处理中，请稍后....'
-								});
-								$
-										.post(
-												'${pageContext.request.contextPath}/manage/babysitter/delete.html',
-												{
-													id : id
-												},
-												function(result) {
-													if (result.status == 0) {
-														parent.$.messager
-																.alert(
-																		'提示',
-																		result.message,
-																		'info');
-														dataGrid
-																.datagrid('reload');
-													}
-													parent.$.messager
-															.progress('close');
-												}, 'JSON');
-							}
-						});
-	}
-
-	function editFun(id) {
-		if (id == undefined) {
-			var rows = dataGrid.datagrid('getSelections');
-			id = rows[0].id;
-		} else {
-			dataGrid.datagrid('unselectAll').datagrid('uncheckAll');
-		}
-		parent.$
-				.modalDialog({
-					title : '编辑月嫂',
-					width : 350,
-					height : 450,
-					href : '${pageContext.request.contextPath}/manage/babysitter/goEdit.html?id='
-							+ id,
-					buttons : [ {
-						text : '编辑',
-						handler : function() {
-							parent.$.modalDialog.openner_dataGrid = dataGrid;//因为添加成功之后，需要刷新这个dataGrid，所以先预定义好
-							var f = parent.$.modalDialog.handler.find('#form');
-							f.submit();
-						}
-					} ]
-				});
-	}
-
 	function addFun() {
+		var rows = dataGrid.datagrid('getChecked');
 		parent.$
 				.modalDialog({
-					title : '添加月嫂',
+					title : '消息发送',
 					width : 350,
 					height : 450,
-					href : '${pageContext.request.contextPath}/manage/babysitter/goAdd.html',
+					href : '${pageContext.request.contextPath}/manage/companyNotice/goSend.html',
 					buttons : [ {
-						text : '添加',
+						text : '发送消息',
 						handler : function() {
-							parent.$.modalDialog.openner_dataGrid = dataGrid;//因为添加成功之后，需要刷新这个dataGrid，所以先预定义好
+							parent.$.modalDialog.rows = rows;
 							var f = parent.$.modalDialog.handler.find('#form');
 							f.submit();
 						}
 					} ]
 				});
 	}
-	function addBankInfo(id) {
-		if (id == undefined) {
-			var rows = dataGrid.datagrid('getSelections');
-			id = rows[0].id;
-		} else {
-			dataGrid.datagrid('unselectAll').datagrid('uncheckAll');
-		}
-		parent.$
-				.modalDialog({
-					title : '增加转账信息',
-					width : 400,
-					height : 200,
-					href : '${pageContext.request.contextPath}/manage/babysitter/goAddBankInfo.html?id='+id,
-					buttons : [ {
-						text : '添加',
-						handler : function() {
-							parent.$.modalDialog.openner_dataGrid = dataGrid;//因为添加成功之后，需要刷新这个dataGrid，所以先预定义好
-							var f = parent.$.modalDialog.handler.find('#form');
-							f.submit();
-						}
-					} ]
-				});
-	}
+
 	function queryForm(){
 		dataGrid.datagrid('load', $.serializeObject($('#searchForm')));
 	}
@@ -273,15 +188,8 @@
 	<div id="toolbar" style="display: none;">
 		<a onclick="addFun();" href="javascript:void(0);"
 			class="easyui-linkbutton"
-			data-options="plain:true,iconCls:'pencil_add'">添加</a>
+			data-options="plain:true,iconCls:'pencil_add'">发送消息</a>
 		<!-- <a onclick="batchDeleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'delete'">批量删除</a> -->
-	</div>
-
-	<div id="menu" class="easyui-menu" style="width: 120px; display: none;">
-		<div onclick="addFun();" data-options="iconCls:'pencil_add'">增加</div>
-		<div onclick="addBankInfo();" data-options="iconCls:'pencil_add'">增加转账信息</div>
-		<div onclick="deleteFun();" data-options="iconCls:'pencil_delete'">删除</div>
-		<div onclick="editFun();" data-options="iconCls:'pencil'">编辑</div>
 	</div>
 </body>
 </html>

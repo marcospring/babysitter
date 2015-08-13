@@ -1,7 +1,6 @@
 package com.zhangk.babysitter.controller.manage;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -14,13 +13,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zhangk.babysitter.controller.BaseController;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
-import com.zhangk.babysitter.service.common.CountyService;
-import com.zhangk.babysitter.service.level.CountyLevelService;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
-import com.zhangk.babysitter.viewmodel.CountyLevelView;
-import com.zhangk.babysitter.viewmodel.CountyView;
 
 @Controller
 @RequestMapping("/manage/babysitter")
@@ -28,10 +23,6 @@ public class ManageBabysitterController extends BaseController {
 
 	@Autowired
 	private BabysitterService babysitterService;
-	@Autowired
-	private CountyService countyService;
-	@Autowired
-	private CountyLevelService levelService;
 
 	@RequestMapping("/go")
 	public String go() {
@@ -68,10 +59,7 @@ public class ManageBabysitterController extends BaseController {
 	@RequestMapping("/goEdit")
 	public Object goEdit(HttpServletRequest request, long id) {
 		Babysitter babysitter = babysitterService.getBabysitter(id);
-		List<CountyView> counties = countyService.getCountyViewList();
-		List<CountyLevelView> levels = levelService.countyLevels(babysitter.getLevel().getCounty().getGuid());
-		request.setAttribute("counties", counties);
-		request.setAttribute("levels", levels);
+		request.setAttribute("vo", babysitter);
 		return "manage/babysitter/babysitterEdit";
 	}
 
@@ -90,6 +78,22 @@ public class ManageBabysitterController extends BaseController {
 	@RequestMapping("/delete")
 	public Object delete(long id) {
 		babysitterService.deleteBabysitter(id);
+		return MyResponse.successResponse();
+	}
+
+	@RequestMapping("/goAddBankInfo")
+	public Object goAddBankInfo(HttpServletRequest request, long id) {
+		Babysitter babysitter = babysitterService.getBabysitter(id);
+		request.setAttribute("vo", babysitter);
+		return "manage/babysitter/bankInfo";
+	}
+
+	@ResponseBody
+	@RequestMapping("/addBankInfo")
+	public Object addBankInfo(long id, String bankName, String bankCardNo, String bankUserName) {
+		ResultInfo result = babysitterService.addBankInfo(id, bankName, bankCardNo, bankUserName);
+		if (result == ResultInfo.BABYSITTER_NULL)
+			return MyResponse.errorResponse(ResultInfo.BABYSITTER_NULL.getCode(), ResultInfo.BABYSITTER_NULL.getMsg());
 		return MyResponse.successResponse();
 	}
 }
