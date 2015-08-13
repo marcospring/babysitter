@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.DicCredentialView;
 
 @Entity
 @Table(name = "babysitter_dic_credential")
@@ -103,6 +104,10 @@ public class Credential implements Serializable {
 
 	public void setScore(int score) {
 		this.score = score;
+	}
+
+	public DicCredentialView view() {
+		return new DicCredentialView(this);
 	}
 
 	public static Credential getInstance() {

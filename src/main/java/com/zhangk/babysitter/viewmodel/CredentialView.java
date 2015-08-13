@@ -5,9 +5,12 @@ import com.zhangk.babysitter.utils.common.Constants;
 
 public class CredentialView {
 	private String guid;
+	private String dicGuid;
 	private String name;
 	private int check;
 	private int credentialType;
+	private int score;
+	private String url;
 
 	public CredentialView() {
 		// TODO Auto-generated constructor stub
@@ -17,9 +20,38 @@ public class CredentialView {
 		setName(credential.getCredential() == null ? "无" : credential
 				.getCredential().getName());
 		setGuid(credential.getGuid());
+		setDicGuid(credential.getCredential() == null ? "" : credential
+				.getCredential().getGuid());
 		setCheck(credential.getIscheck());
+		setScore(credential.getCredential() == null ? 0 : credential
+				.getCredential().getScore());
 		setCredentialType(credential.getCredential() == null ? Constants.CREDENTIAL_TYPE_CREDENTIAL
 				: credential.getCredential().getCredentialType());
+		setUrl(Constants.IMG_DOMAIN + credential.getCredentialUrl());
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	public String getDicGuid() {
+		return dicGuid;
+	}
+
+	public void setDicGuid(String dicGuid) {
+		this.dicGuid = dicGuid;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 	public String getGuid() {

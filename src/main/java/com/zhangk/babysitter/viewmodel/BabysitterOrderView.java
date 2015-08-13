@@ -25,18 +25,17 @@ public class BabysitterOrderView {
 	}
 
 	public BabysitterOrderView(BabysitterOrder order) {
-		BabysitterOrderView view = new BabysitterOrderView();
-		view.setGuid(order.getGuid());
-		view.setBeginDate(order.getServiceBeginDate());
-		view.setEndDate(order.getServiceEndDate());
-		view.setPrice(String.valueOf(order.getOrderPrice()));
-		view.setEmployerName(order.getEmployer().getUsername());
-		view.setState(order.getState());
-		view.setAddress(order.getEmployer().getAddress());
-		view.setTelephone(order.getEmployer().getMobilePhone());
-		view.setEvaluation(order.getEvaluation());
-		view.setScore(order.getScore());
-		view.setOrderId(order.getOrderId());
+		setGuid(order.getGuid());
+		setBeginDate(order.getServiceBeginDate());
+		setEndDate(order.getServiceEndDate());
+		setPrice(String.valueOf(order.getOrderPrice()));
+		setEmployerName(order.getEmployer().getUsername());
+		setState(order.getState());
+		setAddress(order.getEmployer().getAddress());
+		setTelephone(order.getEmployer().getMobilePhone());
+		setEvaluation(order.getEvaluation());
+		setScore(order.getScore());
+		setOrderId(order.getOrderId());
 
 	}
 

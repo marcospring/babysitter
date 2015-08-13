@@ -27,6 +27,7 @@ public class BabysitterCredential implements Serializable {
 	private Date createDate;
 	private Date updateDate;
 	private int ischeck;
+	private String credentialUrl;
 	private Babysitter babysitter;
 	private Credential credential;
 
@@ -104,6 +105,14 @@ public class BabysitterCredential implements Serializable {
 		CredentialView view = new CredentialView(this);
 
 		return view;
+	}
+
+	public String getCredentialUrl() {
+		return credentialUrl;
+	}
+
+	public void setCredentialUrl(String credentialUrl) {
+		this.credentialUrl = credentialUrl;
 	}
 
 	public static BabysitterCredential getInstance() {

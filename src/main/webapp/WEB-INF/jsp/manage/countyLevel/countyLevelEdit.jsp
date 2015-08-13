@@ -37,7 +37,7 @@
 			}
 		});
 		$('#countyid').combobox({    
-		    url:'${pageContext.request.contextPath}/manage/county/list.html',    
+		    url:'${pageContext.request.contextPath}/manage/county/comboList.html',    
 		    valueField:'id',
 		    editable:false,
 		    textField:'name'   

@@ -16,12 +16,14 @@ import com.zhangk.babysitter.entity.FeedBack;
 import com.zhangk.babysitter.entity.Image;
 import com.zhangk.babysitter.service.common.CheckCodeService;
 import com.zhangk.babysitter.service.common.CountyService;
+import com.zhangk.babysitter.service.common.CredentialService;
 import com.zhangk.babysitter.service.common.FeedBackService;
 import com.zhangk.babysitter.service.common.ImageService;
 import com.zhangk.babysitter.service.level.CountyLevelService;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.viewmodel.CountyLevelView;
 import com.zhangk.babysitter.viewmodel.CountyView;
+import com.zhangk.babysitter.viewmodel.DicCredentialView;
 
 @Controller("mobileCommonController")
 @RequestMapping("/mobile/common")
@@ -37,6 +39,8 @@ public class CommonController extends BaseController {
 	private FeedBackService feedbackService;
 	@Autowired
 	private CheckCodeService codeService;
+	@Autowired
+	private CredentialService credentialService;
 
 	@ResponseBody
 	@RequestMapping("/countyList")
@@ -88,6 +92,14 @@ public class CommonController extends BaseController {
 		telephone = telephone.replace(" ", "");
 		CheckCode code = codeService.addCheckCode(telephone.trim(), type);
 		res.put("result", code.view());
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/credentials")
+	public PageResult getCredentials() {
+		List<DicCredentialView> list = credentialService.getCredentials();
+		res.put("result", list);
 		return res;
 	}
 }

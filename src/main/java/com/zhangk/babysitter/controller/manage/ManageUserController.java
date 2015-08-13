@@ -36,7 +36,8 @@ public class ManageUserController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/userMenu")
 	public Object findUserMenu(HttpServletRequest reqeust) {
-		UserInfo user = (UserInfo) reqeust.getSession().getAttribute(Constants.SESSION_USER);
+		UserInfo user = (UserInfo) reqeust.getSession().getAttribute(
+				Constants.SESSION_USER);
 		List<MenuView> treeList = userService.getUserMenus(user);
 
 		return treeList;
@@ -72,10 +73,12 @@ public class ManageUserController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/add")
-	public Object add(String username, String password, String name, long[] roleids) {
+	public Object add(String username, String password, String name,
+			long[] roleids) {
 		UserInfo u = userService.addUser(username, password, name, roleids);
 		if (u == null)
-			return MyResponse.errorResponse(ResultInfo.USER_NULL.getCode(), ResultInfo.USER_NULL.getMsg());
+			return MyResponse.errorResponse(ResultInfo.USER_NOT_NULL.getCode(),
+					ResultInfo.USER_NOT_NULL.getMsg());
 		return MyResponse.successResponse();
 	}
 
@@ -101,7 +104,8 @@ public class ManageUserController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/edit")
-	public Object update(String id, String username, String password, String name, long[] roleids) {
+	public Object update(String id, String username, String password,
+			String name, long[] roleids) {
 		userService.updateUser(id, username, password, name, roleids);
 		return MyResponse.successResponse();
 	}

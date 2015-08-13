@@ -3,6 +3,8 @@ package com.zhangk.babysitter.controller.mobile.babysitter;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -249,5 +251,14 @@ public class BabysitterController extends BaseController {
 	@RequestMapping("/scoreSort")
 	public PageResult scoreSort(String countyGuid) {
 		return babysitterService.scoreSort(getResult(), countyGuid);
+	}
+
+	@ResponseBody
+	@RequestMapping("/addCredential")
+	public PageResult addCredential(HttpServletRequest request,
+			String babysitterGuid, String credentialGuid) {
+		PageResult result = babysitterService.addCredential(request,
+				babysitterGuid, credentialGuid, getResult());
+		return result;
 	}
 }
