@@ -53,4 +53,14 @@ public class Constants {
 	public static final int CREDENTIAL_TYPE_CREDENTIAL = 1;
 	public static final int CREDENTIAL_TYPE_PROFESSIONAL = 2;
 
+	// 相册guid
+	public static final String LIFE_IMAGE_GUID = PropertiesUtils.getString(
+			"guid.image", "001BA330344E41B794DCEB71666C0D39");
+	// 银行卡guid
+	public static final String BANK_CARD_GUID = PropertiesUtils.getString(
+			"guid.bankcard", "FEB6822A1F404A95A7A99DD50A002FFE");
+
+	public static final String MAP_URL = PropertiesUtils.getString("map.url",
+			"http://api.map.baidu.com/geocoder");
+
 }

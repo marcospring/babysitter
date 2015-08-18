@@ -76,10 +76,10 @@ public interface BabysitterService {
 			PageResult res);
 
 	PageResult addLifeImage(String guid, HttpServletRequest request,
-			PageResult res);
+			String cardGuid, PageResult res);
 
 	PageResult updateBankCard(String guid, String bankName, String bankCardNo,
-			String bankUserName, PageResult result);
+			String bankUserName, String cardGuid, PageResult result);
 
 	PageResult addOrder(String guid, String beginDate, String endDate,
 			String price, String address, String employerName,

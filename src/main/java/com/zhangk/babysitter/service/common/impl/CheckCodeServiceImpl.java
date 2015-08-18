@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.CheckCode;
 import com.zhangk.babysitter.service.common.CheckCodeService;
+import com.zhangk.babysitter.utils.common.CheckCodeType;
 import com.zhangk.babysitter.utils.common.CheckCodeUtil;
 
 @Service
@@ -32,7 +33,8 @@ public class CheckCodeServiceImpl implements CheckCodeService {
 		DBcode.setCode(code);
 		dao.add(DBcode);
 		// 发短信
-		CheckCodeUtil.sendMessage(telephone, code, "5");
+		CheckCodeUtil.sendMessage(telephone, code, CheckCodeType.getMsg(type),
+				"5");
 		//
 		return DBcode;
 	}

@@ -21,8 +21,12 @@ public class SessionFilter extends OncePerRequestFilter {
 	private Logger logger = LoggerFactory.getLogger(SessionFilter.class);
 
 	@Override
-	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-		String[] notFilter = new String[] { "login", "dataProvider", "error", "mobile", "file", "wechat" };
+	protected void doFilterInternal(HttpServletRequest request,
+			HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		String[] notFilter = new String[] { "login", "dataProvider", "error",
+				"mobile", "file", "wechat", "about", "grade", "orderSort",
+				"studyCenter", "userTerms" };
 		String uri = request.getRequestURI();
 		boolean doFilter = true;
 		for (String s : notFilter) {
@@ -32,7 +36,8 @@ public class SessionFilter extends OncePerRequestFilter {
 			}
 		}
 		if (doFilter) {
-			UserInfo user = (UserInfo) request.getSession().getAttribute(Constants.SESSION_USER);
+			UserInfo user = (UserInfo) request.getSession().getAttribute(
+					Constants.SESSION_USER);
 			if (user == null) {
 				boolean isAjaxRequest = isAjaxRequest(request);
 				if (isAjaxRequest) {

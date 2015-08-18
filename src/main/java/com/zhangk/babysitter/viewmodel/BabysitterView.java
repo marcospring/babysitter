@@ -1,6 +1,8 @@
 package com.zhangk.babysitter.viewmodel;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -38,6 +40,16 @@ public class BabysitterView {
 	private String introduce;
 	private long orderCountIndex;
 	private long scoreIndex;
+	private String nation;
+	private String height;
+	private String weight;
+	private String hobbies;
+	private String mandarin;
+	private String companyName;
+	private String managerName;
+	private String companyTelephone;
+	private String managerTelephone;
+	private long lastLevelScore;
 
 	private List<CredentialView> credentials;
 	private List<PromotionView> promotions;
@@ -75,6 +87,21 @@ public class BabysitterView {
 		setIntroduce(babysitter.getIntroduce());
 		setCredentialScore(babysitter.getCredentialScore());
 		setLowerSalary(babysitter.getLowerSalary());
+		setNation(babysitter.getNation());
+		setHeight(babysitter.getHeight());
+		setWeight(babysitter.getWeight());
+		setHobbies(babysitter.getHobbies());
+		setMandarin(babysitter.getMandarin());
+		setCompanyName(babysitter.getManager() == null ? "无" : babysitter
+				.getManager().getCompany() == null ? "无" : babysitter
+				.getManager().getCompany().getName());
+		setCompanyTelephone(babysitter.getManager() == null ? "无" : babysitter
+				.getManager().getCompany() == null ? "无" : babysitter
+				.getManager().getCompany().getTelephone());
+		setManagerTelephone(babysitter.getManager() == null ? "无" : babysitter
+				.getManager().getTelephone());
+		setManagerName(babysitter.getManager() == null ? "无" : babysitter
+				.getManager().getName());
 		// setEvaluates(getEvaluate(babysitter.getEvaluates()));
 	}
 
@@ -121,6 +148,12 @@ public class BabysitterView {
 
 	private List<PromotionView> getPromotionView(List<PromotionInfo> promotions) {
 		List<PromotionView> result = new ArrayList<PromotionView>();
+		Collections.sort(promotions, new Comparator<PromotionInfo>() {
+			public int compare(PromotionInfo o1, PromotionInfo o2) {
+				return o1.getCreateDate().getTime() >= o2.getCreateDate()
+						.getTime() ? 1 : -1;
+			};
+		});
 		for (PromotionInfo info : promotions) {
 			result.add(info.view());
 		}
@@ -134,6 +167,46 @@ public class BabysitterView {
 			result.add(credential.view());
 		}
 		return result;
+	}
+
+	public String getNation() {
+		return nation;
+	}
+
+	public void setNation(String nation) {
+		this.nation = nation;
+	}
+
+	public String getHeight() {
+		return height;
+	}
+
+	public void setHeight(String height) {
+		this.height = height;
+	}
+
+	public String getWeight() {
+		return weight;
+	}
+
+	public void setWeight(String weight) {
+		this.weight = weight;
+	}
+
+	public String getHobbies() {
+		return hobbies;
+	}
+
+	public void setHobbies(String hobbies) {
+		this.hobbies = hobbies;
+	}
+
+	public String getMandarin() {
+		return mandarin;
+	}
+
+	public void setMandarin(String mandarin) {
+		this.mandarin = mandarin;
 	}
 
 	public BabysitterView() {
@@ -363,6 +436,46 @@ public class BabysitterView {
 
 	public void setScoreIndex(long scoreIndex) {
 		this.scoreIndex = scoreIndex;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getManagerName() {
+		return managerName;
+	}
+
+	public void setManagerName(String managerName) {
+		this.managerName = managerName;
+	}
+
+	public String getCompanyTelephone() {
+		return companyTelephone;
+	}
+
+	public void setCompanyTelephone(String companyTelephone) {
+		this.companyTelephone = companyTelephone;
+	}
+
+	public String getManagerTelephone() {
+		return managerTelephone;
+	}
+
+	public void setManagerTelephone(String managerTelephone) {
+		this.managerTelephone = managerTelephone;
+	}
+
+	public long getLastLevelScore() {
+		return lastLevelScore;
+	}
+
+	public void setLastLevelScore(long lastLevelScore) {
+		this.lastLevelScore = lastLevelScore;
 	}
 
 }

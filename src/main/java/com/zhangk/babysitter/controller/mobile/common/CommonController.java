@@ -73,6 +73,15 @@ public class CommonController extends BaseController {
 	}
 
 	@ResponseBody
+	@RequestMapping("/levelListXY")
+	public PageResult getCountyLevelXY(String x, String y) {
+		if (StringUtils.isEmpty(x) || StringUtils.isEmpty(y))
+			return getErrRes(ResultInfo.INF_EMPTY);
+		PageResult pres = levelService.countyLevelsXY(x, y, getResult());
+		return pres;
+	}
+
+	@ResponseBody
 	@RequestMapping("/addFeedBack")
 	public PageResult addFeedBack(String msg, String telephone) {
 		if (StringUtils.isEmpty(msg) || StringUtils.isEmpty(telephone))

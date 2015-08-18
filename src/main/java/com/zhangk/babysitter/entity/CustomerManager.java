@@ -31,9 +31,11 @@ public class CustomerManager implements Serializable {
 	private Date createDate;
 	private Date updateDate;
 	private List<Babysitter> babysitters;
+	private Company company;
 	private String telephone;
 	private String username;
 	private String password;
+	private String name;
 	private County county;
 	private List<Role> roles;
 
@@ -132,6 +134,24 @@ public class CustomerManager implements Serializable {
 
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "company_id")
+	public Company getCompany() {
+		return company;
+	}
+
+	public void setCompany(Company company) {
+		this.company = company;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public static CustomerManager getInstance() {

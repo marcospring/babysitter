@@ -10,7 +10,8 @@ public enum ResultInfo {
 			1009, "日期格式化错误"), PROMOTION_NULL(1010, "活动信息不存在"), EXIST_USER(1011,
 			"用户已存在"), NOTICE_NULL(1012, "通知不存在"), FILE_NULL(1013, "上传文件为空"), USER_NOT_NULL(
 			1014, "用户已存在"), COUNTYLEVEL_NOT_NULL(1015, "级别已经存在"), BABYSITTER_NOT_NULL(
-			1016, "月嫂已存在"), CREDENTIAL_NULL(1017, "证件不存在"), SUCCESS(0, "操作成功");
+			1016, "月嫂已存在"), CREDENTIAL_NULL(1017, "证件不存在"), ADDRESS_EXCEPTION(
+			1018, "定位异常"), SUCCESS(0, "操作成功");
 
 	private int code;
 	private String msg;

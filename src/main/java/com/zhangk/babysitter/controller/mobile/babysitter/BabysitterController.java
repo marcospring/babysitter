@@ -217,13 +217,13 @@ public class BabysitterController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/updateBankCard")
 	public PageResult updateBankCard(String guid, String bankName,
-			String bankCardNo, String bankUserName) {
+			String bankCardNo, String bankUserName, String cardGuid) {
 		if (StringUtils.isEmpty(bankName) || StringUtils.isEmpty(bankCardNo)
 				|| StringUtils.isEmpty(bankUserName)) {
 			return getErrRes(ResultInfo.INF_EMPTY);
 		}
 		res = babysitterService.updateBankCard(guid, bankName, bankCardNo,
-				bankUserName, getResult());
+				bankUserName, cardGuid, getResult());
 		return res;
 	}
 

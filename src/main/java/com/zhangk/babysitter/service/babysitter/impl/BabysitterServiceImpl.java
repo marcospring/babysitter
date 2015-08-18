@@ -165,6 +165,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		BabysitterView view = babysitter.view();
 		view.setOrderCountIndex(getOrderCountIndex(view.getId()));
 		view.setScoreIndex(getScoreCountIndex(view.getScore()));
+		view.setLastLevelScore(getLastLevelScore(babysitter));
 		return view;
 	}
 
@@ -250,6 +251,29 @@ public class BabysitterServiceImpl implements BabysitterService {
 				babysitter.setIdentificationNo(cardNo);
 				babysitter.setCounty(county);
 				dao.add(babysitter);
+				// 设置月嫂的银行卡信息和相册信息
+				// Credential image = dao.getResultByGUID(Credential.class,
+				// Constants.LIFE_IMAGE_GUID);
+				// Credential bankCard = dao.getResultByGUID(Credential.class,
+				// Constants.BANK_CARD_GUID);
+				// BabysitterCredential babysitterImage = BabysitterCredential
+				// .getInstance();
+				// babysitterImage.setBabysitter(babysitter);
+				// babysitterImage.setCredential(image);
+				// babysitterImage.setIscheck(Constants.NO_PASS);
+				// dao.add(babysitterImage);
+				// BabysitterCredential babysitterBankCard =
+				// BabysitterCredential
+				// .getInstance();
+				// babysitterBankCard.setBabysitter(babysitter);
+				// babysitterBankCard.setCredential(bankCard);
+				// babysitterBankCard.setIscheck(Constants.NO_PASS);
+				// dao.add(babysitterBankCard);
+				// List<BabysitterCredential> credentials = new
+				// ArrayList<BabysitterCredential>();
+				// credentials.add(babysitterImage);
+				// credentials.add(babysitterBankCard);
+				// babysitter.setCredentials(credentials);
 				res.put("code", ResultInfo.SUCCESS.getCode());
 				res.put("msg", ResultInfo.SUCCESS.getMsg());
 				res.put("result", babysitter.view());
@@ -405,7 +429,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 
 	@Transactional
 	public PageResult addLifeImage(String guid, HttpServletRequest request,
-			PageResult res) {
+			String cardGuid, PageResult res) {
 		UploadFileUtils fileUtil = UploadFileUtils.newInstance();
 		fileUtil.setRequest(request);
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
@@ -426,6 +450,32 @@ public class BabysitterServiceImpl implements BabysitterService {
 				res.setResult(ResultInfo.FILE_NULL);
 				return res;
 			}
+			Credential credential = dao.getResultByGUID(Credential.class,
+					cardGuid);
+			if (credential == null)
+				res.setResult(ResultInfo.CREDENTIAL_NULL);
+			BabysitterCredential babysitterCredential = BabysitterCredential
+					.getInstance();
+			babysitterCredential.setBabysitter(babysitter);
+			babysitterCredential.setCredential(credential);
+			babysitterCredential.setIscheck(Constants.PASS);
+			dao.add(babysitterCredential);
+			long score = babysitter.getCredentialScore();
+			score += credential.getScore();
+			babysitter.setCredentialScore(score);
+			dao.update(babysitter);
+			// 更新相册信息
+			// List<BabysitterCredential> credentials = babysitter
+			// .getCredentials();
+			// for (BabysitterCredential credential : credentials) {
+			// if (Constants.LIFE_IMAGE_GUID.equals(credential.getCredential()
+			// .getGuid())
+			// && credential.getIscheck() == Constants.NO_PASS) {
+			// credential.setIscheck(Constants.PASS);
+			// dao.update(credential);
+			// break;
+			// }
+			// }
 			Map<String, Object> result = new HashMap<String, Object>();
 			result.put("images", images);
 			result.put("domain", Constants.IMG_DOMAIN);
@@ -440,7 +490,8 @@ public class BabysitterServiceImpl implements BabysitterService {
 
 	@Transactional
 	public PageResult updateBankCard(String guid, String bankName,
-			String bankCardNo, String bankUserName, PageResult result) {
+			String bankCardNo, String bankUserName, String cardGuid,
+			PageResult result) {
 		try {
 			Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
 			babysitter.setBankCardNo(bankCardNo);
@@ -448,6 +499,32 @@ public class BabysitterServiceImpl implements BabysitterService {
 			babysitter.setBankUserName(bankUserName);
 			babysitter.setUpdateDate(new Date());
 			dao.update(babysitter);
+			Credential credential = dao.getResultByGUID(Credential.class,
+					cardGuid);
+			if (credential == null)
+				result.setResult(ResultInfo.CREDENTIAL_NULL);
+			BabysitterCredential babysitterCredential = BabysitterCredential
+					.getInstance();
+			babysitterCredential.setBabysitter(babysitter);
+			babysitterCredential.setCredential(credential);
+			babysitterCredential.setIscheck(Constants.PASS);
+			dao.add(babysitterCredential);
+			long score = babysitter.getCredentialScore();
+			score += credential.getScore();
+			babysitter.setCredentialScore(score);
+			dao.update(babysitter);
+			// List<BabysitterCredential> credentials = babysitter
+			// .getCredentials();
+			// 更新银行卡信息
+			// for (BabysitterCredential credential : credentials) {
+			// if (Constants.BANK_CARD_GUID.equals(credential.getCredential()
+			// .getGuid())
+			// && credential.getIscheck() == Constants.NO_PASS) {
+			// credential.setIscheck(Constants.PASS);
+			// dao.update(credential);
+			// break;
+			// }
+			// }
 			result.setResult(ResultInfo.SUCCESS);
 		} catch (RuntimeException e) {
 			e.printStackTrace();
@@ -658,6 +735,38 @@ public class BabysitterServiceImpl implements BabysitterService {
 				.addScalar("counter", LongType.INSTANCE).setLong(0, score)
 				.uniqueResult();
 		return index + 1;
+	}
+
+	private long getLastLevelScore(Babysitter babysitter) {
+		County county = babysitter.getCounty();
+		if (county == null)
+			return -1;
+		String hql = "from CountyLevel t where t.county.id=? order by t.score";
+		List<CountyLevel> levelList = dao.getListResultByHQL(CountyLevel.class,
+				hql, county.getId());
+		if (levelList == null || levelList.size() == 0)
+			return -1;
+		if (babysitter.getLevel() == null) {
+			return levelList.get(0).getScore();
+		} else {
+			CountyLevel babysitterLevel = babysitter.getLevel();
+			int levelSize = levelList.size();
+			int index = 0;
+			for (CountyLevel countyLevel : levelList) {
+				if (babysitterLevel.getId() == countyLevel.getId()) {
+					break;
+				}
+				index++;
+			}
+			if (index == levelSize - 1) {
+				return 0;
+			} else if (index < levelSize) {
+				return levelList.get(index + 1).getScore()
+						- babysitterLevel.getScore();
+			} else {
+				return -1;
+			}
+		}
 	}
 
 	@Transactional

@@ -13,6 +13,8 @@ public class PromotionView {
 	private String memo;
 	private Date beginDate;
 	private Date endDate;
+	private String iconUrl;
+	private int score;
 
 	public PromotionView() {
 		// TODO Auto-generated constructor stub
@@ -24,6 +26,8 @@ public class PromotionView {
 		setMemo(info.getMemo());
 		setBeginDate(info.getBeginDate());
 		setEndDate(info.getEndDate());
+		setIconUrl(info.getIconUrl());
+		setScore(info.getScore());
 	}
 
 	public String getGuid() {
@@ -66,6 +70,22 @@ public class PromotionView {
 
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
+	}
+
+	public String getIconUrl() {
+		return iconUrl;
+	}
+
+	public void setIconUrl(String iconUrl) {
+		this.iconUrl = iconUrl;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 }

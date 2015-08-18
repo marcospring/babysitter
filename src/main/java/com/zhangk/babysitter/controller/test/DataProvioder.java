@@ -289,6 +289,12 @@ public class DataProvioder extends BaseController {
 		Credential jiankangzheng = Credential.getInstance();
 		jiankangzheng.setName("健康证");
 		credentialService.addCredential(jiankangzheng);
+		Credential xiance = Credential.getInstance();
+		xiance.setName("相册");
+		credentialService.addCredential(xiance);
+		Credential yinhangka = Credential.getInstance();
+		yinhangka.setName("银行卡");
+		credentialService.addCredential(yinhangka);
 
 		return res;
 	}

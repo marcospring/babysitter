@@ -31,6 +31,8 @@ public class PromotionInfo implements Serializable {
 	private int isCheck;
 	private Date beginDate;
 	private Date endDate;
+	private String iconUrl;
+	private int score;
 	private String url;
 	private List<Babysitter> babysitters;
 
@@ -135,6 +137,22 @@ public class PromotionInfo implements Serializable {
 
 	public void setIsCheck(int isCheck) {
 		this.isCheck = isCheck;
+	}
+
+	public String getIconUrl() {
+		return iconUrl;
+	}
+
+	public void setIconUrl(String iconUrl) {
+		this.iconUrl = iconUrl;
+	}
+
+	public int getScore() {
+		return score;
+	}
+
+	public void setScore(int score) {
+		this.score = score;
 	}
 
 	public static PromotionInfo getInstance() {

@@ -34,11 +34,12 @@ public class uploadController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/image/life")
-	public PageResult uploadLife(HttpServletRequest request, String guid)
-			throws IllegalStateException, IOException {
+	public PageResult uploadLife(HttpServletRequest request, String guid,
+			String cardGuid) throws IllegalStateException, IOException {
 		if (StringUtils.isEmpty(guid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		res = babysitterService.addLifeImage(guid, request, getResult());
+		res = babysitterService.addLifeImage(guid, request, cardGuid,
+				getResult());
 		return res;
 	}
 }

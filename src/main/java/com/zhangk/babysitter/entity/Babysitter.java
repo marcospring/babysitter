@@ -52,6 +52,11 @@ public class Babysitter implements Serializable {
 	private String nativePlace;
 	private Date birthday;
 	private String introduce;
+	private String nation;
+	private String height;
+	private String weight;
+	private String hobbies;
+	private String mandarin;
 	private List<BabysitterCredential> credentials;
 	private List<PromotionInfo> promotions;
 	private List<BabysitterOrder> orders;
@@ -341,6 +346,46 @@ public class Babysitter implements Serializable {
 
 	public void setIntroduce(String introduce) {
 		this.introduce = introduce;
+	}
+
+	public String getNation() {
+		return nation;
+	}
+
+	public void setNation(String nation) {
+		this.nation = nation;
+	}
+
+	public String getHeight() {
+		return height;
+	}
+
+	public void setHeight(String height) {
+		this.height = height;
+	}
+
+	public String getWeight() {
+		return weight;
+	}
+
+	public void setWeight(String weight) {
+		this.weight = weight;
+	}
+
+	public String getHobbies() {
+		return hobbies;
+	}
+
+	public void setHobbies(String hobbies) {
+		this.hobbies = hobbies;
+	}
+
+	public String getMandarin() {
+		return mandarin;
+	}
+
+	public void setMandarin(String mandarin) {
+		this.mandarin = mandarin;
 	}
 
 	public static Babysitter getInstance() {

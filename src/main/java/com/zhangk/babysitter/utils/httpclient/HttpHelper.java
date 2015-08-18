@@ -10,19 +10,20 @@ import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.entity.mime.content.FileBody;
 
 public class HttpHelper {
-	private static Integer socketTimeout = 50;
+	private static Integer socketTimeout = 50000;
 	private static Integer connectTimeout = 6000;
 	private static Integer connectionRequestTimeout = 50;
 
 	/**
 	 * 使用Get方式 根据URL地址，获取ResponseContent对象
-	 * 
+	 *
 	 * @param url
 	 *            完整的URL地址
 	 * @return ResponseContent 如果发生异常则返回null，否则返回ResponseContent对象
 	 */
 	public static ResponseContent getUrlRespContent(String url) {
-		HttpClientWrapper hw = new HttpClientWrapper(connectionRequestTimeout, connectTimeout, socketTimeout);
+		HttpClientWrapper hw = new HttpClientWrapper(connectionRequestTimeout,
+				connectTimeout, socketTimeout);
 		ResponseContent response = null;
 		try {
 			response = hw.getResponse(url);
@@ -34,15 +35,17 @@ public class HttpHelper {
 
 	/**
 	 * 使用Get方式 根据URL地址，获取ResponseContent对象
-	 * 
+	 *
 	 * @param url
 	 *            完整的URL地址
 	 * @param urlEncoding
 	 *            编码，可以为null
 	 * @return ResponseContent 如果发生异常则返回null，否则返回ResponseContent对象
 	 */
-	public static ResponseContent getUrlRespContent(String url, String urlEncoding) {
-		HttpClientWrapper hw = new HttpClientWrapper(connectionRequestTimeout, connectTimeout, socketTimeout);
+	public static ResponseContent getUrlRespContent(String url,
+			String urlEncoding) {
+		HttpClientWrapper hw = new HttpClientWrapper(connectionRequestTimeout,
+				connectTimeout, socketTimeout);
 		ResponseContent response = null;
 		try {
 			response = hw.getResponse(url, urlEncoding);
@@ -54,7 +57,7 @@ public class HttpHelper {
 
 	/**
 	 * 将参数拼装在url中，进行post请求。
-	 * 
+	 *
 	 * @param url
 	 * @return
 	 */
@@ -93,14 +96,15 @@ public class HttpHelper {
 
 	/**
 	 * 上传文件（包括图片）
-	 * 
+	 *
 	 * @param url
 	 *            请求URL
 	 * @param paramsMap
 	 *            参数和值
 	 * @return
 	 */
-	public static ResponseContent postEntity(String url, Map<String, Object> paramsMap) {
+	public static ResponseContent postEntity(String url,
+			Map<String, Object> paramsMap) {
 		HttpClientWrapper hw = new HttpClientWrapper();
 		ResponseContent ret = null;
 		try {
@@ -114,7 +118,8 @@ public class HttpHelper {
 					hw.getContentBodies().add(fileBody);
 				} else if (value instanceof byte[]) {
 					byte[] byteVlue = (byte[]) value;
-					ByteArrayBody byteArrayBody = new ByteArrayBody(byteVlue, key);
+					ByteArrayBody byteArrayBody = new ByteArrayBody(byteVlue,
+							key);
 					hw.getContentBodies().add(byteArrayBody);
 				} else {
 					if (value != null && !"".equals(value)) {
@@ -133,7 +138,7 @@ public class HttpHelper {
 
 	/**
 	 * 使用post方式，发布对象转成的json给Rest服务。
-	 * 
+	 *
 	 * @param url
 	 * @param jsonBody
 	 * @return
@@ -144,7 +149,7 @@ public class HttpHelper {
 
 	/**
 	 * 使用post方式，发布对象转成的xml给Rest服务
-	 * 
+	 *
 	 * @param url
 	 *            URL地址
 	 * @param xmlBody
@@ -155,7 +160,8 @@ public class HttpHelper {
 		return postEntity(url, xmlBody, "application/xml");
 	}
 
-	private static ResponseContent postEntity(String url, String body, String contentType) {
+	private static ResponseContent postEntity(String url, String body,
+			String contentType) {
 		HttpClientWrapper hw = new HttpClientWrapper();
 		ResponseContent ret = null;
 		try {
@@ -190,7 +196,8 @@ public class HttpHelper {
 			Map<String, Object> paramsMap = new HashMap<String, Object>();
 			paramsMap.put("userName", "jj");
 			paramsMap.put("password", "jj");
-			paramsMap.put("filePath", new File("C:\\Users\\yangjian1004\\Pictures\\default (1).jpeg"));
+			paramsMap.put("filePath", new File(
+					"C:\\Users\\yangjian1004\\Pictures\\default (1).jpeg"));
 			ResponseContent ret = postEntity(url, paramsMap);
 			System.out.println(ret.getContent());
 		} catch (Exception e) {
