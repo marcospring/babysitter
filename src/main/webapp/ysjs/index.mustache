@@ -1,0 +1,86 @@
+<div id="main-page" class="page">
+    <div class="header">
+        <a class="header-back" href="javascript:window.history.back();"></a>
+        <h1>我的名片</h1>
+    </div>
+    <div class="mp-main">
+        <div class="head-contaienr">
+            <div class="left">
+                <img class="head-img" src="{{headUrl}}" alt="头像">
+                <p class="desc">¥{{price}}/月</p>
+            </div>
+            <ul class="right">
+                <li class="info-list name">{{name}}</li>
+                <li class="info-list"><span>年龄：{{age}}</span><span class="magin">籍贯：{{nativePlace}}</span></li>
+                <li class="info-list">客户满意度：{{score}}分</li>
+                <li class="info-list">接单数量：{{orderCount}}</li>
+                {{#promotions}}
+                <li class="promotion">{{title}}</li>
+                {{/promotions}}
+            </ul>
+        </div>
+
+        <div class="group">
+            <h2 class="group-title">身份认证</h2>
+            <ul class="category flexbox">
+            {{#credentials}}
+                <li class="checked-item flexbox-item">{{name}}</li>
+            {{/credentials}}
+            </ul>
+        </div>
+        <div class="group">
+            <h2 class="group-title">专业认证</h2>
+            <ul class="pro-category flexbox">
+                <li class="checked-item flexbox-item">厨师证</li>
+                <li class="checked-item flexbox-item">厨师证</li>
+                <li class="checked-item flexbox-item">厨师证</li>
+            </ul>
+            <div class="arrow"></div>
+        </div>
+        <div class="group">
+            <h2 class="group-title">月嫂档期<div class="title-left"><span class="active"></span>可预约<span class="unactive"></span>已被预约</div></h2>
+            <ul class="category flexbox">
+                <li class="pro-item">厨师证</li>
+                <li class="pro-item">厨师证</li>
+                <li class="pro-item">厨师证</li>
+                <li class="pro-item">厨师证</li>
+            </ul>
+        </div>
+
+        <div class="group">
+            <h2 class="group-title">个人相册</h2>
+            <div class="mr_frbox">
+                <img class="mr_frBtnL prev" src="img/mfrl.gif" />
+                <div class="mr_frUl">
+                    <div class = "tempWrap">
+                        <ul id="mr_fu">
+                        {{#photos}}
+                        <li>
+                            <img src="{{img}}" />
+                        </li>
+                        {{/photos}}
+                        </ul>
+                    </div>
+                </div>
+                <img class="mr_frBtnR next" src="img/mfrr.gif" />
+            </div>
+        </div>
+
+        <div class="group">
+            <h2 class="group-title">历史订单({{amount}})</h2>
+            <div class="comment-grid">
+                <div class="comment-info">
+                    <span class="info-left">客户评分：{{score}}分</span>
+                    <span class="info-right">{{employerName}}：{{telephone}}</span>
+                    <p class="content">{{evaluation}}</p>
+                </div>
+                <div class="order-info">
+                    <p class="order-info-item">订单号：{{orderId}}</p>
+                    <p class="order-info-item">服务时间：{{beginDate}}——{{endDate}}</p>
+                    <p class="order-info-item">地址：{{address}}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

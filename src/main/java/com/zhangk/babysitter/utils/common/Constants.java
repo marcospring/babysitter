@@ -63,4 +63,15 @@ public class Constants {
 	public static final String MAP_URL = PropertiesUtils.getString("map.url",
 			"http://api.map.baidu.com/geocoder");
 
+	public static final String ANDROID_APP_MASTER_SECRET = PropertiesUtils
+			.getString("message.mastersecret.android",
+					"znnb2ob8jb1aajmrxt7t75hjyban3kfo");
+	public static final String ANDROID_APP_KEY = PropertiesUtils.getString(
+			"message.appkey.android", "55adee28e0f55a71800017a1");
+	public static final String IOS_APP_MASTER_SECRET = PropertiesUtils
+			.getString("message.mastersecret.ios",
+					"ugkceklqmgyndcrk10skwte8au0dl6cg");
+	public static final String IOS_APP_KEY = PropertiesUtils.getString(
+			"message.appkey.ios", "55adeebce0f55a71a40014f8");
+
 }

@@ -1,0 +1,333 @@
+html {
+  font-size: 312.5%;
+  -webkit-tap-highlight-color: transparent;
+  height: 100%;
+  min-width: 320px;
+  overflow-x: hidden; }
+
+body {
+  font-family: Microsoft YaHei, Arial, sans-serif;
+  font-size: .28em;
+  line-height: 1;
+  color: #696969;
+  background-color: #f7f6f6; }
+
+.page {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #f6f6f6; }
+
+.flexbox {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: -ms-flexbox;
+  display: flex;
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+  width: 100%; }
+
+.item-container {
+  width: 33%;
+  display: inline-block;
+  text-align: center; }
+
+.flexbox-item {
+  flex: 1;
+  -webkit-flex: 1;
+  -moz-flex: 1;
+  -ms-flex: 1;
+  box-flex: 1;
+  -webkit-box-flex: 1;
+  -moz-box-flex: 1; }
+
+.header {
+  background: #fff;
+  text-align: center;
+  border-bottom: #dcd9d9 1px solid;
+  position: relative;
+  height: .9rem; }
+
+.header h1 {
+  overflow: hidden;
+  margin: 0 50px;
+  font-weight: normal;
+  font-size: 16px;
+  line-height: .9rem;
+  white-space: nowrap;
+  color: #ff681e;
+  text-overflow: ellipsis; }
+
+.header-back {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  background: url(../img/back.png) center center no-repeat;
+  background-size: 13px 17px; }
+
+.head-contaienr {
+  padding: .2rem .2rem 0.1rem;
+  background-color: #fff; }
+
+.head-contaienr .left {
+  display: inline-block;
+  /*width: 2.2rem;*/
+  width: 35%;
+  padding: .2rem;
+  text-align: center;
+  vertical-align: top; }
+
+.head-img {
+  width: 2rem; }
+
+.desc {
+  color: #fd7c3d;
+  font-size: 1.5em;
+  text-align: center;
+  padding-top: .2rem; }
+
+.head-contaienr .right {
+  width: 50%;
+  display: inline-block;
+  padding: .2rem;
+  font-size: .26rem; }
+
+.info-list {
+  margin: .15rem 0;
+  font-size: 1.07em; }
+
+.name {
+  line-height: 1.5em;
+  height: 1.5em;
+  font-size: 1.5em;
+  vertical-align: middle;
+  margin-bottom: 0.7em; }
+  .name > img {
+    height: 1.5em;
+    display: inline-block;
+    position: relative;
+    left: 0.2em;
+    top: 0.4em; }
+
+.promotion {
+  color: #a5a5a5; }
+  .promotion > img {
+    height: 1.06em;
+    padding-right: 0.6em; }
+
+.margin {
+  margin-left: .2rem; }
+
+.group {
+  margin-top: .2rem;
+  background-color: #fff;
+  padding: 0 0 .2rem;
+  border-bottom: 1px solid #eaeaea; }
+  .group .group-title {
+    height: .7rem;
+    line-height: .7rem;
+    color: #a4a4a4;
+    padding: 0 .2rem 0;
+    border-bottom: 1px solid #eaeaea; }
+  .group .group-content {
+    padding: 0 .2rem 0; }
+
+.category {
+  padding: .2rem; }
+
+.pro-category {
+  padding: .2rem; }
+
+.checked-item {
+  background: url(../ysimg/checked.png) 0 center no-repeat;
+  padding: 0.1rem .1rem .1rem .5rem;
+  background-size: .4rem;
+  display: inline-block; }
+
+.unactive, .active {
+  display: inline-block;
+  width: .42rem;
+  height: .42rem;
+  border-radius: 3px;
+  vertical-align: middle;
+  text-align: center;
+  line-height: .42rem;
+  margin: .05rem .1rem; }
+
+.active {
+  background: #71c912;
+  color: #fff; }
+
+.unactive {
+  background: #e5e5e5;
+  color: #686868; }
+
+.title-left {
+  float: right;
+  padding-right: .2rem; }
+
+.comment-info {
+  line-height: 2em;
+  margin-top: .2rem;
+  border-bottom: 1px solid rgba(234, 234, 234, 0.54);
+  padding-bottom: .2rem; }
+
+.info-right {
+  float: right; }
+
+.order-info {
+  line-height: 1.4em;
+  color: #a5a5a5;
+  margin-top: .2rem;
+  border-bottom: 1px solid #eaeaea;
+  padding-bottom: .2rem; }
+
+.mr_frbox {
+  height: 270px;
+  padding: 24px 0px 0px; }
+
+.mr_frUl {
+  float: left;
+  height: 200px;
+  width: 80%;
+  margin-left: 2px; }
+
+.tempWrap {
+  overflow: hidden;
+  position: relative;
+  width: 80%;
+  height: 210px;
+  margin: 0 auto; }
+
+.mr_frUl ul li {
+  margin-left: -10px;
+  display: inline;
+  float: left;
+  /* height: 389px; */
+  width: 250px;
+  overflow: hidden;
+  position: relative; }
+
+.mr_frBtnR {
+  float: right;
+  margin-top: 80px;
+  cursor: pointer;
+  width: 28px;
+  height: 46px; }
+
+.mr_frBtnL {
+  cursor: pointer;
+  display: inline;
+  float: left;
+  height: 46px;
+  margin-top: 80px;
+  width: 28px; }
+
+.arrow {
+  padding: .2rem;
+  background-size: .3rem; }
+
+.down {
+  background: url(../ysimg/down.png) center center no-repeat;
+  background-size: .3rem; }
+
+.up {
+  background: url(../ysimg/up.png) center center no-repeat;
+  background-size: .3rem; }
+
+.c-title {
+  height: .7rem;
+  line-height: .7rem;
+  position: relative; }
+
+.c-title .flexbox-item {
+  text-align: center; }
+
+.c-prev {
+  position: absolute;
+  top: .2rem;
+  left: .2rem;
+  width: .18rem;
+  height: .18rem;
+  border-right: .04rem solid #b2b2b2;
+  border-top: .04rem solid #b2b2b2;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(-135deg); }
+
+.c-next {
+  position: absolute;
+  top: .2rem;
+  right: .2rem;
+  width: .18rem;
+  height: .18rem;
+  border-right: .04rem solid #b2b2b2;
+  border-top: .04rem solid #b2b2b2;
+  transform: rotate(45deg);
+  -webkit-transform: rotate(45deg);
+  position: absolute; }
+
+.c-body {
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-flex-flow: row wrap;
+  flex-flow: row wrap; }
+
+.c-body .active {
+  margin: .05rem .1rem; }
+
+.orange {
+  color: #fd864d; }
+
+.hide {
+  display: none; }
+
+.level {
+  display: inline-block;
+  width: 1.2rem;
+  height: .3rem;
+  border-radius: 11px;
+  background-color: #ffd900;
+  border: 1px solid #686868;
+  margin-left: .3rem;
+  padding: .05rem;
+  text-align: center;
+  font-size: .24rem; }
+
+.swiper-container {
+  height: 5em;
+  padding-top: 1.5em;
+  padding-bottom: 1.5em; }
+  .swiper-container img {
+    height: 100%; }
+
+.swiper-slide {
+  text-align: center; }
+
+.info-more {
+  margin-top: 1em;
+  width: 100%; }
+  .info-more .title {
+    padding: 0.3em;
+    padding-right: 2em;
+    text-align: right;
+    width: 50%; }
+  .info-more .detail {
+    width: 50%; }
+
+.slide-loading {
+  background-image: url('../ysimg/loader.gif') !important;
+}
+
+#swipebox-prev, 
+#swipebox-next,
+#swipebox-close {
+  background-image: url('../ysimg/icons.png') !important;
+}

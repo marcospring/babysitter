@@ -57,7 +57,7 @@ public abstract class UmengNotification {
 		appMasterSecret = secret;
 	}
 
-	public boolean send() throws Exception {
+	public String send() throws Exception {
 		String url = host + postPath;
 		String postBody = rootJson.toString();
 		String sign = DigestUtils
@@ -81,11 +81,11 @@ public abstract class UmengNotification {
 		}
 		System.out.println(result.toString());
 		if (status == 200) {
-			System.out.println("Notification sent successfully.");
+			result.append("Notification sent successfully.");
 		} else {
-			System.out.println("Failed to send the notification!");
+			result.append("Failed to send the notification!");
 		}
-		return true;
+		return result.toString();
 	}
 
 }

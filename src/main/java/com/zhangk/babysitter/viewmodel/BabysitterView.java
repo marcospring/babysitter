@@ -50,6 +50,7 @@ public class BabysitterView {
 	private String companyTelephone;
 	private String managerTelephone;
 	private long lastLevelScore;
+	private int isV;
 
 	private List<CredentialView> credentials;
 	private List<PromotionView> promotions;
@@ -102,6 +103,7 @@ public class BabysitterView {
 				.getManager().getTelephone());
 		setManagerName(babysitter.getManager() == null ? "无" : babysitter
 				.getManager().getName());
+		setIsV(babysitter.getIsV());
 		// setEvaluates(getEvaluate(babysitter.getEvaluates()));
 	}
 
@@ -476,6 +478,14 @@ public class BabysitterView {
 
 	public void setLastLevelScore(long lastLevelScore) {
 		this.lastLevelScore = lastLevelScore;
+	}
+
+	public int getIsV() {
+		return isV;
+	}
+
+	public void setIsV(int isV) {
+		this.isV = isV;
 	}
 
 }

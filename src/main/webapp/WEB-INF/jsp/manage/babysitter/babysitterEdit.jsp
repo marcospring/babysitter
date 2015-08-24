@@ -111,6 +111,35 @@
 					<td style="text-align:left;"><input name="nativePlace" type="text" placeholder="请输籍贯" class="easyui-validatebox span2" value="${vo.nativePlace}"></td>
 				</tr>
 				<tr>
+					<td style="text-align:right;">身高</td>
+					<td style="text-align:left;"><input name="height" type="text" placeholder="身高" class="easyui-validatebox span2" value="${vo.height}"></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">体重</td>
+					<td style="text-align:left;"><input name="weight" type="text" placeholder="体重" class="easyui-validatebox span2" value="${vo.weight}"></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">爱好</td>
+					<td style="text-align:left;"><input name="hobbies" type="text" placeholder="爱好" class="easyui-validatebox span2" value="${vo.hobbies}"></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">普通话</td>
+					<td style="text-align:left;"><input name="mandarin" type="text" placeholder="普通话" class="easyui-validatebox span2" value="${vo.mandarin}"></td>
+				</tr>
+				<tr>
+					<td style="text-align:right;">是否为V</td>
+					<td style="text-align:left;">
+						<c:if test="${vo.isV ==1 }">
+							<input type="radio" name="isV" value="1" checked="checked"/>是
+							<input type="radio" name="isV" value="0"/>否
+						</c:if>
+						<c:if test="${vo.isV ==0 }">
+							<input type="radio" name="isV" value="1" />是
+							<input type="radio" name="isV" value="0" checked="checked"/>否
+						</c:if>
+					</td>
+				</tr>
+				<tr>
 					<td style="text-align:right;">简介</td>
 					<td style="text-align:left;"><textarea name="introduce"  placeholder="请输简介" class="easyui-validatebox" >${vo.introduce}</textarea></td>
 				</tr>

@@ -93,7 +93,8 @@ public interface BabysitterService {
 	ResultInfo manageUpdateBabysitter(String id, String name, String password,
 			String identificationNo, long lowerSalary, String mobilePhone,
 			long countyId, long levelId, String birthday, String nativePlace,
-			String introduce);
+			String introduce, String height, String weight, String hobbies,
+			String mandarin, String isV);
 
 	PageResult orderScore(PageResult result, String countyGuid);
 
@@ -104,4 +105,9 @@ public interface BabysitterService {
 
 	PageResult addCredential(HttpServletRequest request, String babysitterGuid,
 			String credentialGuid, PageResult result);
+
+	PageResult search(String countyGuid, String expectedDate, String level,
+			PageResult result);
+
+	PageResult nameSearch(String name, PageResult result);
 }

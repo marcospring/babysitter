@@ -162,10 +162,29 @@ public class BabysitterServiceImpl implements BabysitterService {
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
 		if (babysitter == null)
 			return null;
+		// 去掉新建订单
+		List<BabysitterOrder> resultOrders = new ArrayList<BabysitterOrder>();
+		List<BabysitterOrder> orders = babysitter.getOrders();
+		for (BabysitterOrder babysitterOrder : orders) {
+			if (babysitterOrder.getState() != Constants.NEW_ORDER) {
+				resultOrders.add(babysitterOrder);
+			}
+		}
+		babysitter.setOrders(resultOrders);
+		// 证件中去掉相册
+		List<BabysitterCredential> resultCredentials = new ArrayList<BabysitterCredential>();
+		List<BabysitterCredential> credentials = babysitter.getCredentials();
+		for (BabysitterCredential babysitterCredential : credentials) {
+			if (!babysitterCredential.getCredential().getName().contains("相册")) {
+				resultCredentials.add(babysitterCredential);
+			}
+		}
+		babysitter.setCredentials(resultCredentials);
 		BabysitterView view = babysitter.view();
 		view.setOrderCountIndex(getOrderCountIndex(view.getId()));
 		view.setScoreIndex(getScoreCountIndex(view.getScore()));
 		view.setLastLevelScore(getLastLevelScore(babysitter));
+
 		return view;
 	}
 
@@ -327,7 +346,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		// if (DBcode != null && verifyCode.equals(DBcode.getCode())) {
 		// DBcode.setOvld(false);
 		// dao.update(DBcode);
-		String hql = "from Babysitter b where b.ovld = true and telephone = ?";
+		String hql = "from Babysitter b where b.ovld = true and mobilePhone = ?";
 		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql,
 				telephone);
 		if (babysitter == null) {
@@ -433,27 +452,39 @@ public class BabysitterServiceImpl implements BabysitterService {
 		UploadFileUtils fileUtil = UploadFileUtils.newInstance();
 		fileUtil.setRequest(request);
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
-		if (babysitter != null) {
-			List<MultipartFile> files = fileUtil.getFiles();
-			List<BabysitterImageView> images = new ArrayList<BabysitterImageView>();
-			if (files != null && files.size() > 0) {
-				for (MultipartFile file : files) {
-					BabysitterImage image = BabysitterImage.getInstance();
-					String url = fileUtil.getFileUrl(file, Constants.URL_LIFE,
-							image.getGuid());
-					image.setBabysitter(babysitter);
-					image.setUrl(url);
-					dao.add(image);
-					images.add(image.view());
-				}
-			} else {
-				res.setResult(ResultInfo.FILE_NULL);
-				return res;
+		if (babysitter == null) {
+			res.setResult(ResultInfo.BABYSITTER_NULL);
+			return res;
+		}
+		Credential credential = dao.getResultByGUID(Credential.class, cardGuid);
+		if (credential == null) {
+			res.setResult(ResultInfo.CREDENTIAL_NULL);
+			return res;
+		}
+		List<MultipartFile> files = fileUtil.getFiles();
+		List<BabysitterImageView> images = new ArrayList<BabysitterImageView>();
+		if (files != null && files.size() > 0) {
+			MultipartFile file = files.get(0);
+			BabysitterImage image = BabysitterImage.getInstance();
+			String url = fileUtil.getFileUrl(file, Constants.URL_LIFE,
+					image.getGuid());
+			image.setBabysitter(babysitter);
+			image.setUrl(url);
+			dao.add(image);
+			images.add(image.view());
+		} else {
+			res.setResult(ResultInfo.FILE_NULL);
+			return res;
+		}
+		boolean flag = false;
+		List<BabysitterCredential> credentials = babysitter.getCredentials();
+		for (BabysitterCredential babysitterCredential : credentials) {
+			if (babysitterCredential.getCredential().getGuid()
+					.equals(credential.getGuid())) {
+				flag = !flag;
 			}
-			Credential credential = dao.getResultByGUID(Credential.class,
-					cardGuid);
-			if (credential == null)
-				res.setResult(ResultInfo.CREDENTIAL_NULL);
+		}
+		if (!flag) {
 			BabysitterCredential babysitterCredential = BabysitterCredential
 					.getInstance();
 			babysitterCredential.setBabysitter(babysitter);
@@ -464,27 +495,25 @@ public class BabysitterServiceImpl implements BabysitterService {
 			score += credential.getScore();
 			babysitter.setCredentialScore(score);
 			dao.update(babysitter);
-			// 更新相册信息
-			// List<BabysitterCredential> credentials = babysitter
-			// .getCredentials();
-			// for (BabysitterCredential credential : credentials) {
-			// if (Constants.LIFE_IMAGE_GUID.equals(credential.getCredential()
-			// .getGuid())
-			// && credential.getIscheck() == Constants.NO_PASS) {
-			// credential.setIscheck(Constants.PASS);
-			// dao.update(credential);
-			// break;
-			// }
-			// }
-			Map<String, Object> result = new HashMap<String, Object>();
-			result.put("images", images);
-			result.put("domain", Constants.IMG_DOMAIN);
-			res.setResult(ResultInfo.SUCCESS);
-			res.put("result", result);
-		} else {
-			res.setResult(ResultInfo.BABYSITTER_NULL);
-			return res;
 		}
+		// 更新相册信息
+		// List<BabysitterCredential> credentials = babysitter
+		// .getCredentials();
+		// for (BabysitterCredential credential : credentials) {
+		// if (Constants.LIFE_IMAGE_GUID.equals(credential.getCredential()
+		// .getGuid())
+		// && credential.getIscheck() == Constants.NO_PASS) {
+		// credential.setIscheck(Constants.PASS);
+		// dao.update(credential);
+		// break;
+		// }
+		// }
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("images", images);
+		result.put("domain", Constants.IMG_DOMAIN);
+		res.setResult(ResultInfo.SUCCESS);
+		res.put("result", result);
+
 		return res;
 	}
 
@@ -612,7 +641,8 @@ public class BabysitterServiceImpl implements BabysitterService {
 	public ResultInfo manageUpdateBabysitter(String id, String name,
 			String password, String identificationNo, long lowerSalary,
 			String mobilePhone, long countyId, long levelId, String birthday,
-			String nativePlace, String introduce) {
+			String nativePlace, String introduce, String height, String weight,
+			String hobbies, String mandarin, String isV) {
 		long idl = Long.valueOf(id);
 		Babysitter babysitter = dao.getResultById(Babysitter.class, idl);
 		if (babysitter == null)
@@ -637,6 +667,16 @@ public class BabysitterServiceImpl implements BabysitterService {
 		}
 		if (!StringUtils.isEmpty(nativePlace))
 			babysitter.setNativePlace(nativePlace);
+		if (!StringUtils.isEmpty(height))
+			babysitter.setHeight(height);
+		if (!StringUtils.isEmpty(weight))
+			babysitter.setWeight(weight);
+		if (!StringUtils.isEmpty(hobbies))
+			babysitter.setHobbies(hobbies);
+		if (!StringUtils.isEmpty(mandarin))
+			babysitter.setMandarin(mandarin);
+		if (!StringUtils.isEmpty(isV))
+			babysitter.setIsV(Integer.valueOf(isV));
 		if (!StringUtils.isEmpty(introduce))
 			babysitter.setIntroduce(introduce);
 		if (countyId != 0) {
@@ -679,6 +719,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			m.put("name", view.getName());
 			m.put("cardNo", view.getCardNo());
 			m.put("orderCount", count);
+			m.put("level", view.getLevel());
 			m.put("index", index);
 			resultList.add(m);
 			index++;
@@ -708,6 +749,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			m.put("name", view.getName());
 			m.put("cardNo", view.getCardNo());
 			m.put("score", view.getScore());
+			m.put("level", view.getLevel());
 			m.put("index", index);
 			resultList.add(m);
 			index++;
@@ -823,6 +865,38 @@ public class BabysitterServiceImpl implements BabysitterService {
 			return result;
 		}
 
+		return result;
+	}
+
+	public PageResult search(String countyGuid, String expectedDate,
+			String level, PageResult result) {
+		String hql = "from Babysitter b where b.county.guid=? and b.level.guid=?";
+		List<Babysitter> list = dao.getListResultByHQL(Babysitter.class, hql,
+				countyGuid, level);
+		List<BabysitterView> viewList = new ArrayList<BabysitterView>();
+		Map<String, Date> dates = ExpectedDateCreate
+				.getExpectedDate(expectedDate);
+		for (Babysitter babysitter : list) {
+			if (ExpectedDateCreate.checkBabysitterOrder(babysitter, dates)) {
+				viewList.add(babysitter.view());
+			}
+		}
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", viewList);
+		return result;
+	}
+
+	public PageResult nameSearch(String name, PageResult result) {
+		String hql = "from Babysitter b where b.name like ?";
+		List<Babysitter> list = dao.getListResultByHQL(Babysitter.class, hql,
+				"%" + name + "%");
+		List<BabysitterView> viewList = new ArrayList<BabysitterView>();
+
+		for (Babysitter babysitter : list) {
+			viewList.add(babysitter.view());
+		}
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", viewList);
 		return result;
 	}
 }

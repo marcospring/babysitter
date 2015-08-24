@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="zh-Hans-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <title>排行榜</title>
+    <link rel="stylesheet" type="text/css" href="css/webapp.css">
+    <script type="text/javascript" src="static/js/jquery-1.8.3.js"></script>
+    <style>
+    	.top_banner{ position:relative;}
+		.top_banner img{ width:100%;}
+		.top_tit{ position:absolute; bottom:0; height:3.5rem; color:#f5f5f5; background:rgba(0, 0, 0, 0.2)
+		; width:100%; padding-top:.5rem; line-height:1.65rem; text-indent:.25rem;}
+		.top_tit i{ display:block; padding-left:.85rem;}
+		.top_tit :first-child{ font-size:1.25rem;}
+		.mainbox{ position:relative; border-bottom:1px solid #eaeaea; height:auto; overflow:hidden; padding:1.77rem 0 .6rem 0; background:#fff;}
+		.mainbox em{ display:inline-block; float:left;}
+		.mainbox dl{ line-height:1.85rem; font-size:1.05rem;}
+		.mainbox dl dt{ padding-top:.3rem;}
+		.mainbox .mbox_t1{ padding:.75rem;}
+		.mainbox .mbox_t2{ position:absolute; top:.8rem; left:3.2rem;}
+		.mainbox .mbox_t2 img{ width:2.6rem;}
+		.mainbox .mbox_t3{ float:left; padding-right:.8rem;}
+		.mainbox .mbox_t3 img{ width:4.6rem; height:4.6rem;-webkit-border-radius:50%;border-radius:50%;}
+		.mainbox :nth-child(2){ color:#fd7c3d;} 
+		.mainbox .mbox_t4{ position:absolute; right:.5rem; top:1.5rem;}
+		.mainbox .mbox_t4 img{ width:4.65rem;}
+		.mainbox:nth-child(1){ color:#fd7c3d;}
+		.mainbox:nth-child(2){ color:#fd7c3d;}
+		.mainbox:nth-child(3){ color:#fd7c3d;}
+		.mainbox dl dt,.mainbox dl dd{ color:#626262;}
+    </style>
+</head>
+<body>
+<div class="top_banner">
+	<img src="images/top_bg.png"/>
+    <div class="top_tit">
+    	<i>月嫂之星</i>
+        <i> 积分排行榜</i>
+    </div>
+</div>
+<div class="top_main" id="container">
+
+</div>
+</body>
+<script type="text/javascript">
+(function ($) {
+    $.getUrlParam = function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]); return null;
+    }
+})(jQuery);
+$(function(){
+	var countyGuid = $.getUrlParam('countyGuid');
+	$.ajax({
+		url:'http://www.babysitter.com/babysitter/mobile/babysitter/scoreSort.html',
+		data:{countyGuid:countyGuid},
+		dataType:'json',
+		success:function(data){
+			var inner = "";
+			if(data.code == 0){
+				for(var i=0;i<data.result.length;i++){
+					var el = data.result[i];
+					if(i==0){
+						inner +="<div class='mainbox'><dl><em class='mbox_t1'>"+el.index+".</em> <em class='mbox_t2'><img src='images/top_first.png'/></em><em class='mbox_t3'><img src='"+el.headUrl+"'/></em><dt>"+el.name+" <span> 编号"+el.cardNo+"</span></dt><dd>积分：<span>"+el.score+"分</span></dd> <em class='mbox_t4'>"+getLevelImage(el.level)+"</em></dl></div>";
+					}else if(i==1){
+						inner +="<div class='mainbox'><dl><em class='mbox_t1'>"+el.index+".</em> <em class='mbox_t2'><img src='images/top_second.png'/></em><em class='mbox_t3'><img src='"+el.headUrl+"'/></em><dt>"+el.name+" <span> 编号"+el.cardNo+"</span></dt><dd>积分：<span>"+el.score+"分</span></dd> <em class='mbox_t4'>"+getLevelImage(el.level)+"</em></dl></div>";
+					}else if(i==2){
+						inner +="<div class='mainbox'><dl><em class='mbox_t1'>"+el.index+".</em> <em class='mbox_t2'><img src='images/top_third.png'/></em><em class='mbox_t3'><img src='"+el.headUrl+"'/></em><dt>"+el.name+" <span> 编号"+el.cardNo+"</span></dt><dd>积分：<span>"+el.score+"分</span></dd> <em class='mbox_t4'>"+getLevelImage(el.level)+"</em></dl></div>";
+					}else{
+						inner +="<div class='mainbox'><dl><em class='mbox_t1'>"+el.index+".</em> <em class='mbox_t2'></em><em class='mbox_t3'><img src='"+el.headUrl+"'/></em><dt>"+el.name+" <span> 编号"+el.cardNo+"</span></dt><dd>积分：<span>"+el.score+"分</span></dd> <em class='mbox_t4'>"+getLevelImage(el.level)+"</em></dl></div>";
+					}
+				}
+				$("#container").html(inner);
+			}else{
+				alert("数据加载错误！");
+			}
+		}
+		
+	});
+	
+})
+function getLevelImage(s){
+	switch (s) {
+	case "初级月嫂": return "<img src='images/chuji.png'/>"; 
+	case "高级月嫂": return "<img src='images/gaoji.png'/>"; 
+	case "金牌月嫂": return "<img src='images/jinpai.png'/>"; 
+	case "皇冠月嫂": return "<img src='images/huangguan.png'/>"; 
+	case "中级月嫂": return "<img src='images/zhongji.png'/>"; 
+	case "特级月嫂": return "<img src='images/tej.pngi'/>"; 
+	case "钻石月嫂": return "<img src='images/zuanshi.png'/>"; 
+	default: return "";
+}
+	}
+</script>
+</html>

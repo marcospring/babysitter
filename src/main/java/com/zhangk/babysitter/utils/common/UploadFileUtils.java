@@ -30,6 +30,10 @@ public class UploadFileUtils {
 		return instance;
 	}
 
+	public MultipartHttpServletRequest getMultipartRequest() {
+		return (MultipartHttpServletRequest) request;
+	}
+
 	public List<MultipartFile> getFiles() {
 		List<MultipartFile> files = new ArrayList<MultipartFile>();
 		// 创建一个通用的多部分解析器

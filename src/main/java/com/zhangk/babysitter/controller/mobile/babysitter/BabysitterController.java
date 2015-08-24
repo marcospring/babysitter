@@ -194,8 +194,10 @@ public class BabysitterController extends BaseController {
 			return getResult(ResultInfo.INF_EMPTY);
 		Pagination<CompanyNoticeView> pa = noticeService.getPaginationNotice(
 				page, guid);
-		res.put("result", pa);
-		return res;
+		PageResult result = getResult();
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", pa);
+		return result;
 	}
 
 	@ResponseBody

@@ -26,7 +26,7 @@ public class SessionFilter extends OncePerRequestFilter {
 			throws ServletException, IOException {
 		String[] notFilter = new String[] { "login", "dataProvider", "error",
 				"mobile", "file", "wechat", "about", "grade", "orderSort",
-				"studyCenter", "userTerms" };
+				"studyCenter", "userTerms", "website" };
 		String uri = request.getRequestURI();
 		boolean doFilter = true;
 		for (String s : notFilter) {

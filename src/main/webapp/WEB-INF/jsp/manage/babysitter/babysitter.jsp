@@ -13,7 +13,7 @@
 						{
 							url : '${pageContext.request.contextPath}/manage/babysitter/list.html',
 							fit : true,
-							fitColumns : true,
+							fitColumns : false,
 							border : false,
 							pagination : true,
 							idField : 'id',
@@ -30,6 +30,10 @@
 							}, {
 								field : 'cardNo',
 								title : '编码',
+								width : 70
+							}, {
+								field : 'guid',
+								title : 'GUID',
 								width : 70
 							} ] ],
 							columns : [ [ {
@@ -184,7 +188,7 @@
 				.modalDialog({
 					title : '编辑月嫂',
 					width : 350,
-					height : 450,
+					height : 650,
 					href : '${pageContext.request.contextPath}/manage/babysitter/goEdit.html?id='
 							+ id,
 					buttons : [ {
@@ -203,7 +207,7 @@
 				.modalDialog({
 					title : '添加月嫂',
 					width : 350,
-					height : 450,
+					height : 650,
 					href : '${pageContext.request.contextPath}/manage/babysitter/goAdd.html',
 					buttons : [ {
 						text : '添加',

@@ -10,7 +10,8 @@ public interface NoticeService {
 
 	PageResult getNONReadNoticeCount(String guid, PageResult res);
 
-	Pagination<CompanyNoticeView> getPaginationNotice(Pagination<CompanyNotice> page, String guid);
+	Pagination<CompanyNoticeView> getPaginationNotice(
+			Pagination<CompanyNotice> page, String guid);
 
 	PageResult readedNotice(String noticeGuid, PageResult res);
 
@@ -18,5 +19,6 @@ public interface NoticeService {
 
 	ResultInfo addNotices(String title, String memo, String ids);
 
-	Pagination<CompanyNoticeView> getManageNotices(Pagination<CompanyNotice> notices, String name);
+	Pagination<CompanyNoticeView> getManageNotices(
+			Pagination<CompanyNotice> notices, String name);
 }

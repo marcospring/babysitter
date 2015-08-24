@@ -1,5 +1,7 @@
 package com.zhangk.babysitter.service.common.impl;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +22,16 @@ public class CheckCodeServiceImpl implements CheckCodeService {
 	@Transactional
 	public CheckCode addCheckCode(String telephone, int type) {
 		String hql = "from CheckCode t where t.ovld = true and mobilePhone=? and type=?";
-		CheckCode DBcode = dao.getSingleResultByHQL(CheckCode.class, hql,
+		List<CheckCode> codes = dao.getListResultByHQL(CheckCode.class, hql,
 				telephone, type);
-		if (DBcode != null) {
-			DBcode.setOvld(false);
-			dao.update(DBcode);
+		for (CheckCode checkCode : codes) {
+			if (checkCode != null) {
+				checkCode.setOvld(false);
+				dao.update(checkCode);
+			}
 		}
 		String code = CheckCodeUtil.code();
-		DBcode = CheckCode.getInstance();
+		CheckCode DBcode = CheckCode.getInstance();
 		DBcode.setMobilePhone(telephone);
 		DBcode.setType(type);
 		DBcode.setCode(code);

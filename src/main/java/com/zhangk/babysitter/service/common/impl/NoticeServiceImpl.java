@@ -1,8 +1,11 @@
 package com.zhangk.babysitter.service.common.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -14,6 +17,7 @@ import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.CompanyNotice;
+import com.zhangk.babysitter.entity.PromotionInfo;
 import com.zhangk.babysitter.service.common.NoticeService;
 import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.Pagination;
@@ -78,7 +82,24 @@ public class NoticeServiceImpl implements NoticeService {
 		String hql = "select count(c.id) from CompanyNotice c where c.ovld = true and c.babysitter.guid = ? and c.state = ?";
 		Long count = dao.getSingleResultByHQL(Long.class, hql, guid,
 				Constants.NON_READ);
-		res.put("result", count == null ? 0 : count.longValue());
+		String promotionHql = "from PromotionInfo c where c.ovld = true and c.isCheck=?";
+		List<PromotionInfo> list = dao.getListResultByHQL(PromotionInfo.class,
+				promotionHql, Constants.PASS);
+		long promoCount = 0;
+		Calendar c = Calendar.getInstance();
+		int now = c.get(Calendar.DAY_OF_MONTH);
+		for (PromotionInfo promotionInfo : list) {
+			c.setTime(promotionInfo.getCreateDate());
+			int day = c.get(Calendar.DAY_OF_MONTH);
+			if (now - day <= 7)
+				promoCount++;
+		}
+		Map<String, Long> result = new HashMap<String, Long>();
+		result.put("adviceCount", count == null ? 0 : count.longValue());
+		result.put("promotionCount", promoCount);
+		// 学习中心更新数量
+		result.put("studyCount", 0l);
+		res.put("result", result);
 		return res;
 	}
 

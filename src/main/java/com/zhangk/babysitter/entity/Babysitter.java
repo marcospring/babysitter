@@ -57,6 +57,7 @@ public class Babysitter implements Serializable {
 	private String weight;
 	private String hobbies;
 	private String mandarin;
+	private int isV;
 	private List<BabysitterCredential> credentials;
 	private List<PromotionInfo> promotions;
 	private List<BabysitterOrder> orders;
@@ -386,6 +387,14 @@ public class Babysitter implements Serializable {
 
 	public void setMandarin(String mandarin) {
 		this.mandarin = mandarin;
+	}
+
+	public int getIsV() {
+		return isV;
+	}
+
+	public void setIsV(int isV) {
+		this.isV = isV;
 	}
 
 	public static Babysitter getInstance() {

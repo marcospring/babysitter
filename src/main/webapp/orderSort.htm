@@ -6,6 +6,7 @@
     <meta name="format-detection" content="telephone=no">
     <title>排行榜</title>
     <link rel="stylesheet" type="text/css" href="css/webapp.css">
+    <script type="text/javascript" src="static/js/jquery-1.8.3.js"></script>
     <style>
     	.top_banner{ position:relative;}
 		.top_banner img{ width:100%;}
@@ -39,57 +40,59 @@
         <i> 接单排行榜</i>
     </div>
 </div>
-<div class="top_main">
-	<div class="mainbox">
-    	<dl>
-        	<em class="mbox_t1">1.</em>
-            <em class="mbox_t2"><img src="images/top_first.png"/></em>
-        	<em class="mbox_t3"><img src="images/top_img.png"/></em>
-        	<dt>王书恩 <span> 编号BJ0001</span></dt>
-            <dd>接单数：<span>10单</span></dd>
-            <em class="mbox_t4"><img src="images/top_1.png"/></em>
-        </dl>
-    </div>
-    <div class="mainbox">
-    	<dl>
-        	<em class="mbox_t1">2.</em>
-            <em class="mbox_t2"><img src="images/top_second.png"/></em>
-        	<em class="mbox_t3"><img src="images/top_img2.png"/></em>
-        	<dt>王书恩 <span> 编号BJ0001</span></dt>
-            <dd>接单数：<span>10单</span></dd>
-            <em class="mbox_t4"><img src="images/top_2.png"/></em>
-        </dl>
-    </div>
-    <div class="mainbox">
-    	<dl>
-        	<em class="mbox_t1">3.</em>
-            <em class="mbox_t2"><img src="images/top_third.png"/></em>
-        	<em class="mbox_t3"><img src="images/top_img2.png"/></em>
-        	<dt>王书恩 <span> 编号BJ0001</span></dt>
-            <dd>接单数：<span>8单</span></dd>
-            <em class="mbox_t4"><img src="images/top_3.png"/></em>
-        </dl>
-    </div>
-    <div class="mainbox">
-    	<dl>
-        	<em class="mbox_t1">4.</em>
-            <em class="mbox_t2"></em>
-        	<em class="mbox_t3"><img src="images/top_img2.png"/></em>
-        	<dt>王书恩 <span> 编号BJ0001</span></dt>
-            <dd>接单数：<span>8单</span></dd>
-            <em class="mbox_t4"><img src="images/top_3.png"/></em>
-        </dl>
-    </div>
-    <div class="mainbox">
-    	<dl>
-        	<em class="mbox_t1">5.</em>
-            <em class="mbox_t2"></em>
-        	<em class="mbox_t3"><img src="images/top_img2.png"/></em>
-        	<dt>王书恩 <span> 编号BJ0001</span></dt>
-            <dd>接单数：<span>9单</span></dd>
-            <em class="mbox_t4"><img src="images/top_3.png"/></em>
-        </dl>
-    </div>
+<div class="top_main" id="container">
+
 </div>
 </body>
+<script type="text/javascript">
+(function ($) {
+    $.getUrlParam = function (name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return unescape(r[2]); return null;
+    }
+})(jQuery);
+$(function(){
+	var countyGuid = $.getUrlParam('countyGuid');
+	$.ajax({
+		url:'http://www.babysitter.com/babysitter/mobile/babysitter/orderSort.html',
+		data:{countyGuid:countyGuid},
+		dataType:'json',
+		success:function(data){
+			var inner = "";
+			if(data.code == 0){
+				for(var i=0;i<data.result.length;i++){
+					var el = data.result[i];
+					if(i==0){
+						inner +="<div class='mainbox'><dl><em class='mbox_t1'>"+el.index+".</em> <em class='mbox_t2'><img src='images/top_first.png'/></em><em class='mbox_t3'><img src='"+el.headUrl+"'/></em><dt>"+el.name+" <span> 编号"+el.cardNo+"</span></dt><dd>接单数：<span>"+el.orderCount+"单</span></dd> <em class='mbox_t4'>"+getLevelImage(el.level)+"</em></dl></div>";
+					}else if(i==1){
+						inner +="<div class='mainbox'><dl><em class='mbox_t1'>"+el.index+".</em> <em class='mbox_t2'><img src='images/top_second.png'/></em><em class='mbox_t3'><img src='"+el.headUrl+"'/></em><dt>"+el.name+" <span> 编号"+el.cardNo+"</span></dt><dd>接单数：<span>"+el.orderCount+"单</span></dd> <em class='mbox_t4'>"+getLevelImage(el.level)+"</em></dl></div>";
+					}else if(i==2){
+						inner +="<div class='mainbox'><dl><em class='mbox_t1'>"+el.index+".</em> <em class='mbox_t2'><img src='images/top_third.png'/></em><em class='mbox_t3'><img src='"+el.headUrl+"'/></em><dt>"+el.name+" <span> 编号"+el.cardNo+"</span></dt><dd>接单数：<span>"+el.orderCount+"单</span></dd> <em class='mbox_t4'>"+getLevelImage(el.level)+"</em></dl></div>";
+					}else{
+						inner +="<div class='mainbox'><dl><em class='mbox_t1'>"+el.index+".</em> <em class='mbox_t2'></em><em class='mbox_t3'><img src='"+el.headUrl+"'/></em><dt>"+el.name+" <span> 编号"+el.cardNo+"</span></dt><dd>接单数：<span>"+el.orderCount+"单</span></dd> <em class='mbox_t4'>"+getLevelImage(el.level)+"</em></dl></div>";
+					}
+				}
+				$("#container").html(inner);
+			}else{
+				alert("数据加载错误！");
+			}
+		}
+		
+	});
+	
+})
+function getLevelImage(s){
+	switch (s) {
+	case "初级月嫂": return "<img src='images/chuji.png'/>"; 
+	case "高级月嫂": return "<img src='images/gaoji.png'/>"; 
+	case "金牌月嫂": return "<img src='images/jinpai.png'/>"; 
+	case "皇冠月嫂": return "<img src='images/huangguan.png'/>"; 
+	case "中级月嫂": return "<img src='images/zhongji.png'/>"; 
+	case "特级月嫂": return "<img src='images/tej.pngi'/>"; 
+	case "钻石月嫂": return "<img src='images/zuanshi.png'/>"; 
+	default: return "";
+}
+	}
+</script>
 </html>

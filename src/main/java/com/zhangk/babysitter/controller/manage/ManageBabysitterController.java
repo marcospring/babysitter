@@ -31,9 +31,14 @@ public class ManageBabysitterController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/list")
-	public Object list(HttpServletRequest request, int page, int rows, String countyId, String name, String levelid, String telephone, String cardNo) {
-		Pagination<Babysitter> babysitters = new Pagination<Babysitter>(page, rows);
-		Pagination<BabysitterView> views = babysitterService.getManageBabysitters(babysitters, countyId, name, levelid, telephone, cardNo);
+	public Object list(HttpServletRequest request, int page, int rows,
+			String countyId, String name, String levelid, String telephone,
+			String cardNo) {
+		Pagination<Babysitter> babysitters = new Pagination<Babysitter>(page,
+				rows);
+		Pagination<BabysitterView> views = babysitterService
+				.getManageBabysitters(babysitters, countyId, name, levelid,
+						telephone, cardNo);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("rows", views.getResult());
 		result.put("total", views.getResultSize());
@@ -48,11 +53,16 @@ public class ManageBabysitterController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/add")
-	public Object add(String name, String password, String identificationNo, long lowerSalary, String mobilePhone, long countyId, long levelId, String birthday,
-			String nativePlace, String introduce) {
-		ResultInfo result = babysitterService.manageAddBabysitter(name, password, identificationNo, lowerSalary, mobilePhone, countyId, levelId, birthday, nativePlace, introduce);
+	public Object add(String name, String password, String identificationNo,
+			long lowerSalary, String mobilePhone, long countyId, long levelId,
+			String birthday, String nativePlace, String introduce) {
+		ResultInfo result = babysitterService.manageAddBabysitter(name,
+				password, identificationNo, lowerSalary, mobilePhone, countyId,
+				levelId, birthday, nativePlace, introduce);
 		if (result == ResultInfo.BABYSITTER_NOT_NULL)
-			return MyResponse.errorResponse(ResultInfo.BABYSITTER_NOT_NULL.getCode(), ResultInfo.BABYSITTER_NOT_NULL.getMsg());
+			return MyResponse.errorResponse(
+					ResultInfo.BABYSITTER_NOT_NULL.getCode(),
+					ResultInfo.BABYSITTER_NOT_NULL.getMsg());
 		return MyResponse.successResponse();
 	}
 
@@ -65,12 +75,19 @@ public class ManageBabysitterController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/edit")
-	public Object update(String id, String name, String password, String identificationNo, long lowerSalary, String mobilePhone, long countyId, long levelId, String birthday,
-			String nativePlace, String introduce) {
-		ResultInfo result = babysitterService.manageUpdateBabysitter(id, name, password, identificationNo, lowerSalary, mobilePhone, countyId, levelId, birthday, nativePlace,
-				introduce);
+	public Object update(String id, String name, String password,
+			String identificationNo, long lowerSalary, String mobilePhone,
+			long countyId, long levelId, String birthday, String nativePlace,
+			String introduce, String height, String weight, String hobbies,
+			String mandarin, String isV) {
+		ResultInfo result = babysitterService.manageUpdateBabysitter(id, name,
+				password, identificationNo, lowerSalary, mobilePhone, countyId,
+				levelId, birthday, nativePlace, introduce, height, weight,
+				hobbies, mandarin, isV);
 		if (result == ResultInfo.BABYSITTER_NULL)
-			return MyResponse.errorResponse(ResultInfo.BABYSITTER_NULL.getCode(), ResultInfo.BABYSITTER_NULL.getMsg());
+			return MyResponse.errorResponse(
+					ResultInfo.BABYSITTER_NULL.getCode(),
+					ResultInfo.BABYSITTER_NULL.getMsg());
 		return MyResponse.successResponse();
 	}
 
@@ -90,10 +107,14 @@ public class ManageBabysitterController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/addBankInfo")
-	public Object addBankInfo(long id, String bankName, String bankCardNo, String bankUserName) {
-		ResultInfo result = babysitterService.addBankInfo(id, bankName, bankCardNo, bankUserName);
+	public Object addBankInfo(long id, String bankName, String bankCardNo,
+			String bankUserName) {
+		ResultInfo result = babysitterService.addBankInfo(id, bankName,
+				bankCardNo, bankUserName);
 		if (result == ResultInfo.BABYSITTER_NULL)
-			return MyResponse.errorResponse(ResultInfo.BABYSITTER_NULL.getCode(), ResultInfo.BABYSITTER_NULL.getMsg());
+			return MyResponse.errorResponse(
+					ResultInfo.BABYSITTER_NULL.getCode(),
+					ResultInfo.BABYSITTER_NULL.getMsg());
 		return MyResponse.successResponse();
 	}
 }
