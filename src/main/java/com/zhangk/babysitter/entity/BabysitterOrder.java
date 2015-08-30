@@ -34,6 +34,9 @@ public class BabysitterOrder implements Serializable {
 	private long orderPrice;
 	private Babysitter babysitter;
 	private Employer employer;
+	private String employerName;
+	private String employerAddress;
+	private String employerTelephone;
 	private String evaluation;
 	private int score;
 
@@ -157,6 +160,30 @@ public class BabysitterOrder implements Serializable {
 
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
+	}
+
+	public String getEmployerName() {
+		return employerName;
+	}
+
+	public void setEmployerName(String employerName) {
+		this.employerName = employerName;
+	}
+
+	public String getEmployerAddress() {
+		return employerAddress;
+	}
+
+	public void setEmployerAddress(String employerAddress) {
+		this.employerAddress = employerAddress;
+	}
+
+	public String getEmployerTelephone() {
+		return employerTelephone;
+	}
+
+	public void setEmployerTelephone(String employerTelephone) {
+		this.employerTelephone = employerTelephone;
 	}
 
 	public static BabysitterOrder getInstance() {

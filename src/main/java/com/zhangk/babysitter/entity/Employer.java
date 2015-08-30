@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.EmployerView;
 
 @Entity
 @Table(name = "babysitter_employer")
@@ -144,6 +145,10 @@ public class Employer implements Serializable {
 
 	public void setBabysitterOrders(List<BabysitterOrder> babysitterOrders) {
 		this.babysitterOrders = babysitterOrders;
+	}
+
+	public EmployerView view() {
+		return new EmployerView(this);
 	}
 
 	public static Employer getInstance() {

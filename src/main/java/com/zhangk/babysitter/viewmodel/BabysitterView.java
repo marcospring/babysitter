@@ -225,7 +225,7 @@ public class BabysitterView {
 
 	public String getHeadUrl() {
 		return StringUtils.isEmpty(headUrl) ? "" : Constants.IMG_DOMAIN
-				+ headUrl;
+				+ headUrl + "?stamp=" + new Date().getTime();
 	}
 
 	public void setHeadUrl(String headUrl) {

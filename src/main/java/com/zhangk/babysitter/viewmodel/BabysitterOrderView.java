@@ -8,6 +8,7 @@ import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.utils.mapper.JsonDateSerializer;
 
 public class BabysitterOrderView {
+	private long id;
 	private String guid;
 	private Date beginDate;
 	private Date endDate;
@@ -19,24 +20,26 @@ public class BabysitterOrderView {
 	private String telephone;
 	private String evaluation;
 	private int score;
+	private String babysitterName;
 
 	public BabysitterOrderView() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public BabysitterOrderView(BabysitterOrder order) {
+		setId(order.getId());
 		setGuid(order.getGuid());
 		setBeginDate(order.getServiceBeginDate());
 		setEndDate(order.getServiceEndDate());
 		setPrice(String.valueOf(order.getOrderPrice()));
-		setEmployerName(order.getEmployer().getUsername());
+		setEmployerName(order.getEmployerName());
 		setState(order.getState());
-		setAddress(order.getEmployer().getAddress());
-		setTelephone(order.getEmployer().getMobilePhone());
+		setAddress(order.getEmployerAddress());
+		setTelephone(order.getEmployerTelephone());
 		setEvaluation(order.getEvaluation());
 		setScore(order.getScore());
 		setOrderId(order.getOrderId());
-
+		setBabysitterName(order.getBabysitter().getName());
 	}
 
 	public String getGuid() {
@@ -127,6 +130,22 @@ public class BabysitterOrderView {
 
 	public void setOrderId(String orderId) {
 		this.orderId = orderId;
+	}
+
+	public long getId() {
+		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public String getBabysitterName() {
+		return babysitterName;
+	}
+
+	public void setBabysitterName(String babysitterName) {
+		this.babysitterName = babysitterName;
 	}
 
 }

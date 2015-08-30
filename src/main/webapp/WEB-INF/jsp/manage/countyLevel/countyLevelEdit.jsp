@@ -71,7 +71,6 @@
 				</tr>
 				
 				
-				</tr>
 				
 			</table>
 		</form>

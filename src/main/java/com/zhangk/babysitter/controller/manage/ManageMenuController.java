@@ -37,6 +37,19 @@ public class ManageMenuController extends BaseController {
 		return views;
 	}
 
+	@ResponseBody
+	@RequestMapping("/comboList")
+	public Object comboList() {
+		List<Menu> menus = menuService.menuList();
+		List<MenuView> views = new ArrayList<MenuView>();
+		for (Menu menu : menus) {
+			if (menu.getParent() == null) {
+				views.add(menu.view());
+			}
+		}
+		return views;
+	}
+
 	@RequestMapping("/goAdd")
 	public Object goAdd() {
 		return "manage/menu/menuEdit";

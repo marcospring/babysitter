@@ -3,7 +3,7 @@
 	$(function() {
 		
 		$('#pid').combotree({
-			url : '${pageContext.request.contextPath}/manage/menu/list.html',
+			url : '${pageContext.request.contextPath}/manage/menu/comboList.html',
 			parentField : 'parent.id',
 			value : '${vo.parent.id}',
 			onLoadSuccess : function() {

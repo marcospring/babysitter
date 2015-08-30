@@ -104,7 +104,7 @@
 				</tr>
 				<tr>
 					<td style="text-align:right;">生日</td>
-					<td style="text-align:left;"><input name="birthday" id="birthday" type="text" placeholder="请输电话号码" value="${vo.birthday}"></td>
+					<td style="text-align:left;"><input name="birthday" id="birthday" type="text"  value="${vo.birthday}"></td>
 				</tr>
 				<tr>
 					<td style="text-align:right;">籍贯</td>
@@ -141,7 +141,7 @@
 				</tr>
 				<tr>
 					<td style="text-align:right;">简介</td>
-					<td style="text-align:left;"><textarea name="introduce"  placeholder="请输简介" class="easyui-validatebox" >${vo.introduce}</textarea></td>
+					<td style="text-align:left;"><textarea name="introduce" class="easyui-validatebox" >${vo.introduce}</textarea></td>
 				</tr>
 				
 			</table>

@@ -11,6 +11,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.zhangk.babysitter.utils.common.Constants;
+import com.zhangk.babysitter.utils.common.GUIDCreator;
+
 @Entity
 @Table(name = "babysitter_company")
 public class Company implements Serializable {
@@ -23,6 +26,7 @@ public class Company implements Serializable {
 	private boolean ovld;
 	private Date createDate;
 	private Date updateDate;
+	private int state;
 	private int type;
 	private String imageUrl;
 	private County county;
@@ -131,4 +135,21 @@ public class Company implements Serializable {
 		this.address = address;
 	}
 
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
+	public static Company getInstance() {
+		Company o = new Company();
+		o.setOvld(true);
+		o.setGuid(GUIDCreator.GUID());
+		o.setCreateDate(new Date());
+		o.setUpdateDate(new Date());
+		o.setState(Constants.NO_PASS);
+		return o;
+	}
 }

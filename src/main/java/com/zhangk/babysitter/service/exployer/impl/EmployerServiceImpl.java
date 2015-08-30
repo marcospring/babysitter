@@ -9,6 +9,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Babysitter;
@@ -19,6 +20,7 @@ import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
+import com.zhangk.babysitter.viewmodel.EmployerView;
 
 @Service
 public class EmployerServiceImpl implements EmployerService {
@@ -130,5 +132,47 @@ public class EmployerServiceImpl implements EmployerService {
 			}
 		}
 		return result;
+	}
+
+	public Pagination<EmployerView> getPageEmployerListForOrder(
+			Pagination<Employer> page, String employerName,
+			String employerTelephone) {
+		List<Object> params = new ArrayList<Object>();
+		StringBuffer hql = new StringBuffer(
+				"from Employer r where ovld = true ");
+		if (!StringUtils.isEmpty(employerTelephone)) {
+			hql.append(" and r.mobilePhone = ? ");
+			params.add(employerTelephone);
+		}
+		if (!StringUtils.isEmpty(employerName)) {
+			hql.append(" and r.username like ? ");
+			params.add("%" + employerName + "%");
+		}
+
+		StringBuffer countHql = new StringBuffer(" select count(r.id) ");
+		countHql.append(hql);
+		Object[] objParams = new Object[params.size()];
+		for (int i = 0; i < objParams.length; i++) {
+			objParams[i] = params.get(i);
+		}
+		Pagination<Employer> p = dao
+				.getPageResultObjectParams(Employer.class, hql.toString(),
+						page.getPageNo(), page.getPageSize(), objParams);
+		List<Employer> list = p.getResult();
+		List<EmployerView> viewList = new ArrayList<EmployerView>();
+		for (Employer order : list) {
+			viewList.add(order.view());
+		}
+
+		Pagination<EmployerView> pa = new Pagination<EmployerView>(viewList,
+				p.getPageNo(), p.getPageSize());
+		Long count = dao.getSingleResultByHQLObjectParams(Long.class,
+				countHql.toString(), objParams);
+		pa.setResultSize(count);
+		return pa;
+	}
+
+	public Employer getEmployer(String guid) {
+		return dao.getResultByGUID(Employer.class, guid);
 	}
 }

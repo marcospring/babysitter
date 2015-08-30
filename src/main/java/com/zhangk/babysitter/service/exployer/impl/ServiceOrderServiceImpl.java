@@ -1,5 +1,6 @@
 package com.zhangk.babysitter.service.exployer.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,9 @@ import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.service.exployer.ServiceOrderService;
 import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
+import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
+import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
 @Service
 public class ServiceOrderServiceImpl implements ServiceOrderService {
@@ -120,5 +123,124 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		List<ServiceOrder> orders = dao.getListResultByHQL(ServiceOrder.class,
 				hql, mobile);
 		return orders;
+	}
+
+	public Pagination<ServiceOrderView> manageOrderList(
+			Pagination<ServiceOrder> page, String exployerName, String telephone) {
+		List<Object> params = new ArrayList<Object>();
+		StringBuffer hql = new StringBuffer(
+				"from ServiceOrder r where ovld = true ");
+		if (!StringUtils.isEmpty(telephone)) {
+			hql.append(" and r.mobilePhone = ? ");
+			params.add(telephone);
+		}
+		if (!StringUtils.isEmpty(exployerName)) {
+			hql.append(" and r.employer.username like ? ");
+			params.add("%" + exployerName + "%");
+		}
+
+		StringBuffer countHql = new StringBuffer(" select count(r.id) ");
+		countHql.append(hql);
+		Object[] objParams = new Object[params.size()];
+		for (int i = 0; i < objParams.length; i++) {
+			objParams[i] = params.get(i);
+		}
+		Pagination<ServiceOrder> p = dao.getPageResultObjectParams(
+				ServiceOrder.class, hql.toString(), page.getPageNo(),
+				page.getPageSize(), objParams);
+		List<ServiceOrder> list = p.getResult();
+		List<ServiceOrderView> viewList = new ArrayList<ServiceOrderView>();
+		for (ServiceOrder order : list) {
+			viewList.add(order.view());
+		}
+
+		Pagination<ServiceOrderView> pa = new Pagination<ServiceOrderView>(
+				viewList, p.getPageNo(), p.getPageSize());
+		Long count = dao.getSingleResultByHQLObjectParams(Long.class,
+				countHql.toString(), objParams);
+		pa.setResultSize(count);
+		return pa;
+	}
+
+	@Transactional
+	public ResultInfo manageAddOrder(String beginDate, String endDate,
+			String price, String address, String employerName, String telephone) {
+		try {
+			String hql = "from Employer e where e.ovld = true and e.mobilePhone = ?";
+			Employer employer = dao.getSingleResultByHQL(Employer.class, hql,
+					telephone);
+			if (employer == null) {
+				employer = Employer.getInstance();
+				employer.setMobilePhone(telephone.replace(" ", ""));
+				// employer.setCounty(county);
+				employer.setAddress(address);
+				employer.setUsername(employerName);
+				dao.add(employer);
+			}
+			ServiceOrder order = ServiceOrder.getInstance();
+			order.setAddress(address);
+			order.setEmployer(employer);
+			order.setMobilePhone(telephone);
+			order.setOrderPrice(Long.valueOf(price));
+			order.setServiceBeginDate(ExpectedDateCreate.parseDate(beginDate));
+			order.setServiceEndDate(ExpectedDateCreate.parseDate(endDate));
+			dao.add(order);
+			return ResultInfo.SUCCESS;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return ResultInfo.BAD_REQUEST;
+		}
+	}
+
+	@Transactional
+	public void deleteOrder(String ids) {
+		String idArr[] = ids.split(",");
+		for (String id : idArr) {
+			long idl = Long.valueOf(id);
+			ServiceOrder order = dao.getResultById(ServiceOrder.class, idl);
+			order.setOvld(false);
+			dao.update(order);
+		}
+
+	}
+
+	public ServiceOrder getOrder(String id) {
+		return dao.getResultById(ServiceOrder.class, Long.parseLong(id));
+	}
+
+	@Transactional
+	public ResultInfo manageEditOrder(String id, String employerAddress,
+			String price, String beginDate, String endDate) {
+		try {
+			long idl = Long.valueOf(id);
+			ServiceOrder order = dao.getResultById(ServiceOrder.class, idl);
+			if (order == null)
+				return ResultInfo.SERVICE_ORDER_NULL;
+			// String hql =
+			// "from Employer e where e.ovld = true and e.mobilePhone = ?";
+			// Employer employer = dao.getSingleResultByHQL(Employer.class, hql,
+			// employerTelephone);
+			// if (employer == null)
+			// return ResultInfo.EMPLOYER_NULL;
+			// if (!StringUtils.isEmpty(employerName))
+			// employer.setUsername(employerName);
+			// if (!StringUtils.isEmpty(employerTelephone))
+			// employer.setMobilePhone(employerTelephone);
+			if (!StringUtils.isEmpty(employerAddress))
+				order.setAddress(employerAddress);
+			if (!StringUtils.isEmpty(price))
+				order.setOrderPrice(Long.parseLong(price));
+			if (!StringUtils.isEmpty(beginDate))
+				order.setServiceBeginDate(ExpectedDateCreate
+						.parseDate(beginDate));
+			if (!StringUtils.isEmpty(endDate))
+				order.setServiceEndDate(ExpectedDateCreate.parseDate(endDate));
+			// order.setEmployer(employer);
+			order.setUpdateDate(new Date());
+			dao.update(order);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ResultInfo.SUCCESS;
 	}
 }

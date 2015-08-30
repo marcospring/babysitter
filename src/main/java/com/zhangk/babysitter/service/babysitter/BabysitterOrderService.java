@@ -1,6 +1,9 @@
 package com.zhangk.babysitter.service.babysitter;
 
+import com.zhangk.babysitter.entity.BabysitterOrder;
+import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
+import com.zhangk.babysitter.viewmodel.BabysitterOrderView;
 
 public interface BabysitterOrderService {
 
@@ -9,4 +12,21 @@ public interface BabysitterOrderService {
 			String price);
 
 	int updateBabysitterOrder(String orderGuid, int state);
+
+	Pagination<BabysitterOrderView> manageOrderList(
+			Pagination<BabysitterOrder> page, String babysitterGuid,
+			String babysitterName, String employerName,
+			String employerTelephone, String state);
+
+	ResultInfo manageAddOrder(String guid, String beginDate, String endDate,
+			String price, String address, String employerName, String telephone);
+
+	void deleteOrder(String ids);
+
+	BabysitterOrder getOrder(String id);
+
+	ResultInfo manageEditOrder(String id, String employerName,
+			String employerTelephone, String employerAddress, String price,
+			String beginDate, String endDate);
+
 }

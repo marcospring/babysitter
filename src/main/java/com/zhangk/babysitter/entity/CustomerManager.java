@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
+import com.zhangk.babysitter.viewmodel.CustomerManagerView;
 
 @Entity
 @Table(name = "babysitter_customer_manager")
@@ -33,6 +34,7 @@ public class CustomerManager implements Serializable {
 	private List<Babysitter> babysitters;
 	private Company company;
 	private String telephone;
+	private int state;
 	private String username;
 	private String password;
 	private String name;
@@ -152,6 +154,18 @@ public class CustomerManager implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
+	}
+
+	public CustomerManagerView view() {
+		return new CustomerManagerView(this);
 	}
 
 	public static CustomerManager getInstance() {

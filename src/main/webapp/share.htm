@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <meta name="format-detection" content="telephone=no"/>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>月嫂之星</title>
+    <link rel="stylesheet" href="yscss/reset.css">
+    <link rel="stylesheet" href="yscss/index.css?2">
+    <link rel="stylesheet" href="yscss/swiper.min.css">
+    <link rel="stylesheet" href="yscss/swipebox.min.css">
+</head>
+<body>
+<div id="main-page" class="page">
+    <div class="mp-main">
+        <div class="head-contaienr">
+            <div class="left">
+                <img class="head-img" src="ysimg/head.png" alt="头像">
+                <p class="desc">¥<span class="data-salary"></span>元/月</p>
+            </div>
+            <ul class="right">
+                <li class="info-list name"><span class="data-name"></span></li>
+                <li class="info-list">年龄：<span class="data-age"></span><span style="padding: 0.5em"></span></li>
+				<li class="info-list"><span class="magin">籍贯：<span class="data-native-place"></span></span></li>
+                <li class="info-list">客户满意度：<span class="data-score"></span>分</li>
+                <li class="info-list">接单数量：<span class="data-order-count"></span></li>
+                <li class="promotion"><img class="icon" src="ysimg/free.png"/><span class="data-promotion"></span></li>
+            </ul>
+            <div class="hidden-container" style="display:none">
+                <table class="info-more">
+                    <tr>
+                        <td class="title">民族：</td>
+                        <td class="detail data-nation"></td>
+                    </tr>
+                    <tr>
+                        <td class="title">身高：</td>
+                        <td class="detail data-height"></td>
+                    </tr>
+                    <tr>
+                        <td class="title">体重：</td>
+                        <td class="detail data-weight"></td>
+                    </tr>
+                    <tr>
+                        <td class="title">爱好：</td>
+                        <td class="detail data-hobbies"></td>
+                    </tr>
+                    <tr>
+                        <td class="title">普通话：</td>
+                        <td class="detail data-mandarin"></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="arrow down"></div>
+        </div>
+
+        <div class="checked-item-template hide"><div class="item-container"><div class="checked-item">%%NAME%%</div></div></div>
+        <div class="group">
+            <h2 class="group-title">身份认证</h2>
+            <div class="group-content">
+                <div class="category data-credential">
+                </div>
+                <div class="hidden-container" style="display:none">
+                    <div class="swiper-container">
+                        <div class = "swiper-wrapper data-credential-image">
+                        </div>
+                    </div>
+                </div>
+                <div class="arrow down"></div>
+            </div>
+        </div>
+        <div class="group">
+            <h2 class="group-title">专业认证</h2>
+            <div class="group-content">
+                <div class="pro-category data-professcial">
+                </div>
+                <div class="hidden-container" style="display:none">
+                    <div class="swiper-container">
+                        <div class = "swiper-wrapper data-professial-image">
+                        </div>
+                    </div>
+                </div>
+                <div class="arrow down"></div>
+            </div>
+        </div>
+        <div class="group">
+            <h2 class="group-title">月嫂档期<div class="title-left"><span class="active"></span>可预约<span class="unactive"></span>已被预约</div></h2>
+            <div class="group-content">
+                <div class="calender">
+                </div>
+            </div>
+        </div>
+
+        <div class="group" style="padding-bottom: 0">
+            <h2 class="group-title">个人相册</h2>
+            <div class="group-content">
+                <div class="swiper-container">
+                    <div class = "swiper-wrapper data-image-list">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="group">
+            <h2 class="group-title">历史订单(<span class="data-order-count">88</span>)</h2>
+            <div class="group-content data-comment-list"></div>
+            <div class="hide comment-template">
+                <div class="comment-grid">
+                    <div class="comment-info">
+                        <span class="info-left">客户评分：%%SCORE%%分</span>
+                        <span class="info-right">%%EMPLORER%%：%%TEL%%</span>
+                        <p class="content">%%CONTENT%%</p>
+                    </div>
+                    <div class="order-info">
+                        <p class="order-info-item">订单号：%%ORDERID%%</p>
+                        <p class="order-info-item">服务时间：%%TIME%%</p>
+                        <p class="order-info-item">地址：%%ADDRESS%%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script src="ysjs/hogan.js"></script>
+<script src="ysjs/zepto.js"></script>
+<script src="ysjs/jquery.js"></script>
+<script src="ysjs/swiper.jquery.min.js"></script>
+<script src="ysjs/jquery.swipebox.min.js"></script>
+<script src="ysjs/zeptoextend.js"></script>
+<script src="ysjs/jqueryslider.js"></script>
+<script src="ysjs/loader.js"></script>
+<script src="ysjs/calender.js"></script>
+<script src="ysjs/index.js"></script>
+<script>
+    (new detail.Page()).init();
+</script>
+</body>
+</html>

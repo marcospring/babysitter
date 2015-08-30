@@ -73,5 +73,8 @@ public class Constants {
 					"ugkceklqmgyndcrk10skwte8au0dl6cg");
 	public static final String IOS_APP_KEY = PropertiesUtils.getString(
 			"message.appkey.ios", "55adeebce0f55a71a40014f8");
-
+	// 加盟店
+	public static final int COMPANY_CHAIN_STORE = 1;
+	// 直营店
+	public static final int COMPANY_REGULAR_CHAIN = 2;
 }

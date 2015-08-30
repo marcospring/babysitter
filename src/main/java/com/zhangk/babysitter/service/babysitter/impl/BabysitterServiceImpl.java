@@ -175,7 +175,9 @@ public class BabysitterServiceImpl implements BabysitterService {
 		List<BabysitterCredential> resultCredentials = new ArrayList<BabysitterCredential>();
 		List<BabysitterCredential> credentials = babysitter.getCredentials();
 		for (BabysitterCredential babysitterCredential : credentials) {
-			if (!babysitterCredential.getCredential().getName().contains("相册")) {
+			if (babysitterCredential.getCredential() != null
+					&& !babysitterCredential.getCredential().getName()
+							.contains("相册")) {
 				resultCredentials.add(babysitterCredential);
 			}
 		}
@@ -523,6 +525,10 @@ public class BabysitterServiceImpl implements BabysitterService {
 			PageResult result) {
 		try {
 			Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
+			if (babysitter == null) {
+				result.setResult(ResultInfo.BABYSITTER_NULL);
+				return result;
+			}
 			babysitter.setBankCardNo(bankCardNo);
 			babysitter.setBankName(bankName);
 			babysitter.setBankUserName(bankUserName);
@@ -532,16 +538,27 @@ public class BabysitterServiceImpl implements BabysitterService {
 					cardGuid);
 			if (credential == null)
 				result.setResult(ResultInfo.CREDENTIAL_NULL);
-			BabysitterCredential babysitterCredential = BabysitterCredential
-					.getInstance();
-			babysitterCredential.setBabysitter(babysitter);
-			babysitterCredential.setCredential(credential);
-			babysitterCredential.setIscheck(Constants.PASS);
-			dao.add(babysitterCredential);
-			long score = babysitter.getCredentialScore();
-			score += credential.getScore();
-			babysitter.setCredentialScore(score);
-			dao.update(babysitter);
+			boolean flag = true;
+			List<BabysitterCredential> babysitterCredentials = babysitter
+					.getCredentials();
+			for (BabysitterCredential babysitterCredential : babysitterCredentials) {
+				if (babysitterCredential.getCredential().getGuid()
+						.equals(credential.getGuid())) {
+					flag = !flag;
+				}
+			}
+			if (flag) {
+				BabysitterCredential babysitterCredential = BabysitterCredential
+						.getInstance();
+				babysitterCredential.setBabysitter(babysitter);
+				babysitterCredential.setCredential(credential);
+				babysitterCredential.setIscheck(Constants.PASS);
+				dao.add(babysitterCredential);
+				long score = babysitter.getCredentialScore();
+				score += credential.getScore();
+				babysitter.setCredentialScore(score);
+				dao.update(babysitter);
+			}
 			// List<BabysitterCredential> credentials = babysitter
 			// .getCredentials();
 			// 更新银行卡信息
@@ -595,6 +612,9 @@ public class BabysitterServiceImpl implements BabysitterService {
 			order.setOrderId(recordService.createOrderId());
 			order.setServiceBeginDate(ExpectedDateCreate.parseDate(beginDate));
 			order.setServiceEndDate(ExpectedDateCreate.parseDate(endDate));
+			order.setEmployerAddress(address);
+			order.setEmployerName(employerName);
+			order.setEmployerTelephone(telephone.replace(" ", ""));
 			dao.add(order);
 		} catch (CheckErrorException e) {
 			res.setResult(ResultInfo.CHECK_CODE_ERROR);

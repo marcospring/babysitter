@@ -17,7 +17,7 @@ public class CheckCodeUtil {
 			array[i - 1] = tmp;
 		}
 		int result = 0;
-		for (int i = 0; i < 6; i++)
+		for (int i = 0; i < 4; i++)
 			result = result * 10 + array[i];
 		return String.valueOf(result);
 	}
