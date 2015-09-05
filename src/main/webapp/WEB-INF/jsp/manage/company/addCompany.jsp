@@ -39,7 +39,7 @@
 			        }else{
 			        	$.messager.alert('警告','添加成功！'); 
 			        }
-				//
+				$('#form').reset();
 			}
 		});
 		$('#countyId')

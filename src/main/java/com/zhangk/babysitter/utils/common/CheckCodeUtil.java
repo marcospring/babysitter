@@ -87,7 +87,7 @@ public class CheckCodeUtil {
 
 	public static void main(String[] args) {
 		// sendMessage("15210799886", code(), "5");
-		String a = "152 1079 9886";
-		System.out.println(a);
+		// String a = "152 1079 9886";
+		System.out.println(code());
 	}
 }

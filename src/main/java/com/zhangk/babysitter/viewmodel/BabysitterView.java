@@ -51,6 +51,7 @@ public class BabysitterView {
 	private String managerTelephone;
 	private long lastLevelScore;
 	private int isV;
+	private int state;
 
 	private List<CredentialView> credentials;
 	private List<PromotionView> promotions;
@@ -104,6 +105,7 @@ public class BabysitterView {
 		setManagerName(babysitter.getManager() == null ? "无" : babysitter
 				.getManager().getName());
 		setIsV(babysitter.getIsV());
+		setState(babysitter.getState());
 		// setEvaluates(getEvaluate(babysitter.getEvaluates()));
 	}
 
@@ -225,7 +227,7 @@ public class BabysitterView {
 
 	public String getHeadUrl() {
 		return StringUtils.isEmpty(headUrl) ? "" : Constants.IMG_DOMAIN
-				+ headUrl + "?stamp=" + new Date().getTime();
+				+ headUrl;
 	}
 
 	public void setHeadUrl(String headUrl) {
@@ -486,6 +488,14 @@ public class BabysitterView {
 
 	public void setIsV(int isV) {
 		this.isV = isV;
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
 	}
 
 }

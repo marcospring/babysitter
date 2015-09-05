@@ -52,9 +52,14 @@ public class ManageCompanyNoticeController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/list")
-	public Object list(HttpServletRequest request, int page, int rows, String countyId, String name, String levelid, String telephone, String cardNo) {
-		Pagination<Babysitter> babysitters = new Pagination<Babysitter>(page, rows);
-		Pagination<BabysitterView> views = babysitterService.getManageBabysitters(babysitters, countyId, name, levelid, telephone, cardNo);
+	public Object list(HttpServletRequest request, int page, int rows,
+			String countyId, String name, String levelid, String telephone,
+			String cardNo, String identificationNo) {
+		Pagination<Babysitter> babysitters = new Pagination<Babysitter>(page,
+				rows);
+		Pagination<BabysitterView> views = babysitterService
+				.getManageBabysitters(babysitters, countyId, name, levelid,
+						telephone, cardNo, identificationNo);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("rows", views.getResult());
 		result.put("total", views.getResultSize());
@@ -63,9 +68,12 @@ public class ManageCompanyNoticeController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/noticeList")
-	public Object noticeList(HttpServletRequest request, int page, int rows, String name) {
-		Pagination<CompanyNotice> notices = new Pagination<CompanyNotice>(page, rows);
-		Pagination<CompanyNoticeView> views = noticeService.getManageNotices(notices, name);
+	public Object noticeList(HttpServletRequest request, int page, int rows,
+			String name) {
+		Pagination<CompanyNotice> notices = new Pagination<CompanyNotice>(page,
+				rows);
+		Pagination<CompanyNoticeView> views = noticeService.getManageNotices(
+				notices, name);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("rows", views.getResult());
 		result.put("total", views.getResultSize());

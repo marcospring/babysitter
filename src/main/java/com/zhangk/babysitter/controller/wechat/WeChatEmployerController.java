@@ -1,8 +1,6 @@
 package com.zhangk.babysitter.controller.wechat;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,10 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zhangk.babysitter.controller.BaseController;
-import com.zhangk.babysitter.entity.ServiceOrder;
 import com.zhangk.babysitter.service.exployer.ServiceOrderService;
 import com.zhangk.babysitter.utils.common.ResultInfo;
-import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
 @Controller
 @RequestMapping("/wechat")
@@ -59,29 +55,29 @@ public class WeChatEmployerController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/addOrder")
 	public PageResult addServiceOrder(String date, String price,
-			String address, String name, String mobile, String checkCode) {
+			String address, String name, String mobile, String checkCode,
+			String openid, String countyGuid) {
 		if (StringUtils.isEmpty(date) || StringUtils.isEmpty(price)
 				|| StringUtils.isEmpty(address) || StringUtils.isEmpty(name)
-				|| StringUtils.isEmpty(mobile)) {
-			return null;
+				|| StringUtils.isEmpty(mobile) || StringUtils.isEmpty(openid)) {
+			return getResult(ResultInfo.INF_EMPTY);
 		}
-		ResultInfo result = orderService.addServiceOrder(date, price, "",
-				address, name, mobile, checkCode);
-		return getErrRes(result);
+		PageResult result = orderService.wechatAddServiceOrder(date, price,
+				countyGuid, address, name, mobile, checkCode, openid,
+				getResult());
+		return result;
 	}
 
+	@ResponseBody
 	@RequestMapping("/orderList")
-	public String orderList(HttpServletRequest request, String phone) {
-
-		List<ServiceOrder> orders = orderService.orderList(phone.replace(" ",
-				""));
-		List<ServiceOrderView> view = new ArrayList<ServiceOrderView>();
-		if (orders == null)
-			orders = new ArrayList<ServiceOrder>();
-		for (ServiceOrder order : orders) {
-			view.add(order.view());
+	public PageResult orderList(HttpServletRequest request, String phone,
+			String openid) {
+		if (StringUtils.isEmpty(phone) && StringUtils.isEmpty(openid)) {
+			return getResult(ResultInfo.INF_EMPTY);
 		}
-		request.setAttribute("orders", view);
-		return "wechat/order_end";
+		PageResult result = orderService.orderList(phone.replace(" ", ""),
+				openid, getResult());
+
+		return result;
 	}
 }

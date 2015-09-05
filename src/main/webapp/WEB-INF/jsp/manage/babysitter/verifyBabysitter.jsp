@@ -23,7 +23,9 @@
 							checkOnSelect : false,
 							selectOnCheck : false,
 							singleSelect : true,
-							frozenColumns : [ [ {
+							frozenColumns : [ [  { field: 'ck', 
+								 checkbox: true 
+							 },{
 								field : 'id',
 								title : '编号',
 								width : 50
@@ -35,7 +37,14 @@
 								field : 'guid',
 								title : 'GUID',
 								width : 70
-							} ] ],
+							}, {
+								field : 'state',
+								title : '是否验证',
+								width : 70,
+								formatter : function(val) {
+									return val==1?"<font color='green'>通过</font>":"<font color='red'>未通过</font>";
+								}
+							}  ] ],
 							columns : [ [ {
 								field : 'name',
 								title : '用户名称',
@@ -135,9 +144,54 @@
 		    textField:'name'
 		});  
 	});
-	
+
 	function queryForm(){
 		dataGrid.datagrid('load', $.serializeObject($('#searchForm')));
+	}
+	function verifyFun(state) {
+		var rows = dataGrid.datagrid('getChecked');
+		 var i = 0;  
+	        var ids = "";  
+	        for(i;i<rows.length;i++){  
+	        	ids += rows[i].id;  
+	            if(i < rows.length-1){  
+	            	ids += ',';  
+	            }else{  
+	                break;  
+	            }  
+	        } 
+	    
+		parent.$.messager
+				.confirm(
+						'询问',
+						state ==1?'您是否要审核通过？':'您是否要取消审核？',
+						function(b) {
+							if (b) {
+								parent.$.messager.progress({
+									title : '提示',
+									text : '数据处理中，请稍后....'
+								});
+								$.post(
+									'${pageContext.request.contextPath}/manage/babysitter/verify.html',
+									{
+										ids : ids,
+										state:state
+									},
+									function(result) {
+										if (result.status == 0) {
+											parent.$.messager
+													.alert(
+															'提示',
+															result.message,
+															'info');
+											dataGrid
+													.datagrid('reload');
+										}
+										parent.$.messager
+												.progress('close');
+									}, 'JSON');
+							}
+						});
 	}
 </script>
 </head>
@@ -168,6 +222,14 @@
 		<div data-options="region:'center',border:false">
 			<table id="dataGrid"></table>
 		</div>
+	</div>
+	<div id="toolbar" style="display: none;">
+		<a onclick="verifyFun(1);" href="javascript:void(0);"
+			class="easyui-linkbutton"
+			data-options="plain:true,iconCls:'pencil_add'">验证通过</a>
+		<a onclick="verifyFun(0);" href="javascript:void(0);"
+			class="easyui-linkbutton"
+			data-options="plain:true,iconCls:'pencil_add'">取消验证</a>
 	</div>
 
 </body>

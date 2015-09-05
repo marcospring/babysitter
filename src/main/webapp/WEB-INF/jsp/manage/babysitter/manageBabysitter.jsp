@@ -23,7 +23,9 @@
 							checkOnSelect : false,
 							selectOnCheck : false,
 							singleSelect : true,
-							frozenColumns : [ [ {
+							frozenColumns : [ [  { field: 'ck', 
+								 checkbox: true 
+							 },{
 								field : 'id',
 								title : '编号',
 								width : 50
@@ -35,7 +37,14 @@
 								field : 'guid',
 								title : 'GUID',
 								width : 70
-							} ] ],
+							}, {
+								field : 'state',
+								title : '是否验证',
+								width : 70,
+								formatter : function(val) {
+									return val==1?"<font color='green'>通过</font>":"<font color='red'>未通过</font>";
+								}
+							}  ] ],
 							columns : [ [ {
 								field : 'name',
 								title : '用户名称',
@@ -135,7 +144,79 @@
 		    textField:'name'
 		});  
 	});
-	
+
+	function deleteFun(id) {
+		var rows = dataGrid.datagrid('getChecked');
+		 var i = 0;  
+	        var ids = "";  
+	        for(i;i<rows.length;i++){  
+	        	ids += rows[i].id;  
+	            if(i < rows.length-1){  
+	            	ids += ',';  
+	            }else{  
+	                break;  
+	            }  
+	        } 
+	    
+		parent.$.messager
+				.confirm(
+						'询问',
+						'您是否要删除当前用户？',
+						function(b) {
+							if (b) {
+								var currentUserId = '${sessionUser.id}';/*当前登录用户的ID*/
+								parent.$.messager.progress({
+									title : '提示',
+									text : '数据处理中，请稍后....'
+								});
+								$
+										.post(
+												'${pageContext.request.contextPath}/manage/babysitter/delete.html',
+												{
+													id : ids
+												},
+												function(result) {
+													if (result.status == 0) {
+														parent.$.messager
+																.alert(
+																		'提示',
+																		result.message,
+																		'info');
+														dataGrid
+																.datagrid('reload');
+													}
+													parent.$.messager
+															.progress('close');
+												}, 'JSON');
+							}
+						});
+	}
+
+	function editFun(id) {
+		if (id == undefined) {
+			var rows = dataGrid.datagrid('getSelections');
+			id = rows[0].id;
+		} else {
+			dataGrid.datagrid('unselectAll').datagrid('uncheckAll');
+		}
+		parent.$
+				.modalDialog({
+					title : '编辑月嫂',
+					width : 710,
+					height : 470,
+					href : '${pageContext.request.contextPath}/manage/babysitter/goEdit.html?id='
+							+ id,
+					buttons : [ {
+						text : '编辑',
+						handler : function() {
+							parent.$.modalDialog.openner_dataGrid = dataGrid;//因为添加成功之后，需要刷新这个dataGrid，所以先预定义好
+							var f = parent.$.modalDialog.handler.find('#form');
+							f.submit();
+						}
+					} ]
+				});
+	}
+
 	function queryForm(){
 		dataGrid.datagrid('load', $.serializeObject($('#searchForm')));
 	}
@@ -169,6 +250,16 @@
 			<table id="dataGrid"></table>
 		</div>
 	</div>
+	<div id="toolbar" style="display: none;">
+		<a onclick="deleteFun();" href="javascript:void(0);"
+			class="easyui-linkbutton"
+			data-options="plain:true,iconCls:'pencil_add'">删除</a>
+		<!-- <a onclick="batchDeleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'delete'">批量删除</a> -->
+	</div>
+	
 
+	<div id="menu" class="easyui-menu" style="width: 120px; display: none;">
+		<div onclick="editFun();" data-options="iconCls:'pencil'">编辑</div>
+	</div>
 </body>
 </html>

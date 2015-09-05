@@ -219,7 +219,7 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 	@Transactional
 	public ResultInfo manageEditOrder(String id, String employerName,
 			String employerTelephone, String employerAddress, String price,
-			String beginDate, String endDate) {
+			String beginDate, String endDate, int state) {
 		try {
 			long idl = Long.valueOf(id);
 			BabysitterOrder order = dao.getResultById(BabysitterOrder.class,
@@ -239,6 +239,8 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 						.parseDate(beginDate));
 			if (!StringUtils.isEmpty(endDate))
 				order.setServiceEndDate(ExpectedDateCreate.parseDate(endDate));
+			if (state != 0)
+				order.setState(state);
 
 			order.setUpdateDate(new Date());
 			dao.update(order);

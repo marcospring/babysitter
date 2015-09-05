@@ -29,16 +29,21 @@ public class ManageBabysitterController extends BaseController {
 		return "/manage/babysitter/babysitter";
 	}
 
+	@RequestMapping("/goManage")
+	public String goManage() {
+		return "/manage/babysitter/manageBabysitter";
+	}
+
 	@ResponseBody
 	@RequestMapping("/list")
 	public Object list(HttpServletRequest request, int page, int rows,
 			String countyId, String name, String levelid, String telephone,
-			String cardNo) {
+			String cardNo, String identificationNo) {
 		Pagination<Babysitter> babysitters = new Pagination<Babysitter>(page,
 				rows);
 		Pagination<BabysitterView> views = babysitterService
 				.getManageBabysitters(babysitters, countyId, name, levelid,
-						telephone, cardNo);
+						telephone, cardNo, identificationNo);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("rows", views.getResult());
 		result.put("total", views.getResultSize());
@@ -48,17 +53,19 @@ public class ManageBabysitterController extends BaseController {
 	@RequestMapping("/goAdd")
 	public Object goAdd(HttpServletRequest request) {
 
-		return "manage/babysitter/babysitterEdit";
+		return "manage/babysitter/babysitterAdd";
 	}
 
 	@ResponseBody
 	@RequestMapping("/add")
 	public Object add(String name, String password, String identificationNo,
 			long lowerSalary, String mobilePhone, long countyId, long levelId,
-			String birthday, String nativePlace, String introduce) {
+			String birthday, String nativePlace, String bankName,
+			String bankCardNo, String bankUserName, String introduce) {
 		ResultInfo result = babysitterService.manageAddBabysitter(name,
 				password, identificationNo, lowerSalary, mobilePhone, countyId,
-				levelId, birthday, nativePlace, introduce);
+				levelId, birthday, nativePlace, bankName, bankCardNo,
+				bankUserName, introduce);
 		if (result == ResultInfo.BABYSITTER_NOT_NULL)
 			return MyResponse.errorResponse(
 					ResultInfo.BABYSITTER_NOT_NULL.getCode(),
@@ -79,11 +86,12 @@ public class ManageBabysitterController extends BaseController {
 			String identificationNo, long lowerSalary, String mobilePhone,
 			long countyId, long levelId, String birthday, String nativePlace,
 			String introduce, String height, String weight, String hobbies,
+			String bankName, String bankCardNo, String bankUserName,
 			String mandarin, String isV) {
 		ResultInfo result = babysitterService.manageUpdateBabysitter(id, name,
 				password, identificationNo, lowerSalary, mobilePhone, countyId,
 				levelId, birthday, nativePlace, introduce, height, weight,
-				hobbies, mandarin, isV);
+				hobbies, bankName, bankCardNo, bankUserName, mandarin, isV);
 		if (result == ResultInfo.BABYSITTER_NULL)
 			return MyResponse.errorResponse(
 					ResultInfo.BABYSITTER_NULL.getCode(),
@@ -93,28 +101,20 @@ public class ManageBabysitterController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/delete")
-	public Object delete(long id) {
-		babysitterService.deleteBabysitter(id);
+	public Object delete(String id) {
+		babysitterService.manageDeleteBabysitter(id);
 		return MyResponse.successResponse();
 	}
 
-	@RequestMapping("/goAddBankInfo")
-	public Object goAddBankInfo(HttpServletRequest request, long id) {
-		Babysitter babysitter = babysitterService.getBabysitter(id);
-		request.setAttribute("vo", babysitter);
-		return "manage/babysitter/bankInfo";
+	@RequestMapping("/goVerify")
+	public Object goVerify(HttpServletRequest request) {
+		return "manage/babysitter/verifyBabysitter";
 	}
 
 	@ResponseBody
-	@RequestMapping("/addBankInfo")
-	public Object addBankInfo(long id, String bankName, String bankCardNo,
-			String bankUserName) {
-		ResultInfo result = babysitterService.addBankInfo(id, bankName,
-				bankCardNo, bankUserName);
-		if (result == ResultInfo.BABYSITTER_NULL)
-			return MyResponse.errorResponse(
-					ResultInfo.BABYSITTER_NULL.getCode(),
-					ResultInfo.BABYSITTER_NULL.getMsg());
+	@RequestMapping("/verify")
+	public Object verify(String ids, String state) {
+		babysitterService.verify(ids, state);
 		return MyResponse.successResponse();
 	}
 }

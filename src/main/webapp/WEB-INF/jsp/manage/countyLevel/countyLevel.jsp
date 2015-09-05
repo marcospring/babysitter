@@ -125,7 +125,7 @@
 		parent.$
 				.modalDialog({
 					title : '编辑城市级别',
-					width : 500,
+					width : 690,
 					height : 170,
 					href : '${pageContext.request.contextPath}/manage/countyLevel/goEdit.html?id='
 							+ id,
@@ -143,7 +143,7 @@
 	function addFun() {
 		parent.$.modalDialog({
 			title : '添加城市级别',
-			width : 500,
+			width : 690,
 			height : 170,
 			href : '${pageContext.request.contextPath}/manage/countyLevel/goAdd.html',
 			buttons : [ {

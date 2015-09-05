@@ -108,6 +108,8 @@ $.extend(detail.Page.prototype, {
         $('.head-img').attr('src', data.headUrl);
         $('.data-salary').html(data.price);
         $('.data-name').html(data.name);
+		if (data.isV)
+			$('.name').append($('<img src="ysimg/v.png"/>'));
         $('.name').append($('<img src="ysimg/level-icon/' + levelImgName + '.png"/>'));
         $('.data-age').html(data.age);
         $('.data-native-place').html(data.nativePlace);

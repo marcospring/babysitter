@@ -1,10 +1,10 @@
 {
     "minVersionCode":1,
     "badVersion": "0",
-    "apkUrl": "http://************.apk",
+    "apkUrl": "http://123.57.174.128:8080/babysitter/0902.apk",
     "newVersionCode": 2,
-    "newVersionName": "Androidç‰ˆ 2.0.0",
-    "description": "æ–°ç‰ˆæœ¬<br/>1.ä¿®å¤bug.<br/>2.å¢åŠ åŠŸèƒ½äº†ã€‚",
-    "time": "20150813",
-    "md5":"319931AD74338BCA6B2D957EDCFB4F8D"
+    "newVersionName": "Android°æ 2.0.0",
+    "description": "ĞÂ°æ±¾<br/>1.ĞŞ¸´bug.<br/>2.Ôö¼Ó¹¦ÄÜÁË¡£",
+    "time": "20150902",
+    "md5":"2338da3c9d081bf4724d86bea6788903"
 }

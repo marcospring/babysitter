@@ -122,7 +122,7 @@ $.extend(detail.Calender.prototype, {
             var a = new Date(x.beginDate.replace(' ', 'T'));
             var b = new Date(x.endDate.replace(' ', 'T'));
             var year, month, day;
-            for (; a < b; a.setDate(a.getDate() + 1)) {
+            for (; a <= b; a.setDate(a.getDate() + 1)) {
                 year = a.getFullYear();
                 month = a.getMonth() + 1;
                 day = a.getDate();

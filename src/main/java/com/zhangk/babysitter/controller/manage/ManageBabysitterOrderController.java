@@ -94,9 +94,10 @@ public class ManageBabysitterOrderController extends BaseController {
 	@RequestMapping("/edit")
 	public Object edit(String id, String employerName,
 			String employerTelephone, String employerAddress, String price,
-			String beginDate, String endDate) {
+			String beginDate, String endDate, int state) {
 		ResultInfo result = orderService.manageEditOrder(id, employerName,
-				employerTelephone, employerAddress, price, beginDate, endDate);
+				employerTelephone, employerAddress, price, beginDate, endDate,
+				state);
 		if (result == ResultInfo.COMPANY_NULL)
 			return MyResponse.errorResponse(ResultInfo.COMPANY_NULL.getCode(),
 					ResultInfo.COMPANY_NULL.getMsg());
@@ -112,12 +113,12 @@ public class ManageBabysitterOrderController extends BaseController {
 	@RequestMapping("/babysitterList")
 	public Object babysitterList(HttpServletRequest request, int page,
 			int rows, String countyId, String name, String levelid,
-			String telephone, String cardNo) {
+			String telephone, String cardNo, String identificationNo) {
 		Pagination<Babysitter> babysitters = new Pagination<Babysitter>(page,
 				rows);
 		Pagination<BabysitterView> views = babysitterService
 				.getManageBabysitters(babysitters, countyId, name, levelid,
-						telephone, cardNo);
+						telephone, cardNo, identificationNo);
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("rows", views.getResult());
 		result.put("total", views.getResultSize());

@@ -108,8 +108,8 @@
 		}
 		parent.$.modalDialog({
 			title : '编辑用户',
-			width : 500,
-			height : 300,
+			width : 370,
+			height : 130,
 			href : '${pageContext.request.contextPath}/manage/role/goEdit.html?id=' + id,
 			buttons : [ {
 				text : '编辑',
@@ -125,8 +125,8 @@
 	function addFun() {
 		parent.$.modalDialog({
 			title : '添加角色',
-			width : 500,
-			height : 300,
+			width : 370,
+			height : 130,
 			href : '${pageContext.request.contextPath}/manage/role/goAdd.html',
 			buttons : [ {
 				text : '添加',

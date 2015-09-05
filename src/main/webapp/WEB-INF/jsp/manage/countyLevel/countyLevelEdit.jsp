@@ -56,18 +56,18 @@
 	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
 		<form id="form" method="post">
 			<input type="hidden" name="id" value="${vo.id}"/>
-			<table class="table table-hover table-condensed" style="font-size:13px;">
+			<table class="table table-hover table-condensed"  border="1">
 				<tr>
-					<th>城市：</th>
-					<td><input id="countyid" name="countyid" style="width:100px;"></td>
-                    <th>级别：</th>
-                    <td><input id="levelid" name="levelid" style="width:100px;"></td>
+					<td class="titleTd">城市：</td>
+					<td style="text-align: left;"><input id="countyid" name="countyid" style="width:100px;"></td>
+                    <td class="titleTd">级别：</td>
+                    <td style="text-align: left;"><input id="levelid" name="levelid" style="width:100px;"></td>
 				</tr>
 				<tr>
-					<th>级别分数</th>
-					<td><input name="score" type="text" placeholder="请输用户名称" class="easyui-validatebox span2" data-options="required:true,validType:'numberValid'" value="${vo.score}"></td>
-                    <th>级别价格</th>
-                    <td><input name="money" type="text" placeholder="请输用户名称" class="easyui-validatebox span2" data-options="required:true,validType:'numberValid'" value="${vo.money}"></td>
+					<td class="titleTd">级别分数</td>
+					<td style="text-align: left;"><input name="score" type="text" placeholder="请输用户名称" class="easyui-validatebox span2" data-options="required:true,validType:'numberValid'" value="${vo.score}"></td>
+                    <td class="titleTd">级别价格</td>
+                    <td style="text-align: left;"><input name="money" type="text" placeholder="请输用户名称" class="easyui-validatebox span2" data-options="required:true,validType:'numberValid'" value="${vo.money}"></td>
 				</tr>
 				
 				

@@ -108,8 +108,8 @@
 	function addFun() {
 		parent.$.modalDialog({
 			title : '添加资源',
-			width : 500,
-			height : 300,
+			width : 470,
+			height : 200,
 			href : '${pageContext.request.contextPath}/manage/menu/goAdd.html',
 			buttons : [ {
 				text : '添加',

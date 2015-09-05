@@ -34,6 +34,7 @@ public class Employer implements Serializable {
 	private String mobilePhone;
 	private County county;
 	private String address;
+	private String openid;
 	private List<ServiceOrder> serviceOrders;
 	private List<BabysitterOrder> babysitterOrders;
 
@@ -149,6 +150,14 @@ public class Employer implements Serializable {
 
 	public EmployerView view() {
 		return new EmployerView(this);
+	}
+
+	public String getOpenid() {
+		return openid;
+	}
+
+	public void setOpenid(String openid) {
+		this.openid = openid;
 	}
 
 	public static Employer getInstance() {

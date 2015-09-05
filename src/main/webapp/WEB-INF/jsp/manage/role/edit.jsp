@@ -32,10 +32,12 @@
 	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
 		<form id="form" method="post">
 			<input type="hidden" name="id" value="${vo.id}" />
-			<div class="one">
-				<span class="name">角色名称：</span>
-				<input name="name" placeholder="请输入角色名称" class="easyui-validatebox span2" data-options="required:true" value="${vo.name}" />
-			</div>
+			<table class="table table-hover table-condensed" border="1">
+				<tr>
+					<td class="titleTd">角色名称：</td>
+					<td style="text-align: left;"><input name="name" placeholder="请输入角色名称" class="easyui-validatebox span2" data-options="required:true" value="${vo.name}" /></td>
+				</tr>
+			</table>
 		</form>
 	</div>
 </div>

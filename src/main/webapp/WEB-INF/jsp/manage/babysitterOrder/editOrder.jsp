@@ -52,7 +52,33 @@
 		$('#endDate').datebox({    
 		    required:true,
 		    editable:false
-		}); 
+		});
+		var comboData =[{    
+		    "id":1,    
+		    "text":"新发布"   
+		},{    
+		    "id":2,    
+		    "text":"等待上户"   
+		},{    
+		    "id":3,    
+		    "text":"尾款结算，上户中"
+		},{    
+		    "id":4,    
+		    "text":"上户中"   
+		},{    
+		    "id":5,    
+		    "text":"订单完成，待评价"   
+		},{    
+		    "id":6,    
+		    "text":"订单完成"   
+		}]  ;
+		$('#state').combobox({   
+			data: comboData,
+		    valueField:'id', 
+		    editable:false,    
+		    textField:'text'
+		});  
+		 $('#state').combobox('setValue', '${vo.state}');
 	});
 </script>
 <div class="easyui-layout" data-options="fit:true,border:false">
@@ -72,6 +98,10 @@
 					<td style="text-align:right;">雇主地址</td>
 					<td style="text-align:left;"><input name="employerAddress" type="text" placeholder="请输入雇主地址" class="easyui-validatebox span2" data-options="required:true" value="${vo.employerAddress }"></td>
                   </tr>
+				<tr>
+					<td style="text-align:right;">订单状态</td>
+					<td style="text-align:left;"><input name="state" id="state"></td>
+               </tr>
                    <tr>
                      <td style="text-align:right;">订单开始时间</td>
                     <td style="text-align:left;"><input id="beginDate" name="beginDate" type="text" data-options="required:true" value="${vo.serviceBeginDate }"></td>

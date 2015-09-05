@@ -110,7 +110,8 @@ public class BabysitterServiceImpl implements BabysitterService {
 
 	public Pagination<BabysitterView> getManageBabysitters(
 			Pagination<Babysitter> page, String countyId, String name,
-			String levelid, String telephone, String cardNo) {
+			String levelid, String telephone, String cardNo,
+			String identificationNo) {
 		List<Object> params = new ArrayList<Object>();
 		StringBuffer hql = new StringBuffer(
 				"from Babysitter r where ovld = true ");
@@ -133,6 +134,10 @@ public class BabysitterServiceImpl implements BabysitterService {
 		if (!StringUtils.isEmpty(cardNo)) {
 			hql.append(" and r.cardNo = ? ");
 			params.add(cardNo);
+		}
+		if (!StringUtils.isEmpty(identificationNo)) {
+			hql.append(" and r.IdentificationNo like ? ");
+			params.add("%" + identificationNo + "%");
 		}
 		StringBuffer countHql = new StringBuffer(" select count(r.id) ");
 		countHql.append(hql);
@@ -359,6 +364,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		babysitter.setPassword(password);
 		babysitter.setUpdateDate(new Date());
 		dao.update(babysitter);
+		res.setResult(ResultInfo.SUCCESS);
 		res.put("result", babysitter.view());
 		// } else {
 		// res.put("code", ResultInfo.CHECK_CODE_ERROR.getCode());
@@ -630,6 +636,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	public ResultInfo manageAddBabysitter(String name, String password,
 			String identificationNo, long lowerSalary, String mobilePhone,
 			long countyId, long levelId, String birthday, String nativePlace,
+			String bankName, String bankCardNo, String bankUserName,
 			String introduce) {
 		String hql = "from Babysitter t where ovld = true and t.mobilePhone = ?";
 		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql,
@@ -646,6 +653,9 @@ public class BabysitterServiceImpl implements BabysitterService {
 		babysitter.setCardNo(recordService.getCardNo(county));
 		babysitter.setCounty(county);
 		babysitter.setLevel(dao.getResultById(CountyLevel.class, levelId));
+		babysitter.setBankName(bankName);
+		babysitter.setBankCardNo(bankCardNo);
+		babysitter.setBankUserName(bankUserName);
 		try {
 			babysitter.setBirthday(ExpectedDateCreate.parseDate(birthday));
 		} catch (Exception e) {
@@ -662,7 +672,8 @@ public class BabysitterServiceImpl implements BabysitterService {
 			String password, String identificationNo, long lowerSalary,
 			String mobilePhone, long countyId, long levelId, String birthday,
 			String nativePlace, String introduce, String height, String weight,
-			String hobbies, String mandarin, String isV) {
+			String hobbies, String bankName, String bankCardNo,
+			String bankUserName, String mandarin, String isV) {
 		long idl = Long.valueOf(id);
 		Babysitter babysitter = dao.getResultById(Babysitter.class, idl);
 		if (babysitter == null)
@@ -693,6 +704,12 @@ public class BabysitterServiceImpl implements BabysitterService {
 			babysitter.setWeight(weight);
 		if (!StringUtils.isEmpty(hobbies))
 			babysitter.setHobbies(hobbies);
+		if (!StringUtils.isEmpty(bankName))
+			babysitter.setBankName(bankName);
+		if (!StringUtils.isEmpty(bankCardNo))
+			babysitter.setBankCardNo(bankCardNo);
+		if (!StringUtils.isEmpty(bankUserName))
+			babysitter.setBankUserName(bankUserName);
 		if (!StringUtils.isEmpty(mandarin))
 			babysitter.setMandarin(mandarin);
 		if (!StringUtils.isEmpty(isV))
@@ -918,5 +935,28 @@ public class BabysitterServiceImpl implements BabysitterService {
 		result.setResult(ResultInfo.SUCCESS);
 		result.put("result", viewList);
 		return result;
+	}
+
+	@Transactional
+	public void manageDeleteBabysitter(String ids) {
+		String idArr[] = ids.split(",");
+		for (String id : idArr) {
+			long idl = Long.valueOf(id);
+			Babysitter babysitter = dao.getResultById(Babysitter.class, idl);
+			babysitter.setOvld(false);
+			dao.update(babysitter);
+		}
+	}
+
+	@Transactional
+	public void verify(String ids, String state) {
+		String idArr[] = ids.split(",");
+		for (String id : idArr) {
+			long idl = Long.valueOf(id);
+			Babysitter babysitter = dao.getResultById(Babysitter.class, idl);
+			babysitter.setState(Integer.valueOf(state));
+			dao.update(babysitter);
+		}
+
 	}
 }

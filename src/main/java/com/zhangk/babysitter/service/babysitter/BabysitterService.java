@@ -28,6 +28,8 @@ public interface BabysitterService {
 
 	void deleteBabysitter(long id);
 
+	void manageDeleteBabysitter(String ids);
+
 	void updateBabysitter(Babysitter babysitter);
 
 	Babysitter getBabysitter(long id);
@@ -41,7 +43,8 @@ public interface BabysitterService {
 
 	Pagination<BabysitterView> getManageBabysitters(
 			Pagination<Babysitter> page, String countyId, String name,
-			String levelid, String telephone, String cardNo);
+			String levelid, String telephone, String cardNo,
+			String identificationNo);
 
 	BabysitterView getBabysitterView(String guid);
 
@@ -88,12 +91,14 @@ public interface BabysitterService {
 	ResultInfo manageAddBabysitter(String name, String password,
 			String identificationNo, long lowerSalary, String mobilePhone,
 			long countyId, long levelId, String birthday, String nativePlace,
+			String bankName, String bankCardNo, String bankUserName,
 			String introduce);
 
 	ResultInfo manageUpdateBabysitter(String id, String name, String password,
 			String identificationNo, long lowerSalary, String mobilePhone,
 			long countyId, long levelId, String birthday, String nativePlace,
 			String introduce, String height, String weight, String hobbies,
+			String bankName, String bankCardNo, String bankUserName,
 			String mandarin, String isV);
 
 	PageResult orderScore(PageResult result, String countyGuid);
@@ -110,4 +115,6 @@ public interface BabysitterService {
 			PageResult result);
 
 	PageResult nameSearch(String name, PageResult result);
+
+	void verify(String ids, String state);
 }

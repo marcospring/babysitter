@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
+import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.entity.ServiceOrder;
 import com.zhangk.babysitter.exception.CheckErrorException;
@@ -115,14 +117,34 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		return ResultInfo.SUCCESS;
 	}
 
-	public List<ServiceOrder> orderList(String mobile) {
+	public PageResult orderList(String mobile, String openid, PageResult result) {
 		if (StringUtils.isEmpty(mobile)) {
 			return null;
 		}
-		String hql = "from ServiceOrder t where t.ovld = true and t.mobilePhone=?";
+		Employer employer = null;
+		String mobileHql = "from Employer t where t.ovld = true and t.mobilePhone = ?";
+		employer = dao.getSingleResultByHQL(Employer.class, mobileHql, mobile);
+		if (employer == null) {
+			String openidHql = "from Employer t where t.ovld = true and t.openid = ?";
+			employer = dao.getSingleResultByHQL(Employer.class, openidHql,
+					openid);
+		}
+		List<ServiceOrderView> view = new ArrayList<ServiceOrderView>();
+		if (employer == null) {
+			result.setResult(ResultInfo.SUCCESS);
+			result.put("result", view);
+		}
+		String hql = "from ServiceOrder t where t.ovld = true and t.employer.id=?";
 		List<ServiceOrder> orders = dao.getListResultByHQL(ServiceOrder.class,
-				hql, mobile);
-		return orders;
+				hql, employer.getId());
+		if (orders == null)
+			orders = new ArrayList<ServiceOrder>();
+		for (ServiceOrder order : orders) {
+			view.add(order.view());
+		}
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", view);
+		return result;
 	}
 
 	public Pagination<ServiceOrderView> manageOrderList(
@@ -242,5 +264,54 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			e.printStackTrace();
 		}
 		return ResultInfo.SUCCESS;
+	}
+
+	public PageResult wechatAddServiceOrder(String date, String price,
+			String countyGuid, String address, String name, String mobile,
+			String checkCode, String openid, PageResult result) {
+		try {
+			// boolean flag = codeService.updateCheckCode(mobile, checkCode,
+			// CheckCodeService.PUBLISH_ORDER);
+			// if (!flag) {
+			// throw new CheckErrorException();
+			// }
+			Employer employer = employerService.getEmployerByMobile(mobile);
+			County county = dao.getResultByGUID(County.class, countyGuid);
+			if (employer == null) {
+				employer = Employer.getInstance();
+				employer.setMobilePhone(mobile.replace(" ", ""));
+				// employer.setCounty(county);
+				employer.setAddress(address);
+				employer.setUsername(name);
+				employer.setOpenid(openid);
+				employerService.addEmployer(employer);
+			}
+			ServiceOrder order = ServiceOrder.getInstance();
+			order.setEmployer(employer);
+			order.setCounty(county);
+			order.setOrderPrice(Long.valueOf(price));
+			order.setAddress(address);
+			order.setMobilePhone(mobile);
+			order.setEmployerName(name);
+			// order.setCounty(county);
+			order.setMobilePhone(mobile.replace(" ", ""));
+			Map<String, Date> expectedDate = ExpectedDateCreate
+					.getExpectedDate(date);
+			order.setServiceBeginDate(expectedDate
+					.get(ExpectedDateCreate.BEGIN_DATE));
+			order.setServiceEndDate(expectedDate
+					.get(ExpectedDateCreate.END_DATE));
+			dao.add(order);
+			result.setResult(ResultInfo.SUCCESS);
+			result.put("result", order.view());
+			return result;
+		} catch (CheckErrorException e) {
+			result.setResult(ResultInfo.CHECK_CODE_ERROR);
+			return result;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		result.setResult(ResultInfo.BAD_REQUEST);
+		return result;
 	}
 }

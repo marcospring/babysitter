@@ -3,6 +3,7 @@ package com.zhangk.babysitter.utils.common;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -71,13 +72,16 @@ public class UploadFileUtils {
 					String suffix = myFileName.substring(myFileName
 							.lastIndexOf("."));
 					// 定义上传路径
-					url.append(baseUrl).append(guid).append(suffix);
+					long stamp = new Date().getTime();
+					url.append(baseUrl).append(guid).append(stamp)
+							.append(suffix);
 					File p = new File(realPath.toString());
 					if (!p.exists()) {
 						p.mkdirs();
 					}
 					String pathUrl = realPath.append(File.separator)
-							.append(guid).append(suffix).toString();
+							.append(guid).append(stamp).append(suffix)
+							.toString();
 					File localFile = new File(pathUrl);
 					file.transferTo(localFile);
 				}

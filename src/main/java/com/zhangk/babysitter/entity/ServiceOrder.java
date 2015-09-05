@@ -28,8 +28,10 @@ public class ServiceOrder implements Serializable {
 	private Date createDate;
 	private Date updateDate;
 	private Employer employer;
+	private String orderGuid;
 	private County county;
 	private String address;
+	private String employerName;
 	private String mobilePhone;
 	private long orderPrice;
 	private Date serviceBeginDate;
@@ -139,6 +141,22 @@ public class ServiceOrder implements Serializable {
 
 	public ServiceOrderView view() {
 		return new ServiceOrderView(this);
+	}
+
+	public String getEmployerName() {
+		return employerName;
+	}
+
+	public void setEmployerName(String employerName) {
+		this.employerName = employerName;
+	}
+
+	public String getOrderGuid() {
+		return orderGuid;
+	}
+
+	public void setOrderGuid(String orderGuid) {
+		this.orderGuid = orderGuid;
 	}
 
 	public static ServiceOrder getInstance() {

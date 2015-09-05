@@ -40,19 +40,19 @@
 	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
 		<form id="form" method="post">
 			<input type="hidden" name="id" value="${vo.id}"/>
-			<table class="table table-hover table-condensed">
+			<table class="table table-hover table-condensed" border="1">
 				<tr>
-					<th>资源名称</th>
-					<td><input name="title" type="text" placeholder="请输入资源名称" class="easyui-validatebox span2" data-options="required:true" value="${vo.title}"></td>
-                    <th>资源路径</th>
-                    <td><input name="url" type="text" placeholder="请输入资源路径"  class="easyui-validatebox span2" value="${vo.url}"></td>
+					<td class="titleTd">资源名称</td>
+					<td style="text-align: left;"><input name="title" type="text" placeholder="请输入资源名称" class="easyui-validatebox span2" data-options="required:true" value="${vo.title}"></td>
+				</tr>
+				<tr>
+                    <td class="titleTd">资源路径</td>
+                    <td style="text-align: left;"><input name="url" type="text" placeholder="请输入资源路径"  class="easyui-validatebox span2" size="35" value="${vo.url}"></td>
 				</tr>
 				
 				<tr>
-					<th>上级资源</th>
-					<td><select id="pid" name="pid" style="width: 140px; height: 29px;"></select><img src="${pageContext.request.contextPath}/static/component/au/images/extjs_icons/cut_red.png" onclick="$('#pid').combotree('clear');" /></td>
-					<th></th>
-					<td></td>
+					<td class="titleTd">上级资源</td>
+					<td style="text-align: left;"><select id="pid" name="pid" style="width: 140px; height: 29px;"></select><img src="${pageContext.request.contextPath}/static/component/au/images/extjs_icons/cut_red.png" onclick="$('#pid').combotree('clear');" /></td>
 				</tr>
 				
 			</table>

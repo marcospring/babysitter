@@ -27,6 +27,6 @@ public interface BabysitterOrderService {
 
 	ResultInfo manageEditOrder(String id, String employerName,
 			String employerTelephone, String employerAddress, String price,
-			String beginDate, String endDate);
+			String beginDate, String endDate, int state);
 
 }
