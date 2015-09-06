@@ -14,14 +14,12 @@ import javax.persistence.Table;
 import com.zhangk.babysitter.utils.common.GUIDCreator;
 
 @Entity
-@Table(name = "babysitter_panicbuying_order")
-public class PanicBuyingOrder implements Serializable {
-
+@Table(name = "babysitter_panicbuy_advice")
+public class PanicBuyingBabysitterAdvice implements Serializable {
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
-
 	private long id;
 	private boolean ovld;
 	private String guid;
@@ -29,6 +27,8 @@ public class PanicBuyingOrder implements Serializable {
 	private Date updateDate;
 	private Babysitter babysitter;
 	private ServiceOrder serviceOrder;
+	private boolean isAdvice;
+	private boolean isOver;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -92,8 +92,24 @@ public class PanicBuyingOrder implements Serializable {
 		this.serviceOrder = serviceOrder;
 	}
 
-	public static PanicBuyingOrder getInstance() {
-		PanicBuyingOrder o = new PanicBuyingOrder();
+	public boolean isAdvice() {
+		return isAdvice;
+	}
+
+	public void setAdvice(boolean isAdvice) {
+		this.isAdvice = isAdvice;
+	}
+
+	public boolean isOver() {
+		return isOver;
+	}
+
+	public void setOver(boolean isOver) {
+		this.isOver = isOver;
+	}
+
+	public static PanicBuyingBabysitterAdvice getInstance() {
+		PanicBuyingBabysitterAdvice o = new PanicBuyingBabysitterAdvice();
 		o.setOvld(true);
 		o.setGuid(GUIDCreator.GUID());
 		o.setCreateDate(new Date());

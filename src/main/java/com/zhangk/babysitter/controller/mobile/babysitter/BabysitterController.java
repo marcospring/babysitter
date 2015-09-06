@@ -263,4 +263,38 @@ public class BabysitterController extends BaseController {
 				babysitterGuid, credentialGuid, getResult());
 		return result;
 	}
+
+	@ResponseBody
+	@RequestMapping("/getServiceOrder")
+	public PageResult adviceBabysitter(String babysitterGuid) {
+		if (StringUtils.isEmpty(babysitterGuid)) {
+			return getErrRes(ResultInfo.INF_EMPTY);
+		}
+		PageResult result = babysitterService.getAdvice(babysitterGuid,
+				getResult());
+
+		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping("/panic")
+	public PageResult panicBuyingOrder(String babysitterGuid, String orderGuid) {
+		if (StringUtils.isEmpty(babysitterGuid)
+				|| StringUtils.isEmpty(orderGuid))
+			return getErrRes(ResultInfo.INF_EMPTY);
+		PageResult result = babysitterService.panic(babysitterGuid, orderGuid,
+				getResult());
+		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping("/panicOrders")
+	public PageResult panicOrders(String babysitterGuid) {
+		if (StringUtils.isEmpty(babysitterGuid))
+			return getErrRes(ResultInfo.INF_EMPTY);
+		PageResult result = babysitterService.panicOrders(babysitterGuid,
+				getResult());
+		return result;
+	}
+
 }

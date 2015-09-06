@@ -25,9 +25,12 @@ import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.CountyLevel;
 import com.zhangk.babysitter.entity.Credential;
 import com.zhangk.babysitter.entity.Employer;
+import com.zhangk.babysitter.entity.PanicBuyingBabysitterAdvice;
+import com.zhangk.babysitter.entity.PanicBuyingOrder;
 import com.zhangk.babysitter.entity.PromotionInfo;
 import com.zhangk.babysitter.entity.RecommendInfo;
 import com.zhangk.babysitter.entity.RestInfo;
+import com.zhangk.babysitter.entity.ServiceOrder;
 import com.zhangk.babysitter.exception.CheckErrorException;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
 import com.zhangk.babysitter.service.common.NumberRecordService;
@@ -39,6 +42,7 @@ import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.utils.common.UploadFileUtils;
 import com.zhangk.babysitter.viewmodel.BabysitterImageView;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
+import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
 @Service
 public class BabysitterServiceImpl implements BabysitterService {
@@ -958,5 +962,52 @@ public class BabysitterServiceImpl implements BabysitterService {
 			dao.update(babysitter);
 		}
 
+	}
+
+	@Transactional
+	public PageResult getAdvice(String babysitterGuid, PageResult result) {
+		String hql = "from PanicBuyingBabysitterAdvice t where t.ovld = true and t.babysitter.guid = ? and t.isOver = false and t.isAdvice = false";
+		List<PanicBuyingBabysitterAdvice> advices = dao.getListResultByHQL(
+				PanicBuyingBabysitterAdvice.class, hql, babysitterGuid);
+		List<ServiceOrderView> views = new ArrayList<ServiceOrderView>();
+		for (PanicBuyingBabysitterAdvice advice : advices) {
+			views.add(advice.getServiceOrder().view());
+		}
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", views);
+		return result;
+	}
+
+	public PageResult panic(String babysitterGuid, String orderGuid,
+			PageResult result) {
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class,
+				babysitterGuid);
+		ServiceOrder order = dao.getResultByGUID(ServiceOrder.class, orderGuid);
+		PanicBuyingOrder buyingOrder = PanicBuyingOrder.getInstance();
+		buyingOrder.setBabysitter(babysitter);
+		buyingOrder.setServiceOrder(order);
+		dao.add(buyingOrder);
+		// 更新通知表
+		String hql = "from PanicBuyingBabysitterAdvice t where t.ovld = true and t.babysitter.guid = ? and t.serviceOrder.guid = ?";
+		PanicBuyingBabysitterAdvice advice = dao.getSingleResultByHQL(
+				PanicBuyingBabysitterAdvice.class, hql, babysitterGuid,
+				orderGuid);
+		advice.setAdvice(true);
+		dao.update(advice);
+		result.setResult(ResultInfo.SUCCESS);
+		return result;
+	}
+
+	public PageResult panicOrders(String babysitterGuid, PageResult result) {
+		String hql = "from PanicBuyingOrder t where t.ovld = true and t.babysitter.guid = ?";
+		List<PanicBuyingOrder> list = dao.getListResultByHQL(
+				PanicBuyingOrder.class, hql, babysitterGuid);
+		List<ServiceOrderView> orders = new ArrayList<ServiceOrderView>();
+		for (PanicBuyingOrder order : list) {
+			orders.add(order.getServiceOrder().view());
+		}
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", orders);
+		return result;
 	}
 }

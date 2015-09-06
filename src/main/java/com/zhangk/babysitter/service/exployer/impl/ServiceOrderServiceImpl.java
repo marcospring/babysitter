@@ -17,9 +17,11 @@ import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.Employer;
+import com.zhangk.babysitter.entity.PanicBuyingBabysitterAdvice;
 import com.zhangk.babysitter.entity.ServiceOrder;
 import com.zhangk.babysitter.exception.CheckErrorException;
 import com.zhangk.babysitter.service.common.CheckCodeService;
+import com.zhangk.babysitter.service.common.NumberRecordService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.service.exployer.ServiceOrderService;
 import com.zhangk.babysitter.utils.common.Constants;
@@ -37,6 +39,8 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	private CheckCodeService codeService;
 	@Autowired
 	private EmployerService employerService;
+	@Autowired
+	private NumberRecordService recordService;
 
 	@Transactional
 	public ResultInfo addServiceOrder(String date, String price,
@@ -58,6 +62,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 				employer.setUsername(name);
 				employerService.addEmployer(employer);
 			}
+			// 月嫂提交私单不需要向月嫂抢单表中添加数据正常添加私单。
 			ServiceOrder order = ServiceOrder.getInstance();
 			order.setEmployer(employer);
 			order.setOrderPrice(Long.valueOf(price));
@@ -118,13 +123,12 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	public PageResult orderList(String mobile, String openid, PageResult result) {
-		if (StringUtils.isEmpty(mobile)) {
-			return null;
-		}
 		Employer employer = null;
-		String mobileHql = "from Employer t where t.ovld = true and t.mobilePhone = ?";
-		employer = dao.getSingleResultByHQL(Employer.class, mobileHql, mobile);
-		if (employer == null) {
+		if (StringUtils.isEmpty(openid)) {
+			String mobileHql = "from Employer t where t.ovld = true and t.mobilePhone = ?";
+			employer = dao.getSingleResultByHQL(Employer.class, mobileHql,
+					mobile);
+		} else {
 			String openidHql = "from Employer t where t.ovld = true and t.openid = ?";
 			employer = dao.getSingleResultByHQL(Employer.class, openidHql,
 					openid);
@@ -266,6 +270,9 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		return ResultInfo.SUCCESS;
 	}
 
+	/**
+	 * 雇主添加订单，需要根据订单的开始结束时间、订单所属地区查找符合要求的月嫂添加到需要通知的月嫂的数据表中
+	 */
 	public PageResult wechatAddServiceOrder(String date, String price,
 			String countyGuid, String address, String name, String mobile,
 			String checkCode, String openid, PageResult result) {
@@ -286,6 +293,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 				employer.setOpenid(openid);
 				employerService.addEmployer(employer);
 			}
+			// 添加雇主订单
 			ServiceOrder order = ServiceOrder.getInstance();
 			order.setEmployer(employer);
 			order.setCounty(county);
@@ -293,7 +301,6 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			order.setAddress(address);
 			order.setMobilePhone(mobile);
 			order.setEmployerName(name);
-			// order.setCounty(county);
 			order.setMobilePhone(mobile.replace(" ", ""));
 			Map<String, Date> expectedDate = ExpectedDateCreate
 					.getExpectedDate(date);
@@ -302,6 +309,22 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			order.setServiceEndDate(expectedDate
 					.get(ExpectedDateCreate.END_DATE));
 			dao.add(order);
+			// 添加需要通知的月嫂
+			String hql = "from Babysitter b where b.county.guid=?";
+			List<Babysitter> babysitters = dao.getListResultByHQL(
+					Babysitter.class, hql, countyGuid);
+			for (Babysitter babysitter : babysitters) {
+				if (ExpectedDateCreate.checkBabysitterOrder(babysitter,
+						expectedDate)) {
+					PanicBuyingBabysitterAdvice advice = PanicBuyingBabysitterAdvice
+							.getInstance();
+					advice.setBabysitter(babysitter);
+					advice.setServiceOrder(order);
+					advice.setAdvice(false);
+					advice.setOver(false);
+					dao.add(advice);
+				}
+			}
 			result.setResult(ResultInfo.SUCCESS);
 			result.put("result", order.view());
 			return result;
@@ -312,6 +335,42 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			e.printStackTrace();
 		}
 		result.setResult(ResultInfo.BAD_REQUEST);
+		return result;
+	}
+
+	@Transactional
+	public PageResult markBabysitter(String babysitterGuid, String orderGuid,
+			PageResult result) {
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class,
+				babysitterGuid);
+		ServiceOrder serviceOrder = dao.getResultByGUID(ServiceOrder.class,
+				orderGuid);
+		// 添加月嫂订单
+		BabysitterOrder babysitterOrder = BabysitterOrder.getInstance();
+		babysitterOrder.setBabysitter(babysitter);
+		babysitterOrder.setEmployer(serviceOrder.getEmployer());
+		babysitterOrder.setEmployerAddress(serviceOrder.getAddress());
+		babysitterOrder.setEmployerName(serviceOrder.getEmployerName());
+		babysitterOrder.setEmployerTelephone(serviceOrder.getMobilePhone());
+		babysitterOrder.setOrderId(recordService.createOrderId());
+		babysitterOrder.setOrderPrice(serviceOrder.getOrderPrice());
+		babysitterOrder.setServiceBeginDate(serviceOrder.getServiceBeginDate());
+		babysitterOrder.setServiceEndDate(serviceOrder.getServiceEndDate());
+		babysitterOrder.setState(Constants.NEW_ORDER);
+		dao.add(babysitterOrder);
+		// 更新雇主订单
+		serviceOrder.setOrderGuid(babysitterOrder.getGuid());
+		dao.update(serviceOrder);
+		// 更新月嫂抢单通知表中该订单的所有记录为不可用即订单已经被抢
+		String hql = "from PanicBuyingBabysitterAdvice t where t.ovld = true and t.serviceOrder.guid = ?";
+		List<PanicBuyingBabysitterAdvice> list = dao.getListResultByHQL(
+				PanicBuyingBabysitterAdvice.class, hql, orderGuid);
+		for (PanicBuyingBabysitterAdvice advice : list) {
+			advice.setOver(true);
+			dao.update(advice);
+		}
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", babysitter.view());
 		return result;
 	}
 }

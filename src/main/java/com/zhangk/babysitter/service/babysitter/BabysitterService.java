@@ -117,4 +117,25 @@ public interface BabysitterService {
 	PageResult nameSearch(String name, PageResult result);
 
 	void verify(String ids, String state);
+
+	PageResult getAdvice(String babysitterGuid, PageResult result);
+
+	/**
+	 * 抢单
+	 *
+	 * @param babysitterGuid
+	 * @param orderGuid
+	 * @param result
+	 * @return
+	 */
+	PageResult panic(String babysitterGuid, String orderGuid, PageResult result);
+
+	/**
+	 * 获取月嫂抢过的雇主订单
+	 * 
+	 * @param babysitterGuid
+	 * @param result
+	 * @return
+	 */
+	PageResult panicOrders(String babysitterGuid, PageResult result);
 }
