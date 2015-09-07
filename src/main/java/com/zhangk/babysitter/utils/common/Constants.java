@@ -22,59 +22,44 @@ public class Constants {
 	public static final int READ = 1;
 	public static final int NON_READ = 0;
 	// 图片主域
-	public static final String IMG_DOMAIN = PropertiesUtils.getString(
-			"domain.image", "http://www.babysitter.com/babysitter");
+	public static final String IMG_DOMAIN = PropertiesUtils.getString("domain.image", "http://www.babysitter.com/babysitter");
 	// 头像
-	public static final String URL_HEAD = PropertiesUtils.getString("url.head",
-			"/resource/user/head/");
+	public static final String URL_HEAD = PropertiesUtils.getString("url.head", "/resource/user/head/");
 	// 生活照
-	public static final String URL_LIFE = PropertiesUtils.getString("url.life",
-			"/resource/user/life/");
+	public static final String URL_LIFE = PropertiesUtils.getString("url.life", "/resource/user/life/");
 	// 证件
-	public static final String URL_CARD = PropertiesUtils.getString("url.card",
-			"/resource/user/card/");
+	public static final String URL_CARD = PropertiesUtils.getString("url.card", "/resource/user/card/");
 
 	public static final int ORDER_ID = 1;
 	public static final int BABYSITTER_ID = 2;
 
-	public static final String CODE_DOMAIN = PropertiesUtils.getString(
-			"code.domain", "sandboxapp.cloopen.com");
-	public static final String CODE_PORT = PropertiesUtils.getString(
-			"code.port", "8883");
-	public static final String CODE_ACCOUNT = PropertiesUtils.getString(
-			"code.account", "8a48b5514ecd7fa8014edcde010a15c1");
-	public static final String CODE_AUTH = PropertiesUtils.getString(
-			"code.auth", "b820805e71984068a021377b3822a798");
-	public static final String CODE_APPID = PropertiesUtils.getString(
-			"code.appid", "8a48b5514ecd7fa8014edcde557015c4");
-	public static final String MSG_TEMPLATE = PropertiesUtils.getString(
-			"code.template", "1");
+	public static final String CODE_DOMAIN = PropertiesUtils.getString("code.domain", "sandboxapp.cloopen.com");
+	public static final String CODE_PORT = PropertiesUtils.getString("code.port", "8883");
+	public static final String CODE_ACCOUNT = PropertiesUtils.getString("code.account", "8a48b5514ecd7fa8014edcde010a15c1");
+	public static final String CODE_AUTH = PropertiesUtils.getString("code.auth", "b820805e71984068a021377b3822a798");
+	public static final String CODE_APPID = PropertiesUtils.getString("code.appid", "8a48b5514ecd7fa8014edcde557015c4");
+	public static final String MSG_TEMPLATE = PropertiesUtils.getString("code.template", "1");
 
 	public static final int CREDENTIAL_TYPE_CREDENTIAL = 1;
 	public static final int CREDENTIAL_TYPE_PROFESSIONAL = 2;
 
 	// 相册guid
-	public static final String LIFE_IMAGE_GUID = PropertiesUtils.getString(
-			"guid.image", "001BA330344E41B794DCEB71666C0D39");
+	public static final String LIFE_IMAGE_GUID = PropertiesUtils.getString("guid.image", "001BA330344E41B794DCEB71666C0D39");
 	// 银行卡guid
-	public static final String BANK_CARD_GUID = PropertiesUtils.getString(
-			"guid.bankcard", "FEB6822A1F404A95A7A99DD50A002FFE");
+	public static final String BANK_CARD_GUID = PropertiesUtils.getString("guid.bankcard", "FEB6822A1F404A95A7A99DD50A002FFE");
 
-	public static final String MAP_URL = PropertiesUtils.getString("map.url",
-			"http://api.map.baidu.com/geocoder");
+	public static final String MAP_URL = PropertiesUtils.getString("map.url", "http://api.map.baidu.com/geocoder");
 
-	public static final String ANDROID_APP_MASTER_SECRET = PropertiesUtils
-			.getString("message.mastersecret.android",
-					"znnb2ob8jb1aajmrxt7t75hjyban3kfo");
-	public static final String ANDROID_APP_KEY = PropertiesUtils.getString(
-			"message.appkey.android", "55adee28e0f55a71800017a1");
-	public static final String IOS_APP_MASTER_SECRET = PropertiesUtils
-			.getString("message.mastersecret.ios",
-					"ugkceklqmgyndcrk10skwte8au0dl6cg");
-	public static final String IOS_APP_KEY = PropertiesUtils.getString(
-			"message.appkey.ios", "55adeebce0f55a71a40014f8");
+	public static final String ANDROID_APP_MASTER_SECRET = PropertiesUtils.getString("message.mastersecret.android", "znnb2ob8jb1aajmrxt7t75hjyban3kfo");
+	public static final String ANDROID_APP_KEY = PropertiesUtils.getString("message.appkey.android", "55adee28e0f55a71800017a1");
+	public static final String IOS_APP_MASTER_SECRET = PropertiesUtils.getString("message.mastersecret.ios", "ugkceklqmgyndcrk10skwte8au0dl6cg");
+	public static final String IOS_APP_KEY = PropertiesUtils.getString("message.appkey.ios", "55adeebce0f55a71a40014f8");
 	// 加盟店
 	public static final int COMPANY_CHAIN_STORE = 1;
 	// 直营店
 	public static final int COMPANY_REGULAR_CHAIN = 2;
+
+	public static final String WECHAT_OPENID_URL = PropertiesUtils.getString("wechat.url", "https://api.weixin.qq.com/sns/oauth2/access_token");;
+	public static final String WECHAT_OPENID_APPID = PropertiesUtils.getString("wechat.appid", "wxbaca4dbccd6548a7");;
+	public static final String WECHAT_OPENID_APPSECRET = PropertiesUtils.getString("wechat.appsecret", "aa3cba812479f1a9c610301d4722bd99");
 }
