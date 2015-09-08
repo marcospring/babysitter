@@ -1,6 +1,9 @@
 package com.zhangk.babysitter.viewmodel;
 
+import org.springframework.util.StringUtils;
+
 import com.zhangk.babysitter.entity.ServiceOrder;
+import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 
 public class ServiceOrderView {
@@ -13,6 +16,7 @@ public class ServiceOrderView {
 	private String serviceBeginDate;
 	private String serviceEndDate;
 	private String orderPrice;
+	private int state;
 
 	public ServiceOrderView() {
 	}
@@ -24,11 +28,18 @@ public class ServiceOrderView {
 		setAddress(order.getAddress());
 		setTelephone(order.getMobilePhone());
 		setCreateDate(ExpectedDateCreate.formatDate(order.getCreateDate()));
-		setServiceBeginDate(ExpectedDateCreate.formatDate(order
-				.getServiceBeginDate()));
-		setServiceEndDate(ExpectedDateCreate.formatDate(order
-				.getServiceEndDate()));
+		setServiceBeginDate(ExpectedDateCreate.formatDate(order.getServiceBeginDate()));
+		setServiceEndDate(ExpectedDateCreate.formatDate(order.getServiceEndDate()));
 		setOrderPrice(String.valueOf(order.getOrderPrice()));
+		setState(StringUtils.isEmpty(order.getOrderGuid()) ? Constants.UNMARK : Constants.MARK);
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
 	}
 
 	public String getGuid() {

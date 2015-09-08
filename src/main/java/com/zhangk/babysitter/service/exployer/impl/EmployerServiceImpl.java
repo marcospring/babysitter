@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.Employer;
+import com.zhangk.babysitter.entity.PanicBuyingOrder;
 import com.zhangk.babysitter.entity.RecommendInfo;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
@@ -39,8 +40,7 @@ public class EmployerServiceImpl implements EmployerService {
 		String hql = "from Employer r";
 		String countHql = "select count(r.id) from Employer r";
 
-		Pagination<Employer> p = dao.getPageResult(Employer.class, hql,
-				page.getPageNo(), page.getPageSize());
+		Pagination<Employer> p = dao.getPageResult(Employer.class, hql, page.getPageNo(), page.getPageSize());
 		Long count = dao.getSingleResultByHQL(Long.class, countHql);
 		p.setResultSize(count);
 		return p;
@@ -67,20 +67,17 @@ public class EmployerServiceImpl implements EmployerService {
 
 	public Employer getEmployerByMobile(String mobile) {
 		String hql = "from Employer e where e.ovld = true and e.mobilePhone = ?";
-		Employer employer = dao.getSingleResultByHQL(Employer.class, hql,
-				mobile);
+		Employer employer = dao.getSingleResultByHQL(Employer.class, hql, mobile);
 		return employer;
 	}
 
-	public List<BabysitterView> getRecommendBabysitter(String date, int page,
-			String countyGuid) {
+	public List<BabysitterView> getRecommendBabysitter(String date, int page, String countyGuid, String orderGuid) {
 		List<BabysitterView> result = new ArrayList<BabysitterView>();
 		// 计算档期起止时间
 		Map<String, Date> dates = ExpectedDateCreate.getExpectedDate(date);
 		// 获得今日推荐月嫂列表
 		List<Babysitter> preResult = new ArrayList<Babysitter>();
-		RecommendInfo info = babysitterService
-				.getNewBabysitterRecommend(countyGuid);
+		RecommendInfo info = babysitterService.getNewBabysitterRecommend(countyGuid);
 		if (info != null) {
 			List<Babysitter> recommendBabysitter = info.getBabysitters();
 			for (Babysitter babysitter : recommendBabysitter) {
@@ -92,8 +89,7 @@ public class EmployerServiceImpl implements EmployerService {
 		// 判断请求次数，以及推荐月嫂个数
 		if (page == 0)
 			page = 1;
-		int pageCount = preResult.size() % 5 == 0 ? preResult.size() / 5
-				: preResult.size() / 5 + 1;
+		int pageCount = preResult.size() % 5 == 0 ? preResult.size() / 5 : preResult.size() / 5 + 1;
 		int lastCount = preResult.size() % 5;
 		if (page < pageCount) {
 			int begin = (page - 1) * 5;
@@ -103,8 +99,13 @@ public class EmployerServiceImpl implements EmployerService {
 			}
 
 		} else {
-			List<BabysitterView> views = babysitterService
-					.getExpectedBabysitter(countyGuid, date);
+			// 获取抢单的月嫂
+			String hql = "from PanicBuyingOrder t where t.ovld = true and serviceOrder.guid = ? order by t.createDate desc";
+			List<BabysitterView> views = new ArrayList<BabysitterView>();
+			List<PanicBuyingOrder> list = dao.getListResultByHQL(PanicBuyingOrder.class, hql, orderGuid);
+			for (PanicBuyingOrder panicBuyingOrder : list) {
+				views.add(panicBuyingOrder.getBabysitter().view());
+			}
 			if (page == pageCount) {
 				for (int i = preResult.size() - lastCount; i < preResult.size(); i++) {
 					result.add(preResult.get(i).view());
@@ -115,16 +116,13 @@ public class EmployerServiceImpl implements EmployerService {
 				}
 			} else {
 				int resultSize = views.size() - lastCount;
-				int viewPageCount = resultSize % 5 == 0 ? resultSize / 5 == 0 ? 1
-						: resultSize / 5
-						: resultSize / 5 + 1;
+				int viewPageCount = resultSize % 5 == 0 ? resultSize / 5 == 0 ? 1 : resultSize / 5 : resultSize / 5 + 1;
 				int viewPage = page - pageCount;
 				if (viewPage > viewPageCount)
 					viewPage = viewPageCount;
 				if (viewPage <= viewPageCount) {
 					int begin = (viewPage - 1) * 5 + lastCount;
-					int end = viewPage == viewPageCount ? views.size()
-							: begin + 5;
+					int end = viewPage == viewPageCount ? views.size() : begin + 5;
 					for (int i = begin; i < end; i++) {
 						result.add(views.get(i));
 					}
@@ -134,12 +132,9 @@ public class EmployerServiceImpl implements EmployerService {
 		return result;
 	}
 
-	public Pagination<EmployerView> getPageEmployerListForOrder(
-			Pagination<Employer> page, String employerName,
-			String employerTelephone) {
+	public Pagination<EmployerView> getPageEmployerListForOrder(Pagination<Employer> page, String employerName, String employerTelephone) {
 		List<Object> params = new ArrayList<Object>();
-		StringBuffer hql = new StringBuffer(
-				"from Employer r where ovld = true ");
+		StringBuffer hql = new StringBuffer("from Employer r where ovld = true ");
 		if (!StringUtils.isEmpty(employerTelephone)) {
 			hql.append(" and r.mobilePhone = ? ");
 			params.add(employerTelephone);
@@ -155,19 +150,15 @@ public class EmployerServiceImpl implements EmployerService {
 		for (int i = 0; i < objParams.length; i++) {
 			objParams[i] = params.get(i);
 		}
-		Pagination<Employer> p = dao
-				.getPageResultObjectParams(Employer.class, hql.toString(),
-						page.getPageNo(), page.getPageSize(), objParams);
+		Pagination<Employer> p = dao.getPageResultObjectParams(Employer.class, hql.toString(), page.getPageNo(), page.getPageSize(), objParams);
 		List<Employer> list = p.getResult();
 		List<EmployerView> viewList = new ArrayList<EmployerView>();
 		for (Employer order : list) {
 			viewList.add(order.view());
 		}
 
-		Pagination<EmployerView> pa = new Pagination<EmployerView>(viewList,
-				p.getPageNo(), p.getPageSize());
-		Long count = dao.getSingleResultByHQLObjectParams(Long.class,
-				countHql.toString(), objParams);
+		Pagination<EmployerView> pa = new Pagination<EmployerView>(viewList, p.getPageNo(), p.getPageSize());
+		Long count = dao.getSingleResultByHQLObjectParams(Long.class, countHql.toString(), objParams);
 		pa.setResultSize(count);
 		return pa;
 	}

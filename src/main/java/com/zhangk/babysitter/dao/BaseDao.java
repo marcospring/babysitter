@@ -37,4 +37,6 @@ public interface BaseDao {
 
 	<T> List<T> getResultListBySql(Class<T> clazz, String sql);
 
+	void sessionFlush();
+
 }

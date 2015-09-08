@@ -62,4 +62,9 @@ public class Constants {
 	public static final String WECHAT_OPENID_URL = PropertiesUtils.getString("wechat.url", "https://api.weixin.qq.com/sns/oauth2/access_token");;
 	public static final String WECHAT_OPENID_APPID = PropertiesUtils.getString("wechat.appid", "wxbaca4dbccd6548a7");;
 	public static final String WECHAT_OPENID_APPSECRET = PropertiesUtils.getString("wechat.appsecret", "aa3cba812479f1a9c610301d4722bd99");
+
+	// 雇主订单是否已经选中月嫂
+	public static final int MARK = 1;
+	public static final int UNMARK = 0;
+
 }

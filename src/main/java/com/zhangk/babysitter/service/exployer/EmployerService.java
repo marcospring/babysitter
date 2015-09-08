@@ -24,10 +24,7 @@ public interface EmployerService {
 
 	Employer getEmployerByMobile(String mobile);
 
-	List<BabysitterView> getRecommendBabysitter(String date, int page,
-			String countyGuid);
+	List<BabysitterView> getRecommendBabysitter(String date, int page, String countyGuid, String orderGuid);
 
-	Pagination<EmployerView> getPageEmployerListForOrder(
-			Pagination<Employer> page, String employerName,
-			String employerTelephone);
+	Pagination<EmployerView> getPageEmployerListForOrder(Pagination<Employer> page, String employerName, String employerTelephone);
 }

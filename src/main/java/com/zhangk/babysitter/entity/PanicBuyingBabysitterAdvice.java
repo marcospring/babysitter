@@ -92,19 +92,19 @@ public class PanicBuyingBabysitterAdvice implements Serializable {
 		this.serviceOrder = serviceOrder;
 	}
 
-	public boolean isAdvice() {
+	public boolean getIsAdvice() {
 		return isAdvice;
 	}
 
-	public void setAdvice(boolean isAdvice) {
+	public void setIsAdvice(boolean isAdvice) {
 		this.isAdvice = isAdvice;
 	}
 
-	public boolean isOver() {
+	public boolean getIsOver() {
 		return isOver;
 	}
 
-	public void setOver(boolean isOver) {
+	public void setIsOver(boolean isOver) {
 		this.isOver = isOver;
 	}
 

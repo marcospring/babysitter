@@ -59,13 +59,11 @@ public class BabysitterServiceImpl implements BabysitterService {
 		return list;
 	}
 
-	public Pagination<Babysitter> getPageBabysitterList(
-			Pagination<Babysitter> page) {
+	public Pagination<Babysitter> getPageBabysitterList(Pagination<Babysitter> page) {
 		String hql = "from Babysitter r";
 		String countHql = "select count(r.id) from Babysitter r";
 
-		Pagination<Babysitter> p = dao.getPageResult(Babysitter.class, hql,
-				page.getPageNo(), page.getPageSize());
+		Pagination<Babysitter> p = dao.getPageResult(Babysitter.class, hql, page.getPageNo(), page.getPageSize());
 		Long count = dao.getSingleResultByHQL(Long.class, countHql);
 		p.setResultSize(count);
 		return p;
@@ -90,8 +88,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		return dao.getResultById(Babysitter.class, id);
 	}
 
-	public Pagination<BabysitterOrder> getPageOrderList(
-			Pagination<BabysitterOrder> page, String name) {
+	public Pagination<BabysitterOrder> getPageOrderList(Pagination<BabysitterOrder> page, String name) {
 		String hql = "from BabysitterOrder r ";
 		String countHql = "select count(r.id) from BabysitterOrder r ";
 		if (!StringUtils.isEmpty(name)) {
@@ -99,9 +96,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			countHql = "select count(r.id) from BabysitterOrder r where r.babysitter.name like ?";
 			name = "'%" + name + "%'";
 		}
-		Pagination<BabysitterOrder> p = dao.getPageResult(
-				BabysitterOrder.class, hql, page.getPageNo(),
-				page.getPageSize(), name);
+		Pagination<BabysitterOrder> p = dao.getPageResult(BabysitterOrder.class, hql, page.getPageNo(), page.getPageSize(), name);
 		Long count = dao.getSingleResultByHQL(Long.class, countHql, name);
 		p.setResultSize(count);
 		return p;
@@ -112,13 +107,10 @@ public class BabysitterServiceImpl implements BabysitterService {
 		dao.add(order);
 	}
 
-	public Pagination<BabysitterView> getManageBabysitters(
-			Pagination<Babysitter> page, String countyId, String name,
-			String levelid, String telephone, String cardNo,
+	public Pagination<BabysitterView> getManageBabysitters(Pagination<Babysitter> page, String countyId, String name, String levelid, String telephone, String cardNo,
 			String identificationNo) {
 		List<Object> params = new ArrayList<Object>();
-		StringBuffer hql = new StringBuffer(
-				"from Babysitter r where ovld = true ");
+		StringBuffer hql = new StringBuffer("from Babysitter r where ovld = true ");
 		if (!StringUtils.isEmpty(countyId) && !"0".equals(countyId)) {
 			hql.append(" and r.county.id = ? ");
 			params.add(Long.valueOf(countyId));
@@ -149,9 +141,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		for (int i = 0; i < objParams.length; i++) {
 			objParams[i] = params.get(i);
 		}
-		Pagination<Babysitter> p = dao.getPageResultObjectParams(
-				Babysitter.class, hql.toString(), page.getPageNo(),
-				page.getPageSize(), objParams);
+		Pagination<Babysitter> p = dao.getPageResultObjectParams(Babysitter.class, hql.toString(), page.getPageNo(), page.getPageSize(), objParams);
 		List<Babysitter> list = p.getResult();
 		List<BabysitterView> viewList = new ArrayList<BabysitterView>();
 		for (Babysitter babysitter : list) {
@@ -159,10 +149,8 @@ public class BabysitterServiceImpl implements BabysitterService {
 			viewList.add(view);
 		}
 
-		Pagination<BabysitterView> pa = new Pagination<BabysitterView>(
-				viewList, p.getPageNo(), p.getPageSize());
-		Long count = dao.getSingleResultByHQLObjectParams(Long.class,
-				countHql.toString(), objParams);
+		Pagination<BabysitterView> pa = new Pagination<BabysitterView>(viewList, p.getPageNo(), p.getPageSize());
+		Long count = dao.getSingleResultByHQLObjectParams(Long.class, countHql.toString(), objParams);
 		pa.setResultSize(count);
 		return pa;
 	}
@@ -184,9 +172,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		List<BabysitterCredential> resultCredentials = new ArrayList<BabysitterCredential>();
 		List<BabysitterCredential> credentials = babysitter.getCredentials();
 		for (BabysitterCredential babysitterCredential : credentials) {
-			if (babysitterCredential.getCredential() != null
-					&& !babysitterCredential.getCredential().getName()
-							.contains("相册")) {
+			if (babysitterCredential.getCredential() != null && !babysitterCredential.getCredential().getName().contains("相册")) {
 				resultCredentials.add(babysitterCredential);
 			}
 		}
@@ -213,8 +199,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 
 	public RecommendInfo getNewBabysitterRecommend(String countyGuid) {
 		String hql = "from RecommendInfo r where r.county.guid = ? order by r.createDate desc";
-		List<RecommendInfo> infos = dao.getListResultByHQL(RecommendInfo.class,
-				hql, countyGuid);
+		List<RecommendInfo> infos = dao.getListResultByHQL(RecommendInfo.class, hql, countyGuid);
 		if (infos == null || infos.size() == 0)
 			return null;
 		return infos.get(0);
@@ -225,14 +210,11 @@ public class BabysitterServiceImpl implements BabysitterService {
 		dao.add(info);
 	}
 
-	public List<BabysitterView> getExpectedBabysitter(String countyGuid,
-			String expectedDate) {
+	public List<BabysitterView> getExpectedBabysitter(String countyGuid, String expectedDate) {
 		List<BabysitterView> result = new ArrayList<BabysitterView>();
 		String hql = "from Babysitter b where b.county.guid=?";
-		List<Babysitter> babysitters = dao.getListResultByHQL(Babysitter.class,
-				hql, countyGuid);
-		Map<String, Date> dates = ExpectedDateCreate
-				.getExpectedDate(expectedDate);
+		List<Babysitter> babysitters = dao.getListResultByHQL(Babysitter.class, hql, countyGuid);
+		Map<String, Date> dates = ExpectedDateCreate.getExpectedDate(expectedDate);
 		for (Babysitter babysitter : babysitters) {
 			if (ExpectedDateCreate.checkBabysitterOrder(babysitter, dates)) {
 				result.add(babysitter.view());
@@ -248,13 +230,11 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public PageResult register(String telephone, String password, String name,
-			String cardNo, String countyGuid, String verifyCode, PageResult res) {
+	public PageResult register(String telephone, String password, String name, String cardNo, String countyGuid, String verifyCode, PageResult res) {
 		try {
 			String hql = "from Babysitter b where b.ovld = true and b.mobilePhone=?";
 
-			Babysitter valideBabysitter = dao.getSingleResultByHQL(
-					Babysitter.class, hql, telephone);
+			Babysitter valideBabysitter = dao.getSingleResultByHQL(Babysitter.class, hql, telephone);
 			if (valideBabysitter == null) {
 				County county = dao.getResultByGUID(County.class, countyGuid);
 				if (county == null) {
@@ -327,10 +307,8 @@ public class BabysitterServiceImpl implements BabysitterService {
 	public PageResult login(String telephone, String password, PageResult res) {
 		try {
 			String hql = "from Babysitter b where b.ovld = true and b.mobilePhone = ?";
-			Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class,
-					hql, telephone);
-			if (babysitter == null
-					|| !password.equals(babysitter.getPassword())) {
+			Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql, telephone);
+			if (babysitter == null || !password.equals(babysitter.getPassword())) {
 				res.put("code", ResultInfo.VALID_USER_PASS.getCode());
 				res.put("msg", ResultInfo.VALID_USER_PASS.getMsg());
 				res.remove("result");
@@ -346,8 +324,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public PageResult changePass(String telephone, String password,
-			String code, PageResult res) {
+	public PageResult changePass(String telephone, String password, String code, PageResult res) {
 		// 验证code
 		// String hql =
 		// "from CheckCode t where t.ovld = true and mobilePhone=? and type=?";
@@ -358,8 +335,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		// DBcode.setOvld(false);
 		// dao.update(DBcode);
 		String hql = "from Babysitter b where b.ovld = true and mobilePhone = ?";
-		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql,
-				telephone);
+		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql, telephone);
 		if (babysitter == null) {
 			res.put("code", ResultInfo.BABYSITTER_NULL.getCode());
 			res.put("msg", ResultInfo.BABYSITTER_NULL.getMsg());
@@ -379,8 +355,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public RestInfo addRestInfo(String guid, Date beginDate, Date endDate,
-			String memo) {
+	public RestInfo addRestInfo(String guid, Date beginDate, Date endDate, String memo) {
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
 		if (babysitter == null)
 			return null;
@@ -407,16 +382,14 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public PageResult joinPromotion(String guid, String promotionGuid,
-			PageResult res) {
+	public PageResult joinPromotion(String guid, String promotionGuid, PageResult res) {
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
 		if (babysitter == null) {
 			res.put("code", ResultInfo.BABYSITTER_NULL.getCode());
 			res.put("msg", ResultInfo.BABYSITTER_NULL.getMsg());
 			return res;
 		}
-		PromotionInfo info = dao.getResultByGUID(PromotionInfo.class,
-				promotionGuid);
+		PromotionInfo info = dao.getResultByGUID(PromotionInfo.class, promotionGuid);
 		if (info == null) {
 			res.put("code", ResultInfo.PROMOTION_NULL.getCode());
 			res.put("msg", ResultInfo.PROMOTION_NULL.getMsg());
@@ -430,8 +403,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public PageResult updateHeadImage(String guid, HttpServletRequest request,
-			PageResult res) {
+	public PageResult updateHeadImage(String guid, HttpServletRequest request, PageResult res) {
 		UploadFileUtils fileUtil = UploadFileUtils.newInstance();
 		fileUtil.setRequest(request);
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
@@ -439,8 +411,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			List<MultipartFile> files = fileUtil.getFiles();
 			if (files != null && files.size() > 0) {
 				MultipartFile file = files.get(0);
-				String url = fileUtil.getFileUrl(file, Constants.URL_HEAD,
-						babysitter.getGuid());
+				String url = fileUtil.getFileUrl(file, Constants.URL_HEAD, babysitter.getGuid());
 				babysitter.setHeadUrl(url);
 				dao.update(babysitter);
 				Map<String, String> result = new HashMap<String, String>();
@@ -459,8 +430,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public PageResult addLifeImage(String guid, HttpServletRequest request,
-			String cardGuid, PageResult res) {
+	public PageResult addLifeImage(String guid, HttpServletRequest request, String cardGuid, PageResult res) {
 		UploadFileUtils fileUtil = UploadFileUtils.newInstance();
 		fileUtil.setRequest(request);
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
@@ -478,8 +448,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		if (files != null && files.size() > 0) {
 			MultipartFile file = files.get(0);
 			BabysitterImage image = BabysitterImage.getInstance();
-			String url = fileUtil.getFileUrl(file, Constants.URL_LIFE,
-					image.getGuid());
+			String url = fileUtil.getFileUrl(file, Constants.URL_LIFE, image.getGuid());
 			image.setBabysitter(babysitter);
 			image.setUrl(url);
 			dao.add(image);
@@ -491,14 +460,12 @@ public class BabysitterServiceImpl implements BabysitterService {
 		boolean flag = false;
 		List<BabysitterCredential> credentials = babysitter.getCredentials();
 		for (BabysitterCredential babysitterCredential : credentials) {
-			if (babysitterCredential.getCredential().getGuid()
-					.equals(credential.getGuid())) {
+			if (babysitterCredential.getCredential().getGuid().equals(credential.getGuid())) {
 				flag = !flag;
 			}
 		}
 		if (!flag) {
-			BabysitterCredential babysitterCredential = BabysitterCredential
-					.getInstance();
+			BabysitterCredential babysitterCredential = BabysitterCredential.getInstance();
 			babysitterCredential.setBabysitter(babysitter);
 			babysitterCredential.setCredential(credential);
 			babysitterCredential.setIscheck(Constants.PASS);
@@ -530,9 +497,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public PageResult updateBankCard(String guid, String bankName,
-			String bankCardNo, String bankUserName, String cardGuid,
-			PageResult result) {
+	public PageResult updateBankCard(String guid, String bankName, String bankCardNo, String bankUserName, String cardGuid, PageResult result) {
 		try {
 			Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
 			if (babysitter == null) {
@@ -544,22 +509,18 @@ public class BabysitterServiceImpl implements BabysitterService {
 			babysitter.setBankUserName(bankUserName);
 			babysitter.setUpdateDate(new Date());
 			dao.update(babysitter);
-			Credential credential = dao.getResultByGUID(Credential.class,
-					cardGuid);
+			Credential credential = dao.getResultByGUID(Credential.class, cardGuid);
 			if (credential == null)
 				result.setResult(ResultInfo.CREDENTIAL_NULL);
 			boolean flag = true;
-			List<BabysitterCredential> babysitterCredentials = babysitter
-					.getCredentials();
+			List<BabysitterCredential> babysitterCredentials = babysitter.getCredentials();
 			for (BabysitterCredential babysitterCredential : babysitterCredentials) {
-				if (babysitterCredential.getCredential().getGuid()
-						.equals(credential.getGuid())) {
+				if (babysitterCredential.getCredential().getGuid().equals(credential.getGuid())) {
 					flag = !flag;
 				}
 			}
 			if (flag) {
-				BabysitterCredential babysitterCredential = BabysitterCredential
-						.getInstance();
+				BabysitterCredential babysitterCredential = BabysitterCredential.getInstance();
 				babysitterCredential.setBabysitter(babysitter);
 				babysitterCredential.setCredential(credential);
 				babysitterCredential.setIscheck(Constants.PASS);
@@ -590,9 +551,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public PageResult addOrder(String guid, String beginDate, String endDate,
-			String price, String address, String employerName,
-			String telephone, PageResult res) {
+	public PageResult addOrder(String guid, String beginDate, String endDate, String price, String address, String employerName, String telephone, PageResult res) {
 		try {
 			// boolean flag = codeService.updateCheckCode(mobile, checkCode,
 			// CheckCodeService.PUBLISH_ORDER);
@@ -637,14 +596,10 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public ResultInfo manageAddBabysitter(String name, String password,
-			String identificationNo, long lowerSalary, String mobilePhone,
-			long countyId, long levelId, String birthday, String nativePlace,
-			String bankName, String bankCardNo, String bankUserName,
-			String introduce) {
+	public ResultInfo manageAddBabysitter(String name, String password, String identificationNo, long lowerSalary, String mobilePhone, long countyId, long levelId,
+			String birthday, String nativePlace, String bankName, String bankCardNo, String bankUserName, String introduce) {
 		String hql = "from Babysitter t where ovld = true and t.mobilePhone = ?";
-		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql,
-				mobilePhone);
+		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql, mobilePhone);
 		if (babysitter != null)
 			return ResultInfo.BABYSITTER_NOT_NULL;
 		County county = dao.getResultById(County.class, countyId);
@@ -672,12 +627,9 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public ResultInfo manageUpdateBabysitter(String id, String name,
-			String password, String identificationNo, long lowerSalary,
-			String mobilePhone, long countyId, long levelId, String birthday,
-			String nativePlace, String introduce, String height, String weight,
-			String hobbies, String bankName, String bankCardNo,
-			String bankUserName, String mandarin, String isV) {
+	public ResultInfo manageUpdateBabysitter(String id, String name, String password, String identificationNo, long lowerSalary, String mobilePhone, long countyId, long levelId,
+			String birthday, String nativePlace, String introduce, String height, String weight, String hobbies, String bankName, String bankCardNo, String bankUserName,
+			String mandarin, String isV) {
 		long idl = Long.valueOf(id);
 		Babysitter babysitter = dao.getResultById(Babysitter.class, idl);
 		if (babysitter == null)
@@ -744,17 +696,13 @@ public class BabysitterServiceImpl implements BabysitterService {
 		}
 		long countyId = county.getId();
 		String sql = "select babysitter_id bid,count(t.id) counter from babysitter_babysitter_order t join babysitter_babysitter t1 on t.babysitter_id = t1.id where t1.county_id =? and t.state >=5  group by babysitter_id order by count(t.id) desc limit 10;";
-		List<Object[]> list = dao.getSession().createSQLQuery(sql)
-				.addScalar("bid", LongType.INSTANCE)
-				.addScalar("counter", LongType.INSTANCE).setLong(0, countyId)
-				.list();
+		List<Object[]> list = dao.getSession().createSQLQuery(sql).addScalar("bid", LongType.INSTANCE).addScalar("counter", LongType.INSTANCE).setLong(0, countyId).list();
 		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 		int index = 1;
 		for (Object[] o : list) {
 			long bid = Long.valueOf(o[0].toString());
 			long count = Long.valueOf(o[1].toString());
-			BabysitterView view = dao.getResultById(Babysitter.class, bid)
-					.view();
+			BabysitterView view = dao.getResultById(Babysitter.class, bid).view();
 			Map<String, Object> m = new HashMap<String, Object>();
 			m.put("headUrl", view.getHeadUrl());
 			m.put("name", view.getName());
@@ -779,8 +727,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		}
 		long countyId = county.getId();
 		String sql = "select * from babysitter_babysitter t where t.county_id = ? order by t.score desc limit 10";
-		List<Babysitter> list = dao.getSession().createSQLQuery(sql)
-				.addEntity(Babysitter.class).setLong(0, countyId).list();
+		List<Babysitter> list = dao.getSession().createSQLQuery(sql).addEntity(Babysitter.class).setLong(0, countyId).list();
 		List<Map<String, Object>> resultList = new ArrayList<Map<String, Object>>();
 		int index = 1;
 		for (Babysitter babysitter : list) {
@@ -802,21 +749,15 @@ public class BabysitterServiceImpl implements BabysitterService {
 
 	private long getOrderCountIndex(long babysitterId) {
 		String sql = "select count(t.id) counter from babysitter_babysitter_order t where t.babysitter_id=? and state >=5";
-		long counter = (Long) dao.getSession().createSQLQuery(sql)
-				.addScalar("counter", LongType.INSTANCE)
-				.setLong(0, babysitterId).uniqueResult();
+		long counter = (Long) dao.getSession().createSQLQuery(sql).addScalar("counter", LongType.INSTANCE).setLong(0, babysitterId).uniqueResult();
 		String indexSql = "select count(t.bid) counter from (select babysitter_id bid from babysitter_babysitter_order t  group by babysitter_id having(count(t.id)>?)) t;";
-		long index = (Long) dao.getSession().createSQLQuery(indexSql)
-				.addScalar("counter", LongType.INSTANCE).setLong(0, counter)
-				.uniqueResult();
+		long index = (Long) dao.getSession().createSQLQuery(indexSql).addScalar("counter", LongType.INSTANCE).setLong(0, counter).uniqueResult();
 		return index + 1;
 	}
 
 	private long getScoreCountIndex(long score) {
 		String sql = "select count(t.id) counter from babysitter_babysitter t where t.score> ?";
-		long index = (Long) dao.getSession().createSQLQuery(sql)
-				.addScalar("counter", LongType.INSTANCE).setLong(0, score)
-				.uniqueResult();
+		long index = (Long) dao.getSession().createSQLQuery(sql).addScalar("counter", LongType.INSTANCE).setLong(0, score).uniqueResult();
 		return index + 1;
 	}
 
@@ -825,8 +766,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		if (county == null)
 			return -1;
 		String hql = "from CountyLevel t where t.county.id=? order by t.score";
-		List<CountyLevel> levelList = dao.getListResultByHQL(CountyLevel.class,
-				hql, county.getId());
+		List<CountyLevel> levelList = dao.getListResultByHQL(CountyLevel.class, hql, county.getId());
 		if (levelList == null || levelList.size() == 0)
 			return -1;
 		if (babysitter.getLevel() == null) {
@@ -844,8 +784,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			if (index == levelSize - 1) {
 				return 0;
 			} else if (index < levelSize) {
-				return levelList.get(index + 1).getScore()
-						- babysitterLevel.getScore();
+				return levelList.get(index + 1).getScore() - babysitterLevel.getScore();
 			} else {
 				return -1;
 			}
@@ -853,8 +792,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	@Transactional
-	public ResultInfo addBankInfo(long id, String bankName, String bankCardNo,
-			String bankUserName) {
+	public ResultInfo addBankInfo(long id, String bankName, String bankCardNo, String bankUserName) {
 		Babysitter babysitter = dao.getResultById(Babysitter.class, id);
 		if (babysitter == null)
 			return ResultInfo.BABYSITTER_NULL;
@@ -872,18 +810,15 @@ public class BabysitterServiceImpl implements BabysitterService {
 		return ResultInfo.SUCCESS;
 	}
 
-	public PageResult addCredential(HttpServletRequest request,
-			String babysitterGuid, String credentialGuid, PageResult result) {
+	public PageResult addCredential(HttpServletRequest request, String babysitterGuid, String credentialGuid, PageResult result) {
 		UploadFileUtils fileUtil = UploadFileUtils.newInstance();
 		fileUtil.setRequest(request);
-		Babysitter babysitter = dao.getResultByGUID(Babysitter.class,
-				babysitterGuid);
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, babysitterGuid);
 		if (babysitter == null) {
 			result.setResult(ResultInfo.BABYSITTER_NULL);
 			return result;
 		}
-		Credential dicCredential = dao.getResultByGUID(Credential.class,
-				credentialGuid);
+		Credential dicCredential = dao.getResultByGUID(Credential.class, credentialGuid);
 		if (dicCredential == null) {
 			result.setResult(ResultInfo.CREDENTIAL_NULL);
 			return result;
@@ -895,8 +830,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		List<MultipartFile> files = fileUtil.getFiles();
 		if (files != null && files.size() > 0) {
 			MultipartFile file = files.get(0);
-			String url = fileUtil.getFileUrl(file, Constants.URL_CARD,
-					credential.getGuid());
+			String url = fileUtil.getFileUrl(file, Constants.URL_CARD, credential.getGuid());
 			credential.setCredentialUrl(url);
 			dao.update(credential);
 
@@ -909,14 +843,11 @@ public class BabysitterServiceImpl implements BabysitterService {
 		return result;
 	}
 
-	public PageResult search(String countyGuid, String expectedDate,
-			String level, PageResult result) {
+	public PageResult search(String countyGuid, String expectedDate, String level, PageResult result) {
 		String hql = "from Babysitter b where b.county.guid=? and b.level.guid=?";
-		List<Babysitter> list = dao.getListResultByHQL(Babysitter.class, hql,
-				countyGuid, level);
+		List<Babysitter> list = dao.getListResultByHQL(Babysitter.class, hql, countyGuid, level);
 		List<BabysitterView> viewList = new ArrayList<BabysitterView>();
-		Map<String, Date> dates = ExpectedDateCreate
-				.getExpectedDate(expectedDate);
+		Map<String, Date> dates = ExpectedDateCreate.getExpectedDate(expectedDate);
 		for (Babysitter babysitter : list) {
 			if (ExpectedDateCreate.checkBabysitterOrder(babysitter, dates)) {
 				viewList.add(babysitter.view());
@@ -929,8 +860,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 
 	public PageResult nameSearch(String name, PageResult result) {
 		String hql = "from Babysitter b where b.name like ?";
-		List<Babysitter> list = dao.getListResultByHQL(Babysitter.class, hql,
-				"%" + name + "%");
+		List<Babysitter> list = dao.getListResultByHQL(Babysitter.class, hql, "%" + name + "%");
 		List<BabysitterView> viewList = new ArrayList<BabysitterView>();
 
 		for (Babysitter babysitter : list) {
@@ -967,10 +897,11 @@ public class BabysitterServiceImpl implements BabysitterService {
 	@Transactional
 	public PageResult getAdvice(String babysitterGuid, PageResult result) {
 		String hql = "from PanicBuyingBabysitterAdvice t where t.ovld = true and t.babysitter.guid = ? and t.isOver = false and t.isAdvice = false";
-		List<PanicBuyingBabysitterAdvice> advices = dao.getListResultByHQL(
-				PanicBuyingBabysitterAdvice.class, hql, babysitterGuid);
+		List<PanicBuyingBabysitterAdvice> advices = dao.getListResultByHQL(PanicBuyingBabysitterAdvice.class, hql, babysitterGuid);
 		List<ServiceOrderView> views = new ArrayList<ServiceOrderView>();
 		for (PanicBuyingBabysitterAdvice advice : advices) {
+			advice.setIsAdvice(true);
+			dao.update(advice);
 			views.add(advice.getServiceOrder().view());
 		}
 		result.setResult(ResultInfo.SUCCESS);
@@ -978,10 +909,9 @@ public class BabysitterServiceImpl implements BabysitterService {
 		return result;
 	}
 
-	public PageResult panic(String babysitterGuid, String orderGuid,
-			PageResult result) {
-		Babysitter babysitter = dao.getResultByGUID(Babysitter.class,
-				babysitterGuid);
+	@Transactional
+	public PageResult panic(String babysitterGuid, String orderGuid, PageResult result) {
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, babysitterGuid);
 		ServiceOrder order = dao.getResultByGUID(ServiceOrder.class, orderGuid);
 		PanicBuyingOrder buyingOrder = PanicBuyingOrder.getInstance();
 		buyingOrder.setBabysitter(babysitter);
@@ -989,25 +919,28 @@ public class BabysitterServiceImpl implements BabysitterService {
 		dao.add(buyingOrder);
 		// 更新通知表
 		String hql = "from PanicBuyingBabysitterAdvice t where t.ovld = true and t.babysitter.guid = ? and t.serviceOrder.guid = ?";
-		PanicBuyingBabysitterAdvice advice = dao.getSingleResultByHQL(
-				PanicBuyingBabysitterAdvice.class, hql, babysitterGuid,
-				orderGuid);
-		advice.setAdvice(true);
+		PanicBuyingBabysitterAdvice advice = dao.getSingleResultByHQL(PanicBuyingBabysitterAdvice.class, hql, babysitterGuid, orderGuid);
+		advice.setIsAdvice(true);
 		dao.update(advice);
 		result.setResult(ResultInfo.SUCCESS);
 		return result;
 	}
 
-	public PageResult panicOrders(String babysitterGuid, PageResult result) {
-		String hql = "from PanicBuyingOrder t where t.ovld = true and t.babysitter.guid = ?";
-		List<PanicBuyingOrder> list = dao.getListResultByHQL(
-				PanicBuyingOrder.class, hql, babysitterGuid);
+	public PageResult panicOrders(int pageNo, int pageSize, String babysitterGuid, PageResult result) {
+		String hql = "from PanicBuyingOrder t where t.ovld = true and t.babysitter.guid = ? order by t.createDate desc";
+		Pagination<PanicBuyingOrder> page = dao.getPageResult(PanicBuyingOrder.class, hql, pageNo, pageSize, babysitterGuid);
+		List<PanicBuyingOrder> list = page.getResult();
 		List<ServiceOrderView> orders = new ArrayList<ServiceOrderView>();
 		for (PanicBuyingOrder order : list) {
 			orders.add(order.getServiceOrder().view());
 		}
+		StringBuffer countHql = new StringBuffer(" select count(t.id) ");
+		countHql.append(hql);
+		Pagination<ServiceOrderView> pa = new Pagination<ServiceOrderView>(orders, pageNo, pageSize);
+		Long count = dao.getSingleResultByHQL(Long.class, countHql.toString(), babysitterGuid);
+		pa.setResultSize(count);
 		result.setResult(ResultInfo.SUCCESS);
-		result.put("result", orders);
+		result.put("result", pa);
 		return result;
 	}
 }
