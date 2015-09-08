@@ -43,7 +43,9 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	private NumberRecordService recordService;
 
 	@Transactional
-	public ResultInfo addServiceOrder(String date, String price, String countyGuid, String address, String name, String mobile, String checkCode) {
+	public ResultInfo addServiceOrder(String date, String price,
+			String countyGuid, String address, String name, String mobile,
+			String checkCode) {
 		try {
 			// boolean flag = codeService.updateCheckCode(mobile, checkCode,
 			// CheckCodeService.PUBLISH_ORDER);
@@ -67,9 +69,12 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			order.setAddress(address);
 			// order.setCounty(county);
 			order.setMobilePhone(mobile.replace(" ", ""));
-			Map<String, Date> expectedDate = ExpectedDateCreate.getExpectedDate(date);
-			order.setServiceBeginDate(expectedDate.get(ExpectedDateCreate.BEGIN_DATE));
-			order.setServiceEndDate(expectedDate.get(ExpectedDateCreate.END_DATE));
+			Map<String, Date> expectedDate = ExpectedDateCreate
+					.getExpectedDate(date);
+			order.setServiceBeginDate(expectedDate
+					.get(ExpectedDateCreate.BEGIN_DATE));
+			order.setServiceEndDate(expectedDate
+					.get(ExpectedDateCreate.END_DATE));
 			dao.add(order);
 		} catch (CheckErrorException e) {
 			return ResultInfo.CHECK_CODE_ERROR;
@@ -81,14 +86,17 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	@Transactional
-	public ResultInfo addBabysitterOrderEvaluate(String employGuid, String orderGuid, String babysitterGuid, String msg, String score) {
+	public ResultInfo addBabysitterOrderEvaluate(String employGuid,
+			String orderGuid, String babysitterGuid, String msg, String score) {
 		// Employer employer = dao.getResultByGUID(Employer.class, employGuid);
 		// if (employer == null)
 		// return ResultInfo.EMPLOYER_NULL;
-		BabysitterOrder order = dao.getResultByGUID(BabysitterOrder.class, orderGuid);
+		BabysitterOrder order = dao.getResultByGUID(BabysitterOrder.class,
+				orderGuid);
 		if (order == null)
 			return ResultInfo.BABYSITTER_ORDER_NULL;
-		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, babysitterGuid);
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class,
+				babysitterGuid);
 		if (babysitter == null)
 			return ResultInfo.BABYSITTER_NULL;
 		order.setScore(Integer.valueOf(score));
@@ -118,18 +126,22 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		Employer employer = null;
 		if (StringUtils.isEmpty(openid)) {
 			String mobileHql = "from Employer t where t.ovld = true and t.mobilePhone = ?";
-			employer = dao.getSingleResultByHQL(Employer.class, mobileHql, mobile);
+			employer = dao.getSingleResultByHQL(Employer.class, mobileHql,
+					mobile);
 		} else {
 			String openidHql = "from Employer t where t.ovld = true and t.openid = ?";
-			employer = dao.getSingleResultByHQL(Employer.class, openidHql, openid);
+			employer = dao.getSingleResultByHQL(Employer.class, openidHql,
+					openid);
 		}
 		List<ServiceOrderView> view = new ArrayList<ServiceOrderView>();
 		if (employer == null) {
 			result.setResult(ResultInfo.SUCCESS);
 			result.put("result", view);
+			return result;
 		}
 		String hql = "from ServiceOrder t where t.ovld = true and t.employer.id=?";
-		List<ServiceOrder> orders = dao.getListResultByHQL(ServiceOrder.class, hql, employer.getId());
+		List<ServiceOrder> orders = dao.getListResultByHQL(ServiceOrder.class,
+				hql, employer.getId());
 		if (orders == null)
 			orders = new ArrayList<ServiceOrder>();
 		for (ServiceOrder order : orders) {
@@ -140,9 +152,11 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		return result;
 	}
 
-	public Pagination<ServiceOrderView> manageOrderList(Pagination<ServiceOrder> page, String exployerName, String telephone) {
+	public Pagination<ServiceOrderView> manageOrderList(
+			Pagination<ServiceOrder> page, String exployerName, String telephone) {
 		List<Object> params = new ArrayList<Object>();
-		StringBuffer hql = new StringBuffer("from ServiceOrder r where ovld = true ");
+		StringBuffer hql = new StringBuffer(
+				"from ServiceOrder r where ovld = true ");
 		if (!StringUtils.isEmpty(telephone)) {
 			hql.append(" and r.mobilePhone = ? ");
 			params.add(telephone);
@@ -158,24 +172,30 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		for (int i = 0; i < objParams.length; i++) {
 			objParams[i] = params.get(i);
 		}
-		Pagination<ServiceOrder> p = dao.getPageResultObjectParams(ServiceOrder.class, hql.toString(), page.getPageNo(), page.getPageSize(), objParams);
+		Pagination<ServiceOrder> p = dao.getPageResultObjectParams(
+				ServiceOrder.class, hql.toString(), page.getPageNo(),
+				page.getPageSize(), objParams);
 		List<ServiceOrder> list = p.getResult();
 		List<ServiceOrderView> viewList = new ArrayList<ServiceOrderView>();
 		for (ServiceOrder order : list) {
 			viewList.add(order.view());
 		}
 
-		Pagination<ServiceOrderView> pa = new Pagination<ServiceOrderView>(viewList, p.getPageNo(), p.getPageSize());
-		Long count = dao.getSingleResultByHQLObjectParams(Long.class, countHql.toString(), objParams);
+		Pagination<ServiceOrderView> pa = new Pagination<ServiceOrderView>(
+				viewList, p.getPageNo(), p.getPageSize());
+		Long count = dao.getSingleResultByHQLObjectParams(Long.class,
+				countHql.toString(), objParams);
 		pa.setResultSize(count);
 		return pa;
 	}
 
 	@Transactional
-	public ResultInfo manageAddOrder(String beginDate, String endDate, String price, String address, String employerName, String telephone) {
+	public ResultInfo manageAddOrder(String beginDate, String endDate,
+			String price, String address, String employerName, String telephone) {
 		try {
 			String hql = "from Employer e where e.ovld = true and e.mobilePhone = ?";
-			Employer employer = dao.getSingleResultByHQL(Employer.class, hql, telephone);
+			Employer employer = dao.getSingleResultByHQL(Employer.class, hql,
+					telephone);
 			if (employer == null) {
 				employer = Employer.getInstance();
 				employer.setMobilePhone(telephone.replace(" ", ""));
@@ -216,7 +236,8 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	@Transactional
-	public ResultInfo manageEditOrder(String id, String employerAddress, String price, String beginDate, String endDate) {
+	public ResultInfo manageEditOrder(String id, String employerAddress,
+			String price, String beginDate, String endDate) {
 		try {
 			long idl = Long.valueOf(id);
 			ServiceOrder order = dao.getResultById(ServiceOrder.class, idl);
@@ -237,7 +258,8 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			if (!StringUtils.isEmpty(price))
 				order.setOrderPrice(Long.parseLong(price));
 			if (!StringUtils.isEmpty(beginDate))
-				order.setServiceBeginDate(ExpectedDateCreate.parseDate(beginDate));
+				order.setServiceBeginDate(ExpectedDateCreate
+						.parseDate(beginDate));
 			if (!StringUtils.isEmpty(endDate))
 				order.setServiceEndDate(ExpectedDateCreate.parseDate(endDate));
 			// order.setEmployer(employer);
@@ -253,8 +275,9 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	 * 雇主添加订单，需要根据订单的开始结束时间、订单所属地区查找符合要求的月嫂添加到需要通知的月嫂的数据表中
 	 */
 	@Transactional
-	public PageResult wechatAddServiceOrder(String date, String price, String countyGuid, String address, String name, String mobile, String checkCode, String openid,
-			PageResult result) {
+	public PageResult wechatAddServiceOrder(String date, String price,
+			String countyGuid, String address, String name, String mobile,
+			String checkCode, String openid, PageResult result) {
 		try {
 			// boolean flag = codeService.updateCheckCode(mobile, checkCode,
 			// CheckCodeService.PUBLISH_ORDER);
@@ -281,16 +304,22 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			order.setMobilePhone(mobile);
 			order.setEmployerName(name);
 			order.setMobilePhone(mobile);
-			Map<String, Date> expectedDate = ExpectedDateCreate.getExpectedDate(date);
-			order.setServiceBeginDate(expectedDate.get(ExpectedDateCreate.BEGIN_DATE));
-			order.setServiceEndDate(expectedDate.get(ExpectedDateCreate.END_DATE));
+			Map<String, Date> expectedDate = ExpectedDateCreate
+					.getExpectedDate(date);
+			order.setServiceBeginDate(expectedDate
+					.get(ExpectedDateCreate.BEGIN_DATE));
+			order.setServiceEndDate(expectedDate
+					.get(ExpectedDateCreate.END_DATE));
 			dao.add(order);
 			// 添加需要通知的月嫂
 			String hql = "from Babysitter b where b.county.guid=?";
-			List<Babysitter> babysitters = dao.getListResultByHQL(Babysitter.class, hql, countyGuid);
+			List<Babysitter> babysitters = dao.getListResultByHQL(
+					Babysitter.class, hql, countyGuid);
 			for (Babysitter babysitter : babysitters) {
-				if (ExpectedDateCreate.checkBabysitterOrder(babysitter, expectedDate)) {
-					PanicBuyingBabysitterAdvice advice = PanicBuyingBabysitterAdvice.getInstance();
+				if (ExpectedDateCreate.checkBabysitterOrder(babysitter,
+						expectedDate)) {
+					PanicBuyingBabysitterAdvice advice = PanicBuyingBabysitterAdvice
+							.getInstance();
 					advice.setBabysitter(babysitter);
 					advice.setServiceOrder(order);
 					advice.setIsAdvice(false);
@@ -312,9 +341,12 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	@Transactional
-	public PageResult markBabysitter(String babysitterGuid, String orderGuid, PageResult result) {
-		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, babysitterGuid);
-		ServiceOrder serviceOrder = dao.getResultByGUID(ServiceOrder.class, orderGuid);
+	public PageResult markBabysitter(String babysitterGuid, String orderGuid,
+			PageResult result) {
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class,
+				babysitterGuid);
+		ServiceOrder serviceOrder = dao.getResultByGUID(ServiceOrder.class,
+				orderGuid);
 		// 添加月嫂订单
 		BabysitterOrder babysitterOrder = BabysitterOrder.getInstance();
 		babysitterOrder.setBabysitter(babysitter);
@@ -333,7 +365,8 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		dao.update(serviceOrder);
 		// 更新月嫂抢单通知表中该订单的所有记录为不可用即订单已经被抢
 		String hql = "from PanicBuyingBabysitterAdvice t where t.ovld = true and t.serviceOrder.guid = ?";
-		List<PanicBuyingBabysitterAdvice> list = dao.getListResultByHQL(PanicBuyingBabysitterAdvice.class, hql, orderGuid);
+		List<PanicBuyingBabysitterAdvice> list = dao.getListResultByHQL(
+				PanicBuyingBabysitterAdvice.class, hql, orderGuid);
 		for (PanicBuyingBabysitterAdvice advice : list) {
 			advice.setIsOver(true);
 			dao.update(advice);
