@@ -20,4 +20,6 @@ public interface CountyService {
 
 	void updateCounty(County county);
 
+	void updateCounty(String id, String name, String shortName, String pid);
+
 }

@@ -7,6 +7,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.County;
@@ -62,6 +63,23 @@ public class CountyServiceImpl implements CountyService {
 			views.add(county.view());
 		}
 		return views;
+	}
+
+	@Transactional
+	public void updateCounty(String id, String name, String shortName, String pid) {
+		long idl = Long.valueOf(id);
+		County county = dao.getResultById(County.class, idl);
+		if (!StringUtils.isEmpty(name))
+			county.setName(name);
+		if (!StringUtils.isEmpty(shortName))
+			county.setShortName(shortName);
+		if (StringUtils.isEmpty(pid)) {
+			pid = "0";
+		}
+		long parentId = Long.valueOf(pid);
+		County parent = dao.getResultById(County.class, parentId);
+		county.setParent(parent);
+		dao.update(county);
 	}
 
 }

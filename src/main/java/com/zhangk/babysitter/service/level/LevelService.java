@@ -15,4 +15,6 @@ public interface LevelService {
 
 	Level getLevel(long id);
 
+	void updateLevel(String id, String name, String score, String money);
+
 }
