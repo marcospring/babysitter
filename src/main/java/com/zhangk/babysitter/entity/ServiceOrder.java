@@ -33,6 +33,7 @@ public class ServiceOrder implements Serializable {
 	private String address;
 	private String employerName;
 	private String mobilePhone;
+	private boolean over = true;
 	private long orderPrice;
 	private Date serviceBeginDate;
 	private Date serviceEndDate;
@@ -157,6 +158,14 @@ public class ServiceOrder implements Serializable {
 
 	public void setOrderGuid(String orderGuid) {
 		this.orderGuid = orderGuid;
+	}
+
+	public boolean getOver() {
+		return over;
+	}
+
+	public void setOver(boolean over) {
+		this.over = over;
 	}
 
 	public static ServiceOrder getInstance() {

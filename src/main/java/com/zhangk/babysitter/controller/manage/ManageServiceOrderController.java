@@ -1,6 +1,7 @@
 package com.zhangk.babysitter.controller.manage;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.service.exployer.ServiceOrderService;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
+import com.zhangk.babysitter.viewmodel.BabysitterView;
 import com.zhangk.babysitter.viewmodel.EmployerView;
 import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
@@ -70,6 +72,11 @@ public class ManageServiceOrderController extends BaseController {
 		return "manage/serviceOrder/manageOrder";
 	}
 
+	@RequestMapping("/goDelete")
+	public Object goDelete(String ids) {
+		return "manage/serviceOrder/deleteOrder";
+	}
+
 	@ResponseBody
 	@RequestMapping("/delete")
 	public Object delete(String ids) {
@@ -116,5 +123,79 @@ public class ManageServiceOrderController extends BaseController {
 		result.put("rows", views.getResult());
 		result.put("total", views.getResultSize());
 		return result;
+	}
+
+	@RequestMapping("/goReAddAdvice")
+	public Object goReAddAdvice(String id) {
+		return "/manage/serviceOrder/reAdvice";
+	}
+
+	@ResponseBody
+	@RequestMapping("/reAddAdvice")
+	public Object reAddAdvice(String id) {
+		orderService.addServiceOrderAdvice(id);
+		return MyResponse.successResponse();
+	}
+
+	// ////////////////////////////////////////////////////////////////////
+	@RequestMapping("/goAddPaincOrder")
+	public Object goAddPaincOrder(HttpServletRequest request, String id) {
+		return "/manage/serviceOrder/addPanicOrder";
+	}
+
+	@RequestMapping("/goBabysitterList")
+	public Object goBabysitterList(HttpServletRequest request, String id) {
+		request.getSession().setAttribute("serviceOrderId", id);
+		return "/manage/serviceOrder/babysitter";
+	}
+
+	@ResponseBody
+	@RequestMapping("/addPanicBabysitter")
+	public Object addPanicBabysitter(String babysitterId, String serviceOrderId) {
+		orderService.addServiceOrderPanic(serviceOrderId, babysitterId);
+		return MyResponse.successResponse();
+	}
+
+	@RequestMapping("/goBabysitters")
+	public Object goBabysitters(HttpServletRequest request, String id) {
+		return "/manage/serviceOrder/makeBabysitterList";
+	}
+
+	@RequestMapping("/gopanicBabysitterlist")
+	public Object gopanicBabysitterlist(HttpServletRequest request,
+			String serviceOrderId) {
+		request.setAttribute("getBabysitterServiceOrderId", serviceOrderId);
+		return "/manage/serviceOrder/panicBabysitter";
+	}
+
+	@ResponseBody
+	@RequestMapping("/panicBabysitterlist")
+	public Object panicBabysitterlist(HttpServletRequest request,
+			String serviceOrderId) {
+		List<BabysitterView> list = orderService
+				.getPanicBabysitters(serviceOrderId);
+
+		Map<String, Object> result = new HashMap<String, Object>();
+		result.put("rows", list);
+		result.put("total", 1);
+		return result;
+	}
+
+	@RequestMapping("/goMarkBabysitterList")
+	public Object goMakeBabysitterList(HttpServletRequest request, String id) {
+		request.getSession().setAttribute("markServiceOrderId", id);
+		return "/manage/serviceOrder/panicBabysitter";
+	}
+
+	@RequestMapping("/markPanicBabysitter")
+	public Object markPanicBabysitter(HttpServletRequest request,
+			String serviceOrderId, String babysitterId) {
+		PageResult result = orderService.markBabysitterId(babysitterId,
+				serviceOrderId, getResult());
+		if ("0".equals(result.get("code")))
+			return MyResponse.successResponse();
+		else
+			return MyResponse.errorResponse(Integer.parseInt(result.get("code")
+					.toString()), result.get("msg").toString());
 	}
 }

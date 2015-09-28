@@ -105,4 +105,24 @@ public class ManageCustomerManagerController extends BaseController {
 					ResultInfo.MANAGER_NULL.getMsg());
 		return MyResponse.successResponse();
 	}
+
+	@RequestMapping("/goDuty")
+	public Object goDuty(HttpServletRequest request) {
+
+		return "manage/customManager/dutyCustomerManager";
+	}
+
+	@RequestMapping("/goPageDuty")
+	public Object goPageDuty(HttpServletRequest request, String id) {
+		CustomerManager manager = managerService.getCustomerManager(id);
+		request.setAttribute("customerManager", manager);
+		return "manage/customManager/manageCustomerManagerDuty";
+	}
+
+	@ResponseBody
+	@RequestMapping("/duty")
+	public Object duty(String id, String week, String countyid) {
+		managerService.duty(id, week, countyid);
+		return MyResponse.successResponse();
+	}
 }

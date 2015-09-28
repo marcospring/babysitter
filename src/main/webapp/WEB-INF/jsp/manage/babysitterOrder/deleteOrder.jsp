@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>公司管理</title>
+<title>订单删除</title>
 <jsp:include page="/inc.jsp"></jsp:include>
 <script type="text/javascript">
 	var dataGrid;
@@ -11,7 +11,7 @@
 		dataGrid = $('#dataGrid')
 				.datagrid(
 						{
-							url : '${pageContext.request.contextPath}/manage/customerManager/list.html',
+							url : '${pageContext.request.contextPath}/manage/babysitterOrder/list.html',
 							fit : true,
 							fitColumns : false,
 							border : false,
@@ -23,9 +23,9 @@
 							checkOnSelect : false,
 							selectOnCheck : false,
 							singleSelect : true,
-							frozenColumns : [ [ { field: 'ck', 
+							frozenColumns : [ [{ field: 'ck', 
 								 checkbox: true 
-							 }, {
+							 },  {
 								field : 'id',
 								title : '编号',
 								width : 50
@@ -34,33 +34,57 @@
 								title : 'GUID',
 								width : 70
 							} , {
+								field : 'orderId',
+								title : '订单号',
+								width : 70
+							}, {
 								field : 'state',
-								title : '是否验证',
+								title : '订单状态',
 								width : 70,
 								formatter : function(val) {
-									return val==1?"<font color='green'>通过</font>":"<font color='red'>未通过</font>";
+									var stateStr = "";
+									if(val ==1){
+										stateStr = "新发布";
+									}else if(val ==2){
+										stateStr = "等待上户";
+									}else if(val ==3||val ==4){
+										stateStr = "上户中";
+									}else if(val ==5 || val ==6){
+										stateStr = "订单完成";
+									}
+									return stateStr;
 								}
 							}] ],
 							columns : [ [ {
-								field : 'name',
-								title : '姓名',
+								field : 'babysitterName',
+								title : '月嫂姓名',
 								width : 200
 
 							},{
-								field : 'companyName',
-								title : '公司名称',
+								field : 'employerName',
+								title : '雇主姓名',
 								width : 200
 
 							}, {
 								field : 'telephone',
-								title : '电话',
+								title : '雇主电话',
 								width : 300
 
 							}, {
-								field : 'countyName',
-								title : '城市',
+								field : 'address',
+								title : '雇主地址',
 								width : 300,
 								
+
+							}, {
+								field : 'beginDate',
+								title : '开始时间',
+								width : 350
+
+							}, {
+								field : 'endDate',
+								title : '结束时间',
+								width : 300
 
 							} ] ],
 							toolbar : '#toolbar',
@@ -85,13 +109,7 @@
 										'info');
 							}
 						});
-		$('#countyid').combobox({    
-		    url:'${pageContext.request.contextPath}/manage/county/comboList.html',    
-		    valueField:'id',
-		    editable:false, 
-		    textField:'name',
-		    
-		});
+
 
 	});
 
@@ -116,7 +134,7 @@
 		parent.$.messager
 				.confirm(
 						'询问',
-						'您是否要删除当前用户？',
+						'您是否要删除当前订单？',
 						function(b) {
 							if (b) {
 								parent.$.messager.progress({
@@ -124,7 +142,7 @@
 									text : '数据处理中，请稍后....'
 								});
 								$.post(
-									'${pageContext.request.contextPath}/manage/customerManager/delete.html',
+									'${pageContext.request.contextPath}/manage/babysitterOrder/delete.html',
 									{
 										ids : ids
 									},
@@ -144,30 +162,7 @@
 							}
 						});
 	}
-	function editFun(id) {
-		if (id == undefined) {
-			var rows = dataGrid.datagrid('getSelections');
-			id = rows[0].id;
-		} else {
-			dataGrid.datagrid('unselectAll').datagrid('uncheckAll');
-		}
-		parent.$
-				.modalDialog({
-					title : '编辑客户经理',
-					width : 350,
-					height : 650,
-					href : '${pageContext.request.contextPath}/manage/customerManager/goEdit.html?id='
-							+ id,
-					buttons : [ {
-						text : '编辑',
-						handler : function() {
-							parent.$.modalDialog.openner_dataGrid = dataGrid;//因为添加成功之后，需要刷新这个dataGrid，所以先预定义好
-							var f = parent.$.modalDialog.handler.find('#form');
-							f.submit();
-						}
-					} ]
-				});
-	}
+	
 </script>
 </head>
 <body>
@@ -176,20 +171,27 @@
 			<form id="searchForm">
 			<table style="font-size:13px;">
 				<tr>
-					<td style="padding:0px;">姓名：</td>
-					<td style="padding:5px;"><input name="name" class="easyui-validatebox" type="text" style="width:150px;height: 25px;"></td>
-					<td style="padding:0px;">公司名称：</td>
-					<td style="padding:5px;"><input name="companyName" class="easyui-validatebox" type="text" style="width:150px;height: 25px;"></td>
-					<td style="padding:0px;">城市：</td>
-					<td style="padding:5px;"><input id="countyid" name="countyId" style="width:100px;"></td>
-					<td style="padding:0px;">是否验证：</td>
+					<td style="padding:0px;">月嫂GUID：</td>
+					<td style="padding:5px;"><input name="babysitterGuid" class="easyui-validatebox" type="text" style="width:150px;height: 25px;"></td>
+					<td style="padding:0px;">月嫂姓名：</td>
+					<td style="padding:5px;"><input name="babysitterName" class="easyui-validatebox" type="text" style="width:150px;height: 25px;"></td>
+					<td style="padding:0px;">雇主姓名：</td>
+					<td style="padding:5px;"><input name="employerName" class="easyui-validatebox" type="text" style="width:150px;height: 25px;"></td>
+					<td style="padding:0px;">雇主电话：</td>
+					<td style="padding:5px;"><input name="employerTelephone" class="easyui-validatebox" type="text" style="width:150px;height: 25px;"></td>
+					<td style="padding:0px;">状态：</td>
 					<td style="padding:5px;">
-					<select name="state" class="easyui-combobox"style="width:200px;">   
+						<select name="state" class="easyui-combobox"style="width:200px;">   
 						    <option value="" selected="selected">所有</option>   
-						    <option value="1" >审核通过</option>   
-						    <option value="0">未审核</option>   
+						    <option value="1">新发布</option>   
+						    <option value="2">等待上户</option> 
+						    <option value="3">尾款结算，上户中</option>    
+						    <option value="4">上户中</option>    
+						    <option value="5">订单完成，待评价</option>    
+						    <option value="6">订单完成</option>      
 						</select> 
 					</td>
+					
 					<td style="padding:0px;"><a href="javascript: queryForm();" class="easyui-linkbutton" data-options="iconCls:'icon-search'"></a></td>
 				</tr>
 			</table>
@@ -200,15 +202,13 @@
 			<table id="dataGrid"></table>
 		</div>
 	</div>
-	<div id="toolbar" style="display: none;">
+		<div id="toolbar" style="display: none;">
 		<a onclick="deleteFun();" href="javascript:void(0);"
 			class="easyui-linkbutton"
 			data-options="plain:true,iconCls:'pencil_add'">删除</a>
 		<!-- <a onclick="batchDeleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'delete'">批量删除</a> -->
 	</div>
-	<div id="menu" class="easyui-menu" style="width: 120px; display: none;">
-		<div onclick="editFun();" data-options="iconCls:'pencil'">编辑</div>
-	</div>
-
+	
+	
 </body>
 </html>

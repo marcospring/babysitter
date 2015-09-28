@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.CustomerManager;
+import com.zhangk.babysitter.entity.CustomerManagerDuty;
 import com.zhangk.babysitter.service.manager.CustomerManagerService;
 import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.Pagination;
@@ -163,4 +164,28 @@ public class CustomerManagerServiceImpl implements CustomerManagerService {
 
 	}
 
+	@Transactional
+	public void duty(String id, String week, String countyId) {
+		long countyIdl = Long.valueOf(countyId);
+		long idl = Long.valueOf(id);
+		String hql = "from CustomerManagerDuty t where t.ovld = true and t.county.id = ? and t.week = ?";
+		CustomerManagerDuty duty = dao.getSingleResultByHQL(
+				CustomerManagerDuty.class, hql, countyIdl, week);
+		CustomerManager manager = dao.getResultById(CustomerManager.class, idl);
+		if (duty == null) {
+			CustomerManagerDuty insertDuty = CustomerManagerDuty.getInstance();
+			County county = dao.getResultById(County.class, countyIdl);
+			insertDuty.setCounty(county);
+			insertDuty.setWeek(week);
+			insertDuty.setManager(manager);
+			dao.add(insertDuty);
+		} else {
+			duty.setWeek(week);
+			dao.update(duty);
+		}
+	}
+
+	// public static void main(String[] args) {
+	// System.out.println(ExpectedDateCreate.get);
+	// }
 }

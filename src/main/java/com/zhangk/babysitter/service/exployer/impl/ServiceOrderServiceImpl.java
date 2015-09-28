@@ -2,6 +2,7 @@ package com.zhangk.babysitter.service.exployer.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,8 +17,11 @@ import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.entity.County;
+import com.zhangk.babysitter.entity.CustomerManager;
+import com.zhangk.babysitter.entity.CustomerManagerDuty;
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.entity.PanicBuyingBabysitterAdvice;
+import com.zhangk.babysitter.entity.PanicBuyingOrder;
 import com.zhangk.babysitter.entity.ServiceOrder;
 import com.zhangk.babysitter.exception.CheckErrorException;
 import com.zhangk.babysitter.service.common.CheckCodeService;
@@ -28,6 +32,7 @@ import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
+import com.zhangk.babysitter.viewmodel.BabysitterView;
 import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
 @Service
@@ -311,22 +316,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			order.setServiceEndDate(expectedDate
 					.get(ExpectedDateCreate.END_DATE));
 			dao.add(order);
-			// 添加需要通知的月嫂
-			String hql = "from Babysitter b where b.county.guid=?";
-			List<Babysitter> babysitters = dao.getListResultByHQL(
-					Babysitter.class, hql, countyGuid);
-			for (Babysitter babysitter : babysitters) {
-				if (ExpectedDateCreate.checkBabysitterOrder(babysitter,
-						expectedDate)) {
-					PanicBuyingBabysitterAdvice advice = PanicBuyingBabysitterAdvice
-							.getInstance();
-					advice.setBabysitter(babysitter);
-					advice.setServiceOrder(order);
-					advice.setIsAdvice(false);
-					advice.setIsOver(false);
-					dao.add(advice);
-				}
-			}
+			addBabysitterAdvice(countyGuid, order, expectedDate);
 			result.setResult(ResultInfo.SUCCESS);
 			result.put("result", order.view());
 			return result;
@@ -341,12 +331,41 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	@Transactional
+	public void addBabysitterAdvice(String countyGuid, ServiceOrder order,
+			Map<String, Date> expectedDate) {
+		// 添加需要通知的月嫂
+		String hql = "from Babysitter b where b.county.guid=?";
+		List<Babysitter> babysitters = dao.getListResultByHQL(Babysitter.class,
+				hql, countyGuid);
+		for (Babysitter babysitter : babysitters) {
+			if (ExpectedDateCreate.checkBabysitterOrder(babysitter,
+					expectedDate)) {
+				PanicBuyingBabysitterAdvice advice = PanicBuyingBabysitterAdvice
+						.getInstance();
+				advice.setBabysitter(babysitter);
+				advice.setServiceOrder(order);
+				advice.setIsAdvice(false);
+				advice.setIsOver(false);
+				dao.add(advice);
+			}
+		}
+	}
+
+	@Transactional
 	public PageResult markBabysitter(String babysitterGuid, String orderGuid,
 			PageResult result) {
 		Babysitter babysitter = dao.getResultByGUID(Babysitter.class,
 				babysitterGuid);
 		ServiceOrder serviceOrder = dao.getResultByGUID(ServiceOrder.class,
 				orderGuid);
+		updateBabysitterOrder(orderGuid, babysitter, serviceOrder);
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", babysitter.view());
+		return result;
+	}
+
+	private void updateBabysitterOrder(String orderGuid, Babysitter babysitter,
+			ServiceOrder serviceOrder) {
 		// 添加月嫂订单
 		BabysitterOrder babysitterOrder = BabysitterOrder.getInstance();
 		babysitterOrder.setBabysitter(babysitter);
@@ -371,8 +390,80 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			advice.setIsOver(true);
 			dao.update(advice);
 		}
+	}
+
+	@Transactional
+	public void addServiceOrderAdvice(String id) {
+		long idl = Long.valueOf(id);
+		ServiceOrder order = dao.getResultById(ServiceOrder.class, idl);
+		// 更新所有通知为已通知
+		String hql = "from PanicBuyingBabysitterAdvice t where t.ovld = true and t.serviceOrder.id = ?";
+		List<PanicBuyingBabysitterAdvice> advices = dao.getListResultByHQL(
+				PanicBuyingBabysitterAdvice.class, hql, order.getId());
+		for (PanicBuyingBabysitterAdvice advice : advices) {
+			advice.setIsAdvice(true);
+			dao.update(advice);
+		}
+		Map<String, Date> dateMap = new HashMap<String, Date>();
+		dateMap.put(ExpectedDateCreate.BEGIN_DATE, order.getServiceBeginDate());
+		dateMap.put(ExpectedDateCreate.END_DATE, order.getServiceEndDate());
+		// 重新加入月嫂通知
+		addBabysitterAdvice(order.getCounty().getGuid(), order, dateMap);
+		// 更新雇主订单没有完成抢单
+		order.setOver(true);
+		dao.update(order);
+	}
+
+	@Transactional
+	public void addServiceOrderPanic(String babysitterId, String serviceOrderId) {
+		long babysitterIdl = Long.valueOf(babysitterId);
+		long serviceOrderIdl = Long.valueOf(serviceOrderId);
+
+		Babysitter babysitter = dao.getResultById(Babysitter.class,
+				babysitterIdl);
+		ServiceOrder order = dao.getResultById(ServiceOrder.class,
+				serviceOrderIdl);
+		if (order != null) {
+
+			PanicBuyingOrder buyingOrder = PanicBuyingOrder.getInstance();
+			buyingOrder.setBabysitter(babysitter);
+			buyingOrder.setServiceOrder(order);
+			dao.add(buyingOrder);
+
+		}
+	}
+
+	public List<BabysitterView> getPanicBabysitters(String serviceOrderId) {
+		long serviceOrderIdl = Long.valueOf(serviceOrderId);
+		String hql = "from PanicBuyingOrder t where t.ovld = true and t.serviceOrder.id = ?";
+		List<PanicBuyingOrder> orders = dao.getListResultByHQL(
+				PanicBuyingOrder.class, hql, serviceOrderIdl);
+		List<BabysitterView> views = new ArrayList<BabysitterView>();
+		for (PanicBuyingOrder order : orders) {
+			views.add(order.getBabysitter().view());
+		}
+
+		return views;
+	}
+
+	public PageResult markBabysitterId(String babysitterId,
+			String serviceOrderId, PageResult result) {
+		long babysitterIdl = Long.valueOf(babysitterId);
+		long serviceOrderIdl = Long.valueOf(serviceOrderId);
+		Babysitter babysitter = dao.getResultById(Babysitter.class,
+				babysitterIdl);
+		ServiceOrder serviceOrder = dao.getResultById(ServiceOrder.class,
+				serviceOrderIdl);
+		updateBabysitterOrder(serviceOrder.getGuid(), babysitter, serviceOrder);
 		result.setResult(ResultInfo.SUCCESS);
 		result.put("result", babysitter.view());
 		return result;
+	}
+
+	public CustomerManager getCustomerManager(String countyGuid, String week) {
+		String hql = "from CustomerManagerDuty t where t.ovld = true and t.county.guid = ? and t.week = ?";
+		CustomerManagerDuty duty = dao.getSingleResultByHQL(
+				CustomerManagerDuty.class, hql, countyGuid, week);
+		return duty == null ? null : duty.getManager();
 	}
 }

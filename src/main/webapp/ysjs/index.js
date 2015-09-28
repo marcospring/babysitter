@@ -11,7 +11,7 @@ $.extend(detail.Page.prototype, {
 		var guid = $.getUrlParam('guid');
         // 浣跨敤鏈嶅姟鍣ㄦ帴鍙ｆ椂鎶婁笅闈袱琛屾敞閲婂璋冿紝鍙﹀闇�瑕佹纭殑璁剧疆涓婇潰鐨刧uid
         // data.json鏄竴涓湰鍦扮殑娴嬭瘯鏁版嵁锛屽彲鍒�
-        this.url_ = 'http://123.57.17.124:8080/babysitter/mobile/babysitter/babysitter.html?guid=' + guid;
+        this.url_ = '/babysitter/mobile/babysitter/babysitter.html?guid=' + guid;
 //        this.url_ = 'data.json';
         this.index = 4;
         this.hiddend = true;
@@ -58,6 +58,10 @@ $.extend(detail.Page.prototype, {
     handleRenderPage: function(e, response) {
         var data = response.result;
         var i;
+		if (!data) {
+			alert('月嫂信息不存在');
+			return;
+		}
         data.professcial = [];
         data.credential = [];
         data.photos = [];
@@ -110,7 +114,8 @@ $.extend(detail.Page.prototype, {
         $('.data-name').html(data.name);
 		if (data.isV)
 			$('.name').append($('<img src="ysimg/v.png"/>'));
-        $('.name').append($('<img src="ysimg/level-icon/' + levelImgName + '.png"/>'));
+		if (levelImgName)
+			$('.name').append($('<img src="ysimg/level-icon/' + levelImgName + '.png"/>'));
         $('.data-age').html(data.age);
         $('.data-native-place').html(data.nativePlace);
         $('.data-score').html(data.score);
@@ -126,7 +131,7 @@ $.extend(detail.Page.prototype, {
         $('.data-mandarin').html(data.Mandarin);
 
         function translateTimeString(dateStr) {
-            var d = new Date(dateStr);
+            var d = new Date(dateStr.split(' ')[0]);
             return d.getFullYear() + '年' + (d.getMonth() + 1) + '月' + d.getDate() + '日';
         }
 

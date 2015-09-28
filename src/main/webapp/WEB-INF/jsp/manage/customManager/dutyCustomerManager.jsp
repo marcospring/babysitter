@@ -23,9 +23,7 @@
 							checkOnSelect : false,
 							selectOnCheck : false,
 							singleSelect : true,
-							frozenColumns : [ [ { field: 'ck', 
-								 checkbox: true 
-							 }, {
+							frozenColumns : [ [  {
 								field : 'id',
 								title : '编号',
 								width : 50
@@ -62,7 +60,7 @@
 								width : 300,
 								
 
-							} ] ],
+							}] ],
 							toolbar : '#toolbar',
 							onLoadSuccess : function() {
 								$('#searchForm table').show();
@@ -100,51 +98,7 @@
 	function queryForm(){
 		dataGrid.datagrid('load', $.serializeObject($('#searchForm')));
 	}
-	function deleteFun(id) {
-		var rows = dataGrid.datagrid('getChecked');
-		 var i = 0;  
-	        var ids = "";  
-	        for(i;i<rows.length;i++){  
-	        	ids += rows[i].id;  
-	            if(i < rows.length-1){  
-	            	ids += ',';  
-	            }else{  
-	                break;  
-	            }  
-	        } 
-	    
-		parent.$.messager
-				.confirm(
-						'询问',
-						'您是否要删除当前用户？',
-						function(b) {
-							if (b) {
-								parent.$.messager.progress({
-									title : '提示',
-									text : '数据处理中，请稍后....'
-								});
-								$.post(
-									'${pageContext.request.contextPath}/manage/customerManager/delete.html',
-									{
-										ids : ids
-									},
-									function(result) {
-										if (result.status == 0) {
-											parent.$.messager
-													.alert(
-															'提示',
-															result.message,
-															'info');
-											dataGrid
-													.datagrid('reload');
-										}
-										parent.$.messager
-												.progress('close');
-									}, 'JSON');
-							}
-						});
-	}
-	function editFun(id) {
+	function duty(id) {
 		if (id == undefined) {
 			var rows = dataGrid.datagrid('getSelections');
 			id = rows[0].id;
@@ -153,13 +107,13 @@
 		}
 		parent.$
 				.modalDialog({
-					title : '编辑客户经理',
-					width : 350,
-					height : 650,
-					href : '${pageContext.request.contextPath}/manage/customerManager/goEdit.html?id='
+					title : '客户经理排班',
+					width : 360,
+					height : 250,
+					href : '${pageContext.request.contextPath}/manage/customerManager/goPageDuty.html?id='
 							+ id,
 					buttons : [ {
-						text : '编辑',
+						text : '确定',
 						handler : function() {
 							parent.$.modalDialog.openner_dataGrid = dataGrid;//因为添加成功之后，需要刷新这个dataGrid，所以先预定义好
 							var f = parent.$.modalDialog.handler.find('#form');
@@ -168,6 +122,7 @@
 					} ]
 				});
 	}
+
 </script>
 </head>
 <body>
@@ -200,15 +155,10 @@
 			<table id="dataGrid"></table>
 		</div>
 	</div>
-	<div id="toolbar" style="display: none;">
-		<a onclick="deleteFun();" href="javascript:void(0);"
-			class="easyui-linkbutton"
-			data-options="plain:true,iconCls:'pencil_add'">删除</a>
-		<!-- <a onclick="batchDeleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'delete'">批量删除</a> -->
-	</div>
 	<div id="menu" class="easyui-menu" style="width: 120px; display: none;">
-		<div onclick="editFun();" data-options="iconCls:'pencil'">编辑</div>
+		<div onclick="duty();" data-options="iconCls:'pencil'">排班</div>
 	</div>
+	
 
 </body>
 </html>

@@ -76,6 +76,11 @@ public class ManageBabysitterOrderController extends BaseController {
 		return "manage/babysitterOrder/manageOrder";
 	}
 
+	@RequestMapping("/goDelete")
+	public Object goDelete(String ids) {
+		return "manage/babysitterOrder/deleteOrder";
+	}
+
 	@ResponseBody
 	@RequestMapping("/delete")
 	public Object delete(String ids) {

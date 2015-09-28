@@ -1,9 +1,15 @@
 package com.zhangk.babysitter.service.exployer;
 
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import com.zhangk.babysitter.controller.BaseController.PageResult;
+import com.zhangk.babysitter.entity.CustomerManager;
 import com.zhangk.babysitter.entity.ServiceOrder;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
+import com.zhangk.babysitter.viewmodel.BabysitterView;
 import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
 public interface ServiceOrderService {
@@ -53,7 +59,7 @@ public interface ServiceOrderService {
 
 	/**
 	 * 雇主选择抢单月嫂
-	 * 
+	 *
 	 * @param babysitterGuid
 	 * @param orderGuid
 	 * @param result
@@ -62,4 +68,17 @@ public interface ServiceOrderService {
 	PageResult markBabysitter(String babysitterGuid, String orderGuid,
 			PageResult result);
 
+	void addBabysitterAdvice(String countyGuid, ServiceOrder order,
+			Map<String, Date> expectedDate);
+
+	void addServiceOrderAdvice(String id);
+
+	void addServiceOrderPanic(String babysitterId, String serviceOrderId);
+
+	List<BabysitterView> getPanicBabysitters(String serviceOrderId);
+
+	PageResult markBabysitterId(String babysitterId, String serviceOrderId,
+			PageResult result);
+
+	CustomerManager getCustomerManager(String countyGuid, String week);
 }

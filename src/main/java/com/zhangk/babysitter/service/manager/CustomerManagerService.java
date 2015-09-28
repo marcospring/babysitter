@@ -25,4 +25,6 @@ public interface CustomerManagerService {
 			String name, String telephone, long countyid);
 
 	void verify(String ids, String state);
+
+	void duty(String id, String week, String countyId);
 }

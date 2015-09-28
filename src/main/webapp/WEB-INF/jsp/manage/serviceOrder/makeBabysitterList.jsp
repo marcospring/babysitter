@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<title>公司管理</title>
+<title>选择抢单月嫂</title>
 <jsp:include page="/inc.jsp"></jsp:include>
 <script type="text/javascript">
 	var dataGrid;
@@ -11,7 +11,7 @@
 		dataGrid = $('#dataGrid')
 				.datagrid(
 						{
-							url : '${pageContext.request.contextPath}/manage/customerManager/list.html',
+							url : '${pageContext.request.contextPath}/manage/serviceOrder/list.html',
 							fit : true,
 							fitColumns : false,
 							border : false,
@@ -31,36 +31,44 @@
 								field : 'guid',
 								title : 'GUID',
 								width : 70
-							} , {
-								field : 'state',
-								title : '是否验证',
-								width : 70,
-								formatter : function(val) {
-									return val==1?"<font color='green'>通过</font>":"<font color='red'>未通过</font>";
-								}
-							}] ],
+							} ] ],
 							columns : [ [ {
 								field : 'name',
-								title : '姓名',
+								title : '雇主姓名',
 								width : 200
 
 							},{
-								field : 'companyName',
-								title : '公司名称',
+								field : 'telephone',
+								title : '雇主电话',
 								width : 200
 
 							}, {
-								field : 'telephone',
-								title : '电话',
+								field : 'address',
+								title : '雇主地址',
 								width : 300
 
 							}, {
-								field : 'countyName',
-								title : '城市',
+								field : 'createDate',
+								title : '订单创建时间',
 								width : 300,
 								
 
-							} ] ],
+							}, {
+								field : 'serviceBeginDate',
+								title : '开始时间',
+								width : 350
+
+							}, {
+								field : 'serviceEndDate',
+								title : '结束时间',
+								width : 300
+
+							} , {
+								field : 'orderPrice',
+								title : '订单价格',
+								width : 300
+
+							}] ],
 							toolbar : '#toolbar',
 							onLoadSuccess : function() {
 								$('#searchForm table').show();
@@ -83,13 +91,7 @@
 										'info');
 							}
 						});
-		$('#countyid').combobox({    
-		    url:'${pageContext.request.contextPath}/manage/county/comboList.html',    
-		    valueField:'id',
-		    editable:false, 
-		    textField:'name',
-		    
-		});
+
 
 	});
 
@@ -98,7 +100,23 @@
 	function queryForm(){
 		dataGrid.datagrid('load', $.serializeObject($('#searchForm')));
 	}
-	
+
+	function goBabysitterFun(id) {
+		if (id == undefined) {
+			var rows = dataGrid.datagrid('getSelections');
+			id = rows[0].id;
+		} else {
+			dataGrid.datagrid('unselectAll').datagrid('uncheckAll');
+		}
+		parent.$
+				.modalDialog({
+					title : '月嫂列表',
+					width : 1110,
+					height : 550,
+					href : '${pageContext.request.contextPath}/manage/serviceOrder/gopanicBabysitterlist.html?serviceOrderId='
+							+ id
+				});
+	}
 </script>
 </head>
 <body>
@@ -107,20 +125,11 @@
 			<form id="searchForm">
 			<table style="font-size:13px;">
 				<tr>
-					<td style="padding:0px;">姓名：</td>
-					<td style="padding:5px;"><input name="name" class="easyui-validatebox" type="text" style="width:150px;height: 25px;"></td>
-					<td style="padding:0px;">公司名称：</td>
-					<td style="padding:5px;"><input name="companyName" class="easyui-validatebox" type="text" style="width:150px;height: 25px;"></td>
-					<td style="padding:0px;">城市：</td>
-					<td style="padding:5px;"><input id="countyid" name="countyId" style="width:100px;"></td>
-					<td style="padding:0px;">是否验证：</td>
-					<td style="padding:5px;">
-					<select name="state" class="easyui-combobox"style="width:200px;">   
-						    <option value="" selected="selected">所有</option>   
-						    <option value="1" >审核通过</option>   
-						    <option value="0">未审核</option>   
-						</select> 
-					</td>
+					<td style="padding:0px;">雇主姓名：</td>
+					<td style="padding:5px;"><input name="exployerName" class="easyui-validatebox" type="text" style="width:150px;height: 25px;"></td>
+					<td style="padding:0px;">雇主电话：</td>
+					<td style="padding:5px;"><input name="telephone" class="easyui-validatebox" type="text" style="width:150px;height: 25px;"></td>
+				
 					
 					<td style="padding:0px;"><a href="javascript: queryForm();" class="easyui-linkbutton" data-options="iconCls:'icon-search'"></a></td>
 				</tr>
@@ -131,6 +140,10 @@
 		<div data-options="region:'center',border:false">
 			<table id="dataGrid"></table>
 		</div>
+	</div>
+
+	<div id="menu" class="easyui-menu" style="width: 120px; display: none;">
+		<div onclick="goBabysitterFun();" data-options="iconCls:'pencil'">选择月嫂</div>
 	</div>
 	
 </body>

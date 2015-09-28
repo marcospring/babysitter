@@ -13,7 +13,8 @@ public enum ResultInfo {
 			1016, "月嫂已存在"), CREDENTIAL_NULL(1017, "证件不存在"), ADDRESS_EXCEPTION(
 			1018, "定位异常"), COMPANY_NOT_NULL(1019, "公司不为空"), COMPANY_NULL(1020,
 			"公司为空"), MANAGER_NOT_NULL(1021, "客户经理不为空"), MANAGER_NULL(1022,
-			"客户经理为空"), SUCCESS(0, "操作成功");
+			"客户经理为空"), SERVICE_ORDER_OVER(1023, "抢单已结束"), NONE_CUSTOMERMANAGER_SERVICE(
+			1024, "没有安排客户经理，请拨打总台电话"), SUCCESS(0, "操作成功");
 
 	private int code;
 	private String msg;

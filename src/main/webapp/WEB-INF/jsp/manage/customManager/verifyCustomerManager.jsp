@@ -85,7 +85,7 @@
 										'info');
 							}
 						});
-		$('#countyId').combobox({    
+		$('#countyid').combobox({    
 		    url:'${pageContext.request.contextPath}/manage/county/comboList.html',    
 		    valueField:'id',
 		    editable:false, 

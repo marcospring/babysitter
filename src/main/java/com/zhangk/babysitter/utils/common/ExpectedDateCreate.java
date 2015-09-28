@@ -297,6 +297,26 @@ public class ExpectedDateCreate {
 		return "未知";
 	}
 
+	public static String getChineseWeekdayNumber(Calendar paramCalendar) {
+		switch (paramCalendar.get(7)) {
+		case 2:
+			return "1";
+		case 3:
+			return "2";
+		case 4:
+			return "3";
+		case 5:
+			return "4";
+		case 6:
+			return "5";
+		case 7:
+			return "6";
+		case 1:
+			return "7";
+		}
+		return "未知";
+	}
+
 	public static boolean checkBabysitterOrder(Babysitter babysitter,
 			Map<String, Date> dates) {
 		Date expectedBeginDate = dates.get(ExpectedDateCreate.BEGIN_DATE);
