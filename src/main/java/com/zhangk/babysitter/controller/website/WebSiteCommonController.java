@@ -38,4 +38,27 @@ public class WebSiteCommonController extends BaseController {
 		PageResult result = babysitterService.nameSearch(name, getResult());
 		return result;
 	}
+
+	@ResponseBody
+	@RequestMapping("/indexRecommond")
+	public PageResult recommondIndex(String countyGuid) {
+		if (StringUtils.isEmpty(countyGuid))
+			return getErrRes(ResultInfo.COUNTY_NULL);
+		PageResult result = babysitterService.getNewBabysitterRecommend(
+				countyGuid, getResult());
+
+		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping("/recommondCount")
+	public PageResult recommondCount(String countyGuid) {
+		if (StringUtils.isEmpty(countyGuid))
+			return getErrRes(ResultInfo.COUNTY_NULL);
+		PageResult result = babysitterService.getRecommondCount(countyGuid,
+				getResult());
+
+		return result;
+	}
+
 }

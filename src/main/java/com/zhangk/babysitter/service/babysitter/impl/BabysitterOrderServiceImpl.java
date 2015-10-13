@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
@@ -248,6 +249,15 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 			e.printStackTrace();
 		}
 		return ResultInfo.SUCCESS;
+	}
+
+	public PageResult getOrderInfo(String orderNo, PageResult result) {
+		String hql = "from BabysitterOrder t where t.orderId = ?";
+		BabysitterOrder order = dao.getSingleResultByHQL(BabysitterOrder.class,
+				hql, orderNo);
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", order.view());
+		return result;
 	}
 
 }

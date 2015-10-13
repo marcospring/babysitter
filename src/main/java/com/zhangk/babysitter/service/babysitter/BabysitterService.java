@@ -52,7 +52,7 @@ public interface BabysitterService {
 
 	void addBabysitterImage(BabysitterImage image);
 
-	RecommendInfo getNewBabysitterRecommend(String countyGuid);
+	PageResult getNewBabysitterRecommend(String countyGuid, PageResult result);
 
 	void addRecommendInfo(RecommendInfo info);
 
@@ -139,5 +139,7 @@ public interface BabysitterService {
 	 */
 	PageResult panicOrders(int pageNo, int pageSize, String babysitterGuid,
 			PageResult result);
+
+	PageResult getRecommondCount(String countyGuid, PageResult result);
 
 }

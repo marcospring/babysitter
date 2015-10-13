@@ -32,6 +32,7 @@ public class BabysitterOrder implements Serializable {
 	private Date serviceBeginDate;
 	private Date serviceEndDate;
 	private long orderPrice;
+	private long orderFrontPrice;
 	private Babysitter babysitter;
 	private Employer employer;
 	private String employerName;
@@ -184,6 +185,14 @@ public class BabysitterOrder implements Serializable {
 
 	public void setEmployerTelephone(String employerTelephone) {
 		this.employerTelephone = employerTelephone;
+	}
+
+	public long getOrderFrontPrice() {
+		return orderFrontPrice;
+	}
+
+	public void setOrderFrontPrice(long orderFrontPrice) {
+		this.orderFrontPrice = orderFrontPrice;
 	}
 
 	public static BabysitterOrder getInstance() {

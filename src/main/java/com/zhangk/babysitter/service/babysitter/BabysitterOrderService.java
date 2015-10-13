@@ -1,5 +1,6 @@
 package com.zhangk.babysitter.service.babysitter;
 
+import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.entity.BabysitterOrder;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
@@ -28,5 +29,7 @@ public interface BabysitterOrderService {
 	ResultInfo manageEditOrder(String id, String employerName,
 			String employerTelephone, String employerAddress, String price,
 			String beginDate, String endDate, int state);
+
+	PageResult getOrderInfo(String orderNo, PageResult result);
 
 }

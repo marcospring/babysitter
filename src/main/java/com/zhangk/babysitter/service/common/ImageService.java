@@ -7,7 +7,7 @@ import com.zhangk.babysitter.entity.Image;
 public interface ImageService {
 	void addImage(Image image);
 
-	List<Image> imageList();
+	List<Image> imageList(String countyGuid);
 
 	List<Image> allImageList();
 

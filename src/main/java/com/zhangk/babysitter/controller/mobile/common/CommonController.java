@@ -56,8 +56,8 @@ public class CommonController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/headImageList")
-	public PageResult getHeadImageList() {
-		List<Image> list = imgService.imageList();
+	public PageResult getHeadImageList(String countyGuid) {
+		List<Image> list = imgService.imageList(countyGuid);
 		res.put("result", list);
 		return res;
 	}

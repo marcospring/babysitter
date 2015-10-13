@@ -21,9 +21,10 @@ public class ImageServiceImpl implements ImageService {
 		dao.add(image);
 	}
 
-	public List<Image> imageList() {
-		String hql = "from Image m where m.topIndex = ?";
-		List<Image> list = dao.getListResultByHQL(Image.class, hql, 1);
+	public List<Image> imageList(String countyGuid) {
+		String hql = "from Image m where m.topIndex = ? and m.county.guid = ?";
+		List<Image> list = dao.getListResultByHQL(Image.class, hql, 1,
+				countyGuid);
 		return list;
 	}
 

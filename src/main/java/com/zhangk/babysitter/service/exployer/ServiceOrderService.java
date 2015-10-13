@@ -81,4 +81,6 @@ public interface ServiceOrderService {
 			PageResult result);
 
 	CustomerManager getCustomerManager(String countyGuid, String week);
+
+	PageResult payFrontMoney(String orderNo, String ip, PageResult result);
 }

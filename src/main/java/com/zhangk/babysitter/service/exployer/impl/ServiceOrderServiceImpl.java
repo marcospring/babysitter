@@ -466,4 +466,31 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 				CustomerManagerDuty.class, hql, countyGuid, week);
 		return duty == null ? null : duty.getManager();
 	}
+
+	public PageResult payFrontMoney(String orderNo, String ip, PageResult result) {
+		String hql = "from BabysitterOrder t where t.orderId = ?";
+		BabysitterOrder order = dao.getSingleResultByHQL(BabysitterOrder.class,
+				hql, orderNo);
+		if (order == null) {
+			result.setResult(ResultInfo.BABYSITTER_ORDER_NULL);
+			return result;
+		}
+		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		paramsMap.put("appid", Constants.WECHAT_OPENID_APPID);
+		paramsMap.put("mch_id", "1");// 商户号
+		paramsMap.put("nonce_str", order.getGuid());// 随机字符串，选为订单的guid
+		paramsMap.put("body", "月嫂订单定金");
+		paramsMap.put("out_trade_no", order.getOrderId());
+		paramsMap.put("total_fee", order.getOrderFrontPrice());
+		paramsMap.put("spbill_create_ip", ip);
+		paramsMap.put("notify_url", "http://123.57.174.128:8080/babysitter/callback/GongZhongHao");
+		paramsMap.put("trade_type", "JSAPI");//JSAPI代表公众号支付
+		paramsMap.put(key, value)
+		paramsMap.put(key, value)
+		return result;
+	}
+
+	private String getSign() {
+
+	}
 }

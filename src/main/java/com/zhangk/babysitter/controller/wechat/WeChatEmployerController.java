@@ -18,6 +18,7 @@ import com.zhangk.babysitter.exception.BadRequestException;
 import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.service.exployer.ServiceOrderService;
 import com.zhangk.babysitter.utils.common.Constants;
+import com.zhangk.babysitter.utils.common.RemoteIPGeter;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.utils.httpclient.HttpHelper;
 import com.zhangk.babysitter.utils.httpclient.ResponseContent;
@@ -67,18 +68,25 @@ public class WeChatEmployerController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/addOrder")
-	public PageResult addServiceOrder(String date, String price, String address, String name, String mobile, String checkCode, String openid, String countyGuid) {
-		if (StringUtils.isEmpty(date) || StringUtils.isEmpty(price) || StringUtils.isEmpty(checkCode) || StringUtils.isEmpty(address) || StringUtils.isEmpty(name)
+	public PageResult addServiceOrder(String date, String price,
+			String address, String name, String mobile, String checkCode,
+			String openid, String countyGuid) {
+		if (StringUtils.isEmpty(date) || StringUtils.isEmpty(price)
+				|| StringUtils.isEmpty(checkCode)
+				|| StringUtils.isEmpty(address) || StringUtils.isEmpty(name)
 				|| (StringUtils.isEmpty(mobile) && StringUtils.isEmpty(openid))) {
 			return getResult(ResultInfo.INF_EMPTY);
 		}
-		PageResult result = orderService.wechatAddServiceOrder(date, price, countyGuid, address, name, mobile, checkCode, openid, getResult());
+		PageResult result = orderService.wechatAddServiceOrder(date, price,
+				countyGuid, address, name, mobile, checkCode, openid,
+				getResult());
 		return result;
 	}
 
 	@ResponseBody
 	@RequestMapping("/orderList")
-	public PageResult orderList(HttpServletRequest request, String phone, String openid) {
+	public PageResult orderList(HttpServletRequest request, String phone,
+			String openid) {
 		if (StringUtils.isEmpty(phone) && StringUtils.isEmpty(openid)) {
 			return getResult(ResultInfo.INF_EMPTY);
 		}
@@ -96,9 +104,11 @@ public class WeChatEmployerController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/markBabysitter")
 	public PageResult markBabysitter(String babysitterGuid, String orderGuid) {
-		if (StringUtils.isEmpty(babysitterGuid) || StringUtils.isEmpty(orderGuid))
+		if (StringUtils.isEmpty(babysitterGuid)
+				|| StringUtils.isEmpty(orderGuid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		PageResult result = orderService.markBabysitter(babysitterGuid, orderGuid, getResult());
+		PageResult result = orderService.markBabysitter(babysitterGuid,
+				orderGuid, getResult());
 		return result;
 	}
 
@@ -109,8 +119,10 @@ public class WeChatEmployerController extends BaseController {
 		try {
 			StringBuffer url = new StringBuffer();
 			url.append(Constants.WECHAT_OPENID_URL).append("?");
-			url.append("appid=").append(Constants.WECHAT_OPENID_APPID).append("&");
-			url.append("secret=").append(Constants.WECHAT_OPENID_APPSECRET).append("&");
+			url.append("appid=").append(Constants.WECHAT_OPENID_APPID)
+					.append("&");
+			url.append("secret=").append(Constants.WECHAT_OPENID_APPSECRET)
+					.append("&");
 			url.append("code=").append(code).append("&");
 			url.append("grant_type=").append("authorization_code");
 			ResponseContent ret = HttpHelper.getUrlRespContent(url.toString());
@@ -124,8 +136,10 @@ public class WeChatEmployerController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/babysitterList")
-	public PageResult getEmployerRecommond(String date, int page, String countyGuid, String orderGuid) {
-		List<BabysitterView> result = employerService.getRecommendBabysitter(date, page, countyGuid, orderGuid);
+	public PageResult getEmployerRecommond(String date, int page,
+			String countyGuid, String orderGuid) {
+		List<BabysitterView> result = employerService.getRecommendBabysitter(
+				date, page, countyGuid, orderGuid);
 		res.setResult(ResultInfo.SUCCESS);
 		res.put("result", result);
 		res.put("page", page == 0 ? 1 : page);
@@ -134,11 +148,25 @@ public class WeChatEmployerController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/addEvaluate")
-	public PageResult addEvaluate(String employGuid, String orderGuid, String babysitterGuid, String msg, String score) {
-		if (StringUtils.isEmpty(employGuid) || StringUtils.isEmpty(orderGuid) || StringUtils.isEmpty(babysitterGuid) || StringUtils.isEmpty(msg) || StringUtils.isEmpty(score)) {
+	public PageResult addEvaluate(String employGuid, String orderGuid,
+			String babysitterGuid, String msg, String score) {
+		if (StringUtils.isEmpty(employGuid) || StringUtils.isEmpty(orderGuid)
+				|| StringUtils.isEmpty(babysitterGuid)
+				|| StringUtils.isEmpty(msg) || StringUtils.isEmpty(score)) {
 			return getResult(ResultInfo.INF_EMPTY);
 		}
-		ResultInfo result = orderService.addBabysitterOrderEvaluate(employGuid, orderGuid, babysitterGuid, msg, score);
+		ResultInfo result = orderService.addBabysitterOrderEvaluate(employGuid,
+				orderGuid, babysitterGuid, msg, score);
 		return getResult(result);
+	}
+
+	@ResponseBody
+	@RequestMapping("/addEvaluate")
+	public PageResult payFrontMoney(HttpServletRequest request, String orderNo) {
+		String ip = RemoteIPGeter.getIpAddr(request);
+		PageResult result = orderService
+				.payFrontMoney(orderNo, ip, getResult());
+
+		return result;
 	}
 }

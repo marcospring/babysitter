@@ -42,6 +42,7 @@ import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.utils.common.UploadFileUtils;
 import com.zhangk.babysitter.viewmodel.BabysitterImageView;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
+import com.zhangk.babysitter.viewmodel.RecommendInfoView;
 import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
 @Service
@@ -211,13 +212,23 @@ public class BabysitterServiceImpl implements BabysitterService {
 		dao.add(image);
 	}
 
-	public RecommendInfo getNewBabysitterRecommend(String countyGuid) {
+	public PageResult getNewBabysitterRecommend(String countyGuid,
+			PageResult result) {
 		String hql = "from RecommendInfo r where r.county.guid = ? order by r.createDate desc";
 		List<RecommendInfo> infos = dao.getListResultByHQL(RecommendInfo.class,
 				hql, countyGuid);
-		if (infos == null || infos.size() == 0)
-			return null;
-		return infos.get(0);
+		if (infos == null || infos.size() == 0) {
+			result.setResult(ResultInfo.RECOMMEND_NULL);
+			return result;
+		}
+		RecommendInfoView view = infos.get(0).view();
+		String babysitterCountHql = "select count (t.id) from Babysitter t where t.county.guid = ?";
+		long babysitterCount = dao.getSingleResultByHQL(Long.class,
+				babysitterCountHql, countyGuid);
+		view.setBabysitterCount(babysitterCount);
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", view);
+		return result;
 	}
 
 	@Transactional
@@ -1035,6 +1046,23 @@ public class BabysitterServiceImpl implements BabysitterService {
 		pa.setResultSize(count);
 		result.setResult(ResultInfo.SUCCESS);
 		result.put("result", pa);
+		return result;
+	}
+
+	public PageResult getRecommondCount(String countyGuid, PageResult result) {
+		Map<String, Object> resultMap = new HashMap<String, Object>();
+		String babysitterCountHql = "select count (t.id) from Babysitter t where t.county.guid = ?";
+		long babysitterCount = dao.getSingleResultByHQL(Long.class,
+				babysitterCountHql, countyGuid);
+		resultMap.put("babysitterCount", babysitterCount);
+		String hql = "from RecommendInfo r where r.county.guid = ? order by r.createDate desc";
+		List<RecommendInfo> infos = dao.getListResultByHQL(RecommendInfo.class,
+				hql, countyGuid);
+		if (infos == null || infos.size() == 0)
+			return null;
+		resultMap.put("recommondCount", infos.get(0).getBabysitters().size());
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", resultMap);
 		return result;
 	}
 

@@ -63,4 +63,14 @@
     <servlet-name>UpoadServlet</servlet-name>
     <url-pattern>/UpoadServlet</url-pattern>
   </servlet-mapping>
+  <servlet>
+    <description></description>
+    <display-name>WeChatGongZhongHaoCallBackServlet</display-name>
+    <servlet-name>WeChatGongZhongHaoCallBackServlet</servlet-name>
+    <servlet-class>com.zhangk.babysitter.controller.paycallback.WeChatGongZhongHaoCallBackServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>WeChatGongZhongHaoCallBackServlet</servlet-name>
+    <url-pattern>/callback/GongZhongHao</url-pattern>
+  </servlet-mapping>
 </web-app>
