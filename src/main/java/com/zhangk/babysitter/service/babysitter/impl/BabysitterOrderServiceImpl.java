@@ -69,16 +69,22 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 				employerService.addEmployer(employer);
 			}
 			BabysitterOrder order = BabysitterOrder.getInstance();
-			order.setBabysitter(babysitter);
+
 			order.setEmployer(employer);
 			order.setOrderPrice(Long.valueOf(price));
+			order.setBabysitter(babysitter);
+			order.setState(Constants.NEW_ORDER);
+			order.setOrderId(recordService.createOrderId());
 			Map<String, Date> expectedDate = ExpectedDateCreate
 					.getExpectedDate(date);
 			order.setServiceBeginDate(expectedDate
 					.get(ExpectedDateCreate.BEGIN_DATE));
 			order.setServiceEndDate(expectedDate
 					.get(ExpectedDateCreate.END_DATE));
-			order.setState(Constants.NEW_ORDER);
+			order.setEmployerAddress(address);
+			order.setEmployerName(name);
+			order.setEmployerTelephone(mobile.replace(" ", ""));
+
 			dao.add(order);
 		} catch (BabysitterNullException e) {
 			return ResultInfo.BABYSITTER_NULL;

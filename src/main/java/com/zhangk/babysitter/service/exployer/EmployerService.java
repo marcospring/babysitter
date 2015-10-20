@@ -2,6 +2,7 @@ package com.zhangk.babysitter.service.exployer;
 
 import java.util.List;
 
+import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
@@ -24,7 +25,13 @@ public interface EmployerService {
 
 	Employer getEmployerByMobile(String mobile);
 
-	List<BabysitterView> getRecommendBabysitter(String date, int page, String countyGuid, String orderGuid);
+	List<BabysitterView> getRecommendBabysitter(String date, int page,
+			String countyGuid, String orderGuid);
 
-	Pagination<EmployerView> getPageEmployerListForOrder(Pagination<Employer> page, String employerName, String employerTelephone);
+	Pagination<EmployerView> getPageEmployerListForOrder(
+			Pagination<Employer> page, String employerName,
+			String employerTelephone);
+
+	PageResult search(String countyGuid, String babysitterName,
+			PageResult result);
 }

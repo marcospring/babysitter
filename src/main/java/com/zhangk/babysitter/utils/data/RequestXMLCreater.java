@@ -36,7 +36,9 @@ public class RequestXMLCreater {
 		for (String str : treeMap.keySet()) {
 			content.append(str).append("=").append(value.get(str)).append("&");
 		}
-		String mySign = Md5Utils.hash(content.append("key=").append(appkey).toString()).toUpperCase();
+		content.append("key=").append(appkey);
+		System.out.println(content);
+		String mySign = Md5Utils.hash(content.toString()).toUpperCase();
 		return mySign;
 	}
 

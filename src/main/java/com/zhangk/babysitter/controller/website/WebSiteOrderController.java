@@ -29,7 +29,7 @@ public class WebSiteOrderController extends BaseController {
 			return getResult(ResultInfo.INF_EMPTY);
 		}
 		PageResult result = orderService.wechatAddServiceOrder(date, "0",
-				countyGuid, "", name, mobile, checkCode, "", getResult());
+				countyGuid, "", name, mobile, checkCode, "", getResult(), 0);
 		if ("0".equals(result.get("code").toString())) {
 			String number = ExpectedDateCreate.getChineseWeekdayNumber(Calendar
 					.getInstance());

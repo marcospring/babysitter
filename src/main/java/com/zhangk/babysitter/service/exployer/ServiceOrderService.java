@@ -37,7 +37,7 @@ public interface ServiceOrderService {
 
 	PageResult wechatAddServiceOrder(String date, String price,
 			String countyGuid, String address, String name, String mobile,
-			String checkCode, String openid, PageResult result);
+			String checkCode, String openid, PageResult result, int isNotAdvice);
 
 	ResultInfo addBabysitterOrderEvaluate(String employGuid, String orderGuid,
 			String babysitterGuid, String msg, String score);
@@ -82,5 +82,19 @@ public interface ServiceOrderService {
 
 	CustomerManager getCustomerManager(String countyGuid, String week);
 
-	PageResult payFrontMoney(String orderNo, String ip, PageResult result);
+	PageResult endService(String orderGuid);
+
+	PageResult payFrontMoney(String orderNo, String ip, PageResult result,
+			String openid);
+
+	ServiceOrder addEmployerServiceOrder(String date, String price,
+			String countyGuid, String address, String name, String mobile,
+			String checkCode, String openid);
+
+	PageResult addMakeBabysitterOrder(String date, String price,
+			String address, String name, String mobile, String checkCode,
+			String openid, String countyGuid, String babysitterGuid,
+			PageResult result);
+
+	PageResult getBabysitterOrderInfo(String serviceOrderGuid, PageResult result);
 }

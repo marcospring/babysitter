@@ -9,12 +9,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.dao.BaseDao;
+import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.entity.PanicBuyingOrder;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.utils.common.Pagination;
+import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
 import com.zhangk.babysitter.viewmodel.EmployerView;
 
@@ -178,5 +181,19 @@ public class EmployerServiceImpl implements EmployerService {
 
 	public Employer getEmployer(String guid) {
 		return dao.getResultByGUID(Employer.class, guid);
+	}
+
+	public PageResult search(String countyGuid, String babysitterName,
+			PageResult result) {
+		String hql = "from Babysitter t where t.county.guid=? and t.name like ?";
+		List<Babysitter> list = dao.getListResultByHQL(Babysitter.class, hql,
+				countyGuid, "%" + babysitterName + "%");
+		List<BabysitterView> views = new ArrayList<BabysitterView>();
+		for (Babysitter babysitter : list) {
+			views.add(babysitter.view());
+		}
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", views);
+		return result;
 	}
 }

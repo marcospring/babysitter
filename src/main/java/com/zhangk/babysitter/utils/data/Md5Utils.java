@@ -9,7 +9,7 @@ public class Md5Utils {
 				'A', 'B', 'C', 'D', 'E', 'F' };
 		try {
 			// 使用平台的默认字符集将此 String 编码为 byte序列，并将结果存储到一个新的 byte数组中
-			byte[] btInput = pwd.getBytes();
+			byte[] btInput = pwd.getBytes("UTF-8");
 
 			// 信息摘要是安全的单向哈希函数，它接收任意大小的数据，并输出固定长度的哈希值。
 			MessageDigest mdInst = MessageDigest.getInstance("MD5");

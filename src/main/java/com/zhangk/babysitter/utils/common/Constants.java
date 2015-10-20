@@ -84,6 +84,8 @@ public class Constants {
 			"wechat.appid", "wxbaca4dbccd6548a7");;
 	public static final String WECHAT_OPENID_APPSECRET = PropertiesUtils
 			.getString("wechat.appsecret", "aa3cba812479f1a9c610301d4722bd99");
+	public static final String WECHAT_OPENID_FRONTNO = PropertiesUtils
+			.getString("wechat.frontno", "1253335901");
 
 	// 雇主订单是否已经选中月嫂
 	public static final int MARK = 1;

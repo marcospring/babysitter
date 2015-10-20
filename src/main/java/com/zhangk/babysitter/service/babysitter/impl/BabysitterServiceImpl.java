@@ -262,10 +262,10 @@ public class BabysitterServiceImpl implements BabysitterService {
 	public PageResult register(String telephone, String password, String name,
 			String cardNo, String countyGuid, String verifyCode, PageResult res) {
 		try {
-			String hql = "from Babysitter b where b.ovld = true and b.mobilePhone=?";
+			String hql = "from Babysitter b where b.ovld = true and b.IdentificationNo=?";
 
 			Babysitter valideBabysitter = dao.getSingleResultByHQL(
-					Babysitter.class, hql, telephone);
+					Babysitter.class, hql, cardNo);
 			if (valideBabysitter == null) {
 				County county = dao.getResultByGUID(County.class, countyGuid);
 				if (county == null) {

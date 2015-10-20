@@ -305,6 +305,8 @@ public class BabysitterController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/orderInfo")
 	public PageResult orderInfo(String orderNo) {
+		if (StringUtils.isEmpty(orderNo))
+			return getErrRes(ResultInfo.INF_EMPTY);
 		PageResult result = orderService.getOrderInfo(orderNo, getResult());
 		return result;
 	}

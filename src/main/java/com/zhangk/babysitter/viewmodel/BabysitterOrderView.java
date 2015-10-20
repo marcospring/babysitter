@@ -14,13 +14,14 @@ public class BabysitterOrderView {
 	private Date endDate;
 	private String orderId;
 	private String employerName;
+	private String orderFrontPrice;
 	private String price;
 	private int state;
 	private String address;
 	private String telephone;
 	private String evaluation;
 	private int score;
-	private String babysitterName;
+	private String babysitterGuid;
 
 	public BabysitterOrderView() {
 		// TODO Auto-generated constructor stub
@@ -31,6 +32,7 @@ public class BabysitterOrderView {
 		setGuid(order.getGuid());
 		setBeginDate(order.getServiceBeginDate());
 		setEndDate(order.getServiceEndDate());
+		setOrderFrontPrice(String.valueOf(order.getOrderFrontPrice()));
 		setPrice(String.valueOf(order.getOrderPrice()));
 		setEmployerName(order.getEmployerName());
 		setState(order.getState());
@@ -39,7 +41,7 @@ public class BabysitterOrderView {
 		setEvaluation(order.getEvaluation());
 		setScore(order.getScore());
 		setOrderId(order.getOrderId());
-		setBabysitterName(order.getBabysitter().getName());
+		setBabysitterGuid(order.getBabysitter().getGuid());
 	}
 
 	public String getGuid() {
@@ -140,12 +142,20 @@ public class BabysitterOrderView {
 		this.id = id;
 	}
 
-	public String getBabysitterName() {
-		return babysitterName;
+	public String getOrderFrontPrice() {
+		return orderFrontPrice;
 	}
 
-	public void setBabysitterName(String babysitterName) {
-		this.babysitterName = babysitterName;
+	public void setOrderFrontPrice(String orderFrontPrice) {
+		this.orderFrontPrice = orderFrontPrice;
+	}
+
+	public String getBabysitterGuid() {
+		return babysitterGuid;
+	}
+
+	public void setBabysitterGuid(String babysitterGuid) {
+		this.babysitterGuid = babysitterGuid;
 	}
 
 }

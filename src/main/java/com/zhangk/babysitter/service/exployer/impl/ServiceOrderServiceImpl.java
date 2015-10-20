@@ -1,5 +1,6 @@
 package com.zhangk.babysitter.service.exployer.impl;
 
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -8,6 +9,12 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -32,6 +39,7 @@ import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
+import com.zhangk.babysitter.utils.data.RequestXMLCreater;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
 import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
@@ -282,41 +290,22 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	@Transactional
 	public PageResult wechatAddServiceOrder(String date, String price,
 			String countyGuid, String address, String name, String mobile,
-			String checkCode, String openid, PageResult result) {
+			String checkCode, String openid, PageResult result, int isNotAdvice) {
 		try {
 			// boolean flag = codeService.updateCheckCode(mobile, checkCode,
 			// CheckCodeService.PUBLISH_ORDER);
 			// if (!flag) {
 			// throw new CheckErrorException();
 			// }
-			Employer employer = employerService.getEmployerByMobile(mobile);
-			County county = dao.getResultByGUID(County.class, countyGuid);
-			if (employer == null) {
-				employer = Employer.getInstance();
-				employer.setMobilePhone(mobile.replace(" ", ""));
-				// employer.setCounty(county);
-				employer.setAddress(address);
-				employer.setUsername(name);
-				employer.setOpenid(openid);
-				employerService.addEmployer(employer);
-			}
+
 			// 添加雇主订单
-			ServiceOrder order = ServiceOrder.getInstance();
-			order.setEmployer(employer);
-			order.setCounty(county);
-			order.setOrderPrice(Long.valueOf(price));
-			order.setAddress(address);
-			order.setMobilePhone(mobile);
-			order.setEmployerName(name);
-			order.setMobilePhone(mobile);
+			ServiceOrder order = addEmployerServiceOrder(date, price,
+					countyGuid, address, name, mobile, checkCode, openid);
 			Map<String, Date> expectedDate = ExpectedDateCreate
 					.getExpectedDate(date);
-			order.setServiceBeginDate(expectedDate
-					.get(ExpectedDateCreate.BEGIN_DATE));
-			order.setServiceEndDate(expectedDate
-					.get(ExpectedDateCreate.END_DATE));
-			dao.add(order);
-			addBabysitterAdvice(countyGuid, order, expectedDate);
+			if (isNotAdvice == 0) {
+				addBabysitterAdvice(countyGuid, order, expectedDate);
+			}
 			result.setResult(ResultInfo.SUCCESS);
 			result.put("result", order.view());
 			return result;
@@ -328,6 +317,39 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		}
 		result.setResult(ResultInfo.BAD_REQUEST);
 		return result;
+	}
+
+	@Transactional
+	public ServiceOrder addEmployerServiceOrder(String date, String price,
+			String countyGuid, String address, String name, String mobile,
+			String checkCode, String openid) {
+		Employer employer = employerService.getEmployerByMobile(mobile);
+		County county = dao.getResultByGUID(County.class, countyGuid);
+		if (employer == null) {
+			employer = Employer.getInstance();
+			employer.setMobilePhone(mobile.replace(" ", ""));
+			// employer.setCounty(county);
+			employer.setAddress(address);
+			employer.setUsername(name);
+			employer.setOpenid(openid);
+			employerService.addEmployer(employer);
+		}
+		// 添加雇主订单
+		ServiceOrder order = ServiceOrder.getInstance();
+		order.setEmployer(employer);
+		order.setCounty(county);
+		order.setOrderPrice(Long.valueOf(price));
+		order.setAddress(address);
+		order.setMobilePhone(mobile);
+		order.setEmployerName(name);
+		order.setMobilePhone(mobile);
+		Map<String, Date> expectedDate = ExpectedDateCreate
+				.getExpectedDate(date);
+		order.setServiceBeginDate(expectedDate
+				.get(ExpectedDateCreate.BEGIN_DATE));
+		order.setServiceEndDate(expectedDate.get(ExpectedDateCreate.END_DATE));
+		dao.add(order);
+		return order;
 	}
 
 	@Transactional
@@ -358,14 +380,15 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 				babysitterGuid);
 		ServiceOrder serviceOrder = dao.getResultByGUID(ServiceOrder.class,
 				orderGuid);
-		updateBabysitterOrder(orderGuid, babysitter, serviceOrder);
+		BabysitterOrder order = updateBabysitterOrder(orderGuid, babysitter,
+				serviceOrder);
 		result.setResult(ResultInfo.SUCCESS);
-		result.put("result", babysitter.view());
+		result.put("result", order.view());
 		return result;
 	}
 
-	private void updateBabysitterOrder(String orderGuid, Babysitter babysitter,
-			ServiceOrder serviceOrder) {
+	private BabysitterOrder updateBabysitterOrder(String orderGuid,
+			Babysitter babysitter, ServiceOrder serviceOrder) {
 		// 添加月嫂订单
 		BabysitterOrder babysitterOrder = BabysitterOrder.getInstance();
 		babysitterOrder.setBabysitter(babysitter);
@@ -375,6 +398,8 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		babysitterOrder.setEmployerTelephone(serviceOrder.getMobilePhone());
 		babysitterOrder.setOrderId(recordService.createOrderId());
 		babysitterOrder.setOrderPrice(serviceOrder.getOrderPrice());
+		long frontPrice = getFrontPrice(serviceOrder.getOrderPrice());
+		babysitterOrder.setOrderFrontPrice(frontPrice);
 		babysitterOrder.setServiceBeginDate(serviceOrder.getServiceBeginDate());
 		babysitterOrder.setServiceEndDate(serviceOrder.getServiceEndDate());
 		babysitterOrder.setState(Constants.NEW_ORDER);
@@ -390,6 +415,14 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			advice.setIsOver(true);
 			dao.update(advice);
 		}
+		return babysitterOrder;
+	}
+
+	private long getFrontPrice(long orderPrice) {
+		Double frontPrice = new Double(orderPrice * 0.2);
+		String frontPriceStr = frontPrice.toString();
+		frontPriceStr = frontPriceStr.substring(0, frontPriceStr.indexOf("."));
+		return new Long(frontPriceStr).longValue();
 	}
 
 	@Transactional
@@ -467,7 +500,9 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		return duty == null ? null : duty.getManager();
 	}
 
-	public PageResult payFrontMoney(String orderNo, String ip, PageResult result) {
+	@SuppressWarnings({ "resource", "deprecation" })
+	public PageResult payFrontMoney(String orderNo, String ip,
+			PageResult result, String openid) {
 		String hql = "from BabysitterOrder t where t.orderId = ?";
 		BabysitterOrder order = dao.getSingleResultByHQL(BabysitterOrder.class,
 				hql, orderNo);
@@ -475,22 +510,79 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			result.setResult(ResultInfo.BABYSITTER_ORDER_NULL);
 			return result;
 		}
-		Map<String, Object> paramsMap = new HashMap<String, Object>();
+		Map<String, String> paramsMap = new HashMap<String, String>();
 		paramsMap.put("appid", Constants.WECHAT_OPENID_APPID);
-		paramsMap.put("mch_id", "1");// 商户号
-		paramsMap.put("nonce_str", order.getGuid());// 随机字符串，选为订单的guid
+		paramsMap.put("mch_id", "1253335901");// 商户号
+		paramsMap.put("nonce_str", "5454BB82F3104190A781505543681DF3");// 随机字符串，选为订单的guid
 		paramsMap.put("body", "月嫂订单定金");
-		paramsMap.put("out_trade_no", order.getOrderId());
-		paramsMap.put("total_fee", order.getOrderFrontPrice());
-		paramsMap.put("spbill_create_ip", ip);
-		paramsMap.put("notify_url", "http://123.57.174.128:8080/babysitter/callback/GongZhongHao");
-		paramsMap.put("trade_type", "JSAPI");//JSAPI代表公众号支付
-		paramsMap.put(key, value)
-		paramsMap.put(key, value)
+		paramsMap.put("out_trade_no", "Y150888891");//
+		paramsMap.put("total_fee", "1");
+		paramsMap.put("spbill_create_ip", "123.57.174.128");
+		paramsMap.put("notify_url",
+				"http://123.57.174.128:8080/babysitter/callback/GongZhongHao");
+		paramsMap.put("trade_type", "JSAPI");// JSAPI代表公众号支付
+		paramsMap.put("openid", "odVn5vjXHYY3pL56v9mvGIsT0UcE");//
+		String xml = RequestXMLCreater.getInstance().buildXmlString(paramsMap,
+				"12aa12AA3212er4nkkasi7snajde8alm");
+		System.out.println(xml);
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost(
+				"https://api.mch.weixin.qq.com/pay/unifiedorder");
+		StringEntity myEntity = new StringEntity(xml, "UTF-8");
+		httppost.addHeader("Content-Type", "text/xml");
+		httppost.setEntity(myEntity);
+		try {
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity resEntity = response.getEntity();
+			InputStreamReader reader = new InputStreamReader(
+					resEntity.getContent(), "UTF-8");
+			StringBuffer resultStr = new StringBuffer();
+			char[] buff = new char[1024];
+			int length = 0;
+			while ((length = reader.read(buff)) != -1) {
+				resultStr.append(new String(buff, 0, length));
+			}
+			System.out.println(resultStr.toString());
+			httpclient.getConnectionManager().shutdown();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return result;
 	}
 
-	private String getSign() {
+	public PageResult endService(String orderGuid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	@Transactional
+	public PageResult addMakeBabysitterOrder(String date, String price,
+			String address, String name, String mobile, String checkCode,
+			String openid, String countyGuid, String babysitterGuid,
+			PageResult result) {
+		ServiceOrder order = addEmployerServiceOrder(date, price, countyGuid,
+				address, name, mobile, checkCode, openid);
+		result = markBabysitter(babysitterGuid, order.getGuid(), result);
+		return result;
+	}
+
+	public PageResult getBabysitterOrderInfo(String serviceOrderGuid,
+			PageResult result) {
+		ServiceOrder serviceOrder = dao.getResultByGUID(ServiceOrder.class,
+				serviceOrderGuid);
+		if (serviceOrder == null) {
+			result.setResult(ResultInfo.SERVICE_ORDER_NULL);
+			return result;
+		}
+		if (StringUtils.isEmpty(serviceOrder.getOrderGuid())) {
+			result.setResult(ResultInfo.NO_BABYSITTER_SERVICE_ORDER);
+			return result;
+		}
+		String orderGuid = serviceOrder.getOrderGuid();
+		BabysitterOrder order = dao.getResultByGUID(BabysitterOrder.class,
+				orderGuid);
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", order.view());
+		return result;
 	}
 }
