@@ -91,7 +91,8 @@ public class WeChatGongZhongHaoCallBackServlet extends HttpServlet {
 			}
 
 			String mySign = Md5Utils.hash(
-					content.append("key=" + Constants.WECHAT_OPENID_APPSECRET)
+					content.append(
+							"key=" + Constants.WECHAT_OPENID_PAY_APPSECRET)
 							.toString()).toUpperCase();
 			if (!mySign.equals(sign)) {
 				throw new RuntimeException("sign verify error");
@@ -101,6 +102,9 @@ public class WeChatGongZhongHaoCallBackServlet extends HttpServlet {
 					throw new RuntimeException("cash_fee_type error , not CNY");
 				}
 			}
+			System.out
+					.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>回调成功啦！！！！！！<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+			logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>回调成功啦！！！！！！<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 			// boolean ret = SDKUtil.requestBilling(
 			// root.elementText("out_trade_no"),
 			// root.elementText("transaction_id"),

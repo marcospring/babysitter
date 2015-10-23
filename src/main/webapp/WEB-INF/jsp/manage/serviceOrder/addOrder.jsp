@@ -49,10 +49,7 @@
 		    required:true,
 		    editable:false
 		}); 
-		$('#endDate').datebox({    
-		    required:true,
-		    editable:false
-		}); 
+		
 	});
 </script>
 <div class="easyui-layout" data-options="fit:true,border:false">
@@ -77,7 +74,7 @@
                     <td style="text-align:left;"><input id="beginDate" name="beginDate" type="text" data-options="required:true" ></td>
                     </tr>
 				<tr>
-					<td style="text-align:right;">订单结束时间</td>
+					<td style="text-align:right;">订单服务天数</td>
 					<td style="text-align:left;"><input id="endDate" name="endDate"  type="text" ></td>
 				</tr>
 				<tr>

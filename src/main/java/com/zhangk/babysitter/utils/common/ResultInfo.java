@@ -15,7 +15,8 @@ public enum ResultInfo {
 			"公司为空"), MANAGER_NOT_NULL(1021, "客户经理不为空"), MANAGER_NULL(1022,
 			"客户经理为空"), SERVICE_ORDER_OVER(1023, "抢单已结束"), NONE_CUSTOMERMANAGER_SERVICE(
 			1024, "没有安排客户经理，请拨打总台电话"), NO_BABYSITTER_SERVICE_ORDER(1025,
-			"该订单还未添加月嫂订单"), SUCCESS(0, "操作成功");
+			"该订单还未添加月嫂订单"), IDENTIFICATION_NO_INVALID(1026, "身份证号不合法"), PAY_FAIL(
+			1027, "支付失败"), SUCCESS(0, "操作成功");
 
 	private int code;
 	private String msg;

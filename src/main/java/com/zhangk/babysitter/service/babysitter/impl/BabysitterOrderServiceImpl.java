@@ -190,6 +190,8 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 			BabysitterOrder order = BabysitterOrder.getInstance();
 			order.setEmployer(employer);
 			order.setOrderPrice(Long.valueOf(price));
+			long frontPrice = getFrontPrice(Long.valueOf(price));
+			order.setOrderFrontPrice(frontPrice);
 			order.setBabysitter(babysitter);
 			order.setState(Constants.NEW_ORDER);
 			order.setOrderId(recordService.createOrderId());
@@ -205,6 +207,13 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 			e.printStackTrace();
 		}
 		return ResultInfo.SUCCESS;
+	}
+
+	private long getFrontPrice(long orderPrice) {
+		Double frontPrice = new Double(orderPrice * 0.2);
+		String frontPriceStr = frontPrice.toString();
+		frontPriceStr = frontPriceStr.substring(0, frontPriceStr.indexOf("."));
+		return new Long(frontPriceStr).longValue();
 	}
 
 	@Transactional

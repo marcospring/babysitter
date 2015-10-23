@@ -3,6 +3,8 @@ package com.zhangk.babysitter.utils.common;
 public class Constants {
 	public static final String SESSION_USER = "sessionUser";
 	public static final String SESSION_MANAGER = "sessionManager";
+	public static final String PAY_SUCCESS = "SUCCESS";
+	public static final String PAY_MESSAGE_OK = "OK";
 	// 新发布
 	public static final int NEW_ORDER = 1;
 	// 已付定金
@@ -86,6 +88,17 @@ public class Constants {
 			.getString("wechat.appsecret", "aa3cba812479f1a9c610301d4722bd99");
 	public static final String WECHAT_OPENID_FRONTNO = PropertiesUtils
 			.getString("wechat.frontno", "1253335901");
+	public static final String WECHAT_OPENID_PAY_APPSECRET = PropertiesUtils
+			.getString("wechat.pay.appsecret",
+					"12aa12AA3212er4nkkasi7snajde8alm");
+	public static final String WECHAT_OPENID_PAY_URL = PropertiesUtils
+			.getString("wechat.pay.url",
+					"https://api.mch.weixin.qq.com/pay/unifiedorder");
+	public static final String WECHAT_OPENID_NOTIFY_URL = PropertiesUtils
+			.getString("wechat.pay.notify.url",
+					"http://123.57.174.128:8080/babysitter/callback/GongZhongHao");
+	public static final String WECHAT_OPENID_TRADE_TYPE = PropertiesUtils
+			.getString("wechat.pay.trade.type", "JSAPI");
 
 	// 雇主订单是否已经选中月嫂
 	public static final int MARK = 1;

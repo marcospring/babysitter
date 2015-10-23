@@ -656,6 +656,11 @@ public class BabysitterServiceImpl implements BabysitterService {
 		String hql = "from Babysitter t where ovld = true and t.mobilePhone = ?";
 		Babysitter babysitter = dao.getSingleResultByHQL(Babysitter.class, hql,
 				mobilePhone);
+		if (babysitter == null) {
+			String nohql = "from Babysitter t where ovld = true and t.identificationNo = ?";
+			babysitter = dao.getSingleResultByHQL(Babysitter.class, nohql,
+					identificationNo);
+		}
 		if (babysitter != null)
 			return ResultInfo.BABYSITTER_NOT_NULL;
 		County county = dao.getResultById(County.class, countyId);

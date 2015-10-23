@@ -14,6 +14,7 @@ public class BabysitterOrderView {
 	private Date endDate;
 	private String orderId;
 	private String employerName;
+	private String babysitterName;
 	private String orderFrontPrice;
 	private String price;
 	private int state;
@@ -35,6 +36,7 @@ public class BabysitterOrderView {
 		setOrderFrontPrice(String.valueOf(order.getOrderFrontPrice()));
 		setPrice(String.valueOf(order.getOrderPrice()));
 		setEmployerName(order.getEmployerName());
+		setBabysitterName(order.getBabysitter().getName());
 		setState(order.getState());
 		setAddress(order.getEmployerAddress());
 		setTelephone(order.getEmployerTelephone());
@@ -156,6 +158,14 @@ public class BabysitterOrderView {
 
 	public void setBabysitterGuid(String babysitterGuid) {
 		this.babysitterGuid = babysitterGuid;
+	}
+
+	public String getBabysitterName() {
+		return babysitterName;
+	}
+
+	public void setBabysitterName(String babysitterName) {
+		this.babysitterName = babysitterName;
 	}
 
 }

@@ -43,6 +43,7 @@ import com.zhangk.babysitter.utils.data.RequestXMLCreater;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
 import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
+@SuppressWarnings("deprecation")
 @Service
 public class ServiceOrderServiceImpl implements ServiceOrderService {
 
@@ -223,7 +224,9 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			order.setMobilePhone(telephone);
 			order.setOrderPrice(Long.valueOf(price));
 			order.setServiceBeginDate(ExpectedDateCreate.parseDate(beginDate));
-			order.setServiceEndDate(ExpectedDateCreate.parseDate(endDate));
+			order.setServiceEndDate(ExpectedDateCreate.addDays(
+					ExpectedDateCreate.parseDate(beginDate),
+					Integer.valueOf(endDate)));
 			dao.add(order);
 			return ResultInfo.SUCCESS;
 		} catch (Exception e) {
@@ -500,7 +503,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		return duty == null ? null : duty.getManager();
 	}
 
-	@SuppressWarnings({ "resource", "deprecation" })
+	@SuppressWarnings({ "resource" })
 	public PageResult payFrontMoney(String orderNo, String ip,
 			PageResult result, String openid) {
 		String hql = "from BabysitterOrder t where t.orderId = ?";
@@ -510,24 +513,14 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			result.setResult(ResultInfo.BABYSITTER_ORDER_NULL);
 			return result;
 		}
-		Map<String, String> paramsMap = new HashMap<String, String>();
-		paramsMap.put("appid", Constants.WECHAT_OPENID_APPID);
-		paramsMap.put("mch_id", "1253335901");// 商户号
-		paramsMap.put("nonce_str", "5454BB82F3104190A781505543681DF3");// 随机字符串，选为订单的guid
-		paramsMap.put("body", "月嫂订单定金");
-		paramsMap.put("out_trade_no", "Y150888891");//
-		paramsMap.put("total_fee", "1");
-		paramsMap.put("spbill_create_ip", "123.57.174.128");
-		paramsMap.put("notify_url",
-				"http://123.57.174.128:8080/babysitter/callback/GongZhongHao");
-		paramsMap.put("trade_type", "JSAPI");// JSAPI代表公众号支付
-		paramsMap.put("openid", "odVn5vjXHYY3pL56v9mvGIsT0UcE");//
-		String xml = RequestXMLCreater.getInstance().buildXmlString(paramsMap,
-				"12aa12AA3212er4nkkasi7snajde8alm");
-		System.out.println(xml);
+		Map<String, String> params = RequestXMLCreater.getInstance()
+				.getPayRequestMap(order.getGuid(), "月嫂定金", order.getOrderId(),
+						String.valueOf(order.getOrderFrontPrice() * 100), ip,
+						openid);
+		String xml = RequestXMLCreater.getInstance().buildXmlString(params,
+				Constants.WECHAT_OPENID_PAY_APPSECRET);
 		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost(
-				"https://api.mch.weixin.qq.com/pay/unifiedorder");
+		HttpPost httppost = new HttpPost(Constants.WECHAT_OPENID_PAY_URL);
 		StringEntity myEntity = new StringEntity(xml, "UTF-8");
 		httppost.addHeader("Content-Type", "text/xml");
 		httppost.setEntity(myEntity);
@@ -544,6 +537,23 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			}
 			System.out.println(resultStr.toString());
 			httpclient.getConnectionManager().shutdown();
+			Map<String, String> responseResult = RequestXMLCreater
+					.getInstance().getXmlMapResult(resultStr.toString());
+			Map<String, String> resultMap;
+			if (Constants.PAY_SUCCESS.equals(responseResult.get("return_code"))
+					&& Constants.PAY_MESSAGE_OK.equals(responseResult
+							.get("return_msg"))
+					&& Constants.PAY_SUCCESS.equals(responseResult
+							.get("result_code"))) {
+				resultMap = RequestXMLCreater.getInstance().getPayResponseMap(
+						responseResult.get("prepay_id"), order.getGuid());
+
+				result.setResult(ResultInfo.SUCCESS);
+				result.put("result", resultMap);
+			} else {
+				result.put("code", responseResult.get("err_code"));
+				result.put("msg", responseResult.get("err_code_des"));
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

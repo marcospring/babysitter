@@ -44,7 +44,7 @@ public class Babysitter implements Serializable {
 	private County county;
 	private CountyLevel level;
 	private String cardNo;
-	private String IdentificationNo;
+	private String identificationNo;
 	private long lowerSalary;
 	private String bankCardNo;
 	private String bankName;
@@ -295,11 +295,11 @@ public class Babysitter implements Serializable {
 	}
 
 	public String getIdentificationNo() {
-		return IdentificationNo;
+		return identificationNo;
 	}
 
 	public void setIdentificationNo(String identificationNo) {
-		IdentificationNo = identificationNo;
+		this.identificationNo = identificationNo;
 	}
 
 	public String getBankCardNo() {

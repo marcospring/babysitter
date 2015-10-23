@@ -2,6 +2,8 @@ package com.zhangk.babysitter.controller.manage;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -60,12 +62,39 @@ public class ManageBabysitterController extends BaseController {
 	@RequestMapping("/add")
 	public Object add(String name, String password, String identificationNo,
 			long lowerSalary, String mobilePhone, long countyId, long levelId,
-			String birthday, String nativePlace, String bankName,
-			String bankCardNo, String bankUserName, String introduce) {
+			String nativePlace, String bankName, String bankCardNo,
+			String bankUserName, String introduce) {
+		// 定义判别用户身份证号的正则表达式（要么是15位，要么是18位，最后一位可以为字母）
+		Pattern idNumPattern = Pattern
+				.compile("(\\d{14}[0-9a-zA-Z])|(\\d{17}[0-9a-zA-Z])");
+		// 通过Pattern获得Matcher
+		Matcher idNumMatcher = idNumPattern.matcher(identificationNo);
+		StringBuffer birthday = new StringBuffer();
+		// 判断用户输入是否为身份证号
+		if (idNumMatcher.matches()) {
+			// 如果是，定义正则表达式提取出身份证中的出生日期
+			Pattern birthDatePattern = Pattern
+					.compile("\\d{6}(\\d{4})(\\d{2})(\\d{2}).*");// 身份证上的前6位以及出生年月日
+			// 通过Pattern获得Matcher
+			Matcher birthDateMather = birthDatePattern
+					.matcher(identificationNo);
+			// 通过Matcher获得用户的出生年月日
+			if (birthDateMather.find()) {
+				String year = birthDateMather.group(1);
+				String month = birthDateMather.group(2);
+				String date = birthDateMather.group(3);
+				birthday.append(year).append("-").append(month).append("-")
+						.append(date);
+			}
+		} else {
+			return MyResponse.errorResponse(
+					ResultInfo.IDENTIFICATION_NO_INVALID.getCode(),
+					ResultInfo.IDENTIFICATION_NO_INVALID.getMsg());
+		}
 		ResultInfo result = babysitterService.manageAddBabysitter(name,
 				password, identificationNo, lowerSalary, mobilePhone, countyId,
-				levelId, birthday, nativePlace, bankName, bankCardNo,
-				bankUserName, introduce);
+				levelId, birthday.toString(), nativePlace, bankName,
+				bankCardNo, bankUserName, introduce);
 		if (result == ResultInfo.BABYSITTER_NOT_NULL)
 			return MyResponse.errorResponse(
 					ResultInfo.BABYSITTER_NOT_NULL.getCode(),

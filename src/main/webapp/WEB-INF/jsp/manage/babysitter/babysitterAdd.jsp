@@ -99,8 +99,9 @@
 				<tr>
 					<td  class="titleTd">身份证号</td>
 					<td style="text-align:left;"><input name="identificationNo" type="text" placeholder="请输电话号码" class="easyui-validatebox span2" data-options="required:true"></td>
-					<td  class="titleTd">生日</td>
-					<td style="text-align:left;"><input name="birthday" id="birthday" type="text" ></td>
+					<td  class="titleTd">普通话</td>
+					<td style="text-align:left;"><input name="mandarin" type="text" placeholder="普通话" class="easyui-validatebox span2" ></td>
+				
 				</tr>
 				<tr>
 					<td  class="titleTd">籍贯</td>
@@ -116,19 +117,13 @@
 				</tr>
 				<tr>
 					<td  class="titleTd">开户行名称</td>
-					<td style="text-align:left;"><input name="bankName" type="text" placeholder="请输入开户行" class="easyui-validatebox span2" data-options="required:true" ></td>
+					<td style="text-align:left;"><input name="bankName" type="text" placeholder="请输入开户行" class="easyui-validatebox span2"  ></td>
 					<td  class="titleTd">银行卡号</td>
-					<td style="text-align:left;"><input name="bankCardNo" type="text" placeholder="请输入银行卡号"  class="easyui-validatebox span2" data-options="required:true" ></td>
+					<td style="text-align:left;"><input name="bankCardNo" type="text" placeholder="请输入银行卡号"  class="easyui-validatebox span2" ></td>
 				</tr>
 				<tr>
 					<td  class="titleTd">开户名</td>
-					<td style="text-align:left;"><input name="bankUserName" type="text" placeholder="请输开户名" class="easyui-validatebox span2" data-options="required:true" ></td>
-					<td  class="titleTd"></td>
-					<td style="text-align:left;"></td>
-				</tr>
-				<tr>
-					<td  class="titleTd">普通话</td>
-					<td style="text-align:left;"><input name="mandarin" type="text" placeholder="普通话" class="easyui-validatebox span2" ></td>
+					<td style="text-align:left;"><input name="bankUserName" type="text" placeholder="请输开户名" class="easyui-validatebox span2" ></td>
 					<td  class="titleTd">是否为V</td>
 					<td style="text-align:left;">
 							<input type="radio" name="isV" value="1" />是
