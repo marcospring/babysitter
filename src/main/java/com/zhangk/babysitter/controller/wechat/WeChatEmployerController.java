@@ -2,7 +2,6 @@ package com.zhangk.babysitter.controller.wechat;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +17,7 @@ import com.zhangk.babysitter.exception.BadRequestException;
 import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.service.exployer.ServiceOrderService;
 import com.zhangk.babysitter.utils.common.Constants;
+import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.RemoteIPGeter;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.utils.httpclient.HttpHelper;
@@ -68,29 +68,28 @@ public class WeChatEmployerController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/search")
-	public PageResult search(String countyGuid, String babysitterName) {
-		if (StringUtils.isEmpty(countyGuid)
-				|| StringUtils.isEmpty(babysitterName))
-			return getErrRes(ResultInfo.INF_EMPTY);
-		PageResult result = employerService.search(countyGuid, babysitterName,
-				getResult());
+	public PageResult search(String pageSize, String pageNo, String countyGuid,
+			String babysitterName, String orderFlag) {
+
+		PageResult result = employerService.search(pageSize, pageNo,
+				countyGuid, babysitterName, orderFlag, getResult());
 		return result;
 	}
 
 	@ResponseBody
 	@RequestMapping("/addOrder")
-	public PageResult addServiceOrder(String date, String price,
+	public PageResult addServiceOrder(String date, String countyLevelGuid,
 			String address, String name, String mobile, String checkCode,
-			String openid, String countyGuid, int isNotAdvice) {
-		if (StringUtils.isEmpty(date) || StringUtils.isEmpty(price)
+			String openid, String countyGuid, String isNotAdvice) {
+		if (StringUtils.isEmpty(date) || StringUtils.isEmpty(countyLevelGuid)
 				|| StringUtils.isEmpty(checkCode)
 				|| StringUtils.isEmpty(address) || StringUtils.isEmpty(name)
 				|| (StringUtils.isEmpty(mobile) && StringUtils.isEmpty(openid))) {
 			return getResult(ResultInfo.INF_EMPTY);
 		}
-		PageResult result = orderService.wechatAddServiceOrder(date, price,
-				countyGuid, address, name, mobile, checkCode, openid,
-				getResult(), isNotAdvice);
+		PageResult result = orderService.wechatAddServiceOrder(date,
+				countyLevelGuid, countyGuid, address, name, mobile, checkCode,
+				openid, getResult(), isNotAdvice);
 		return result;
 	}
 
@@ -149,13 +148,12 @@ public class WeChatEmployerController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/babysitterList")
-	public PageResult getEmployerRecommond(String date, int page,
+	public PageResult getEmployerRecommond(String date, String page,
 			String countyGuid, String orderGuid) {
-		List<BabysitterView> result = employerService.getRecommendBabysitter(
-				date, page, countyGuid, orderGuid);
+		Pagination<BabysitterView> result = employerService
+				.getRecommendBabysitter(page, orderGuid);
 		res.setResult(ResultInfo.SUCCESS);
 		res.put("result", result);
-		res.put("page", page == 0 ? 1 : page);
 		return res;
 	}
 
@@ -173,15 +171,12 @@ public class WeChatEmployerController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/addEvaluate")
-	public PageResult addEvaluate(String employGuid, String orderGuid,
-			String babysitterGuid, String msg, String score) {
-		if (StringUtils.isEmpty(employGuid) || StringUtils.isEmpty(orderGuid)
-				|| StringUtils.isEmpty(babysitterGuid)
-				|| StringUtils.isEmpty(msg) || StringUtils.isEmpty(score)) {
+	public PageResult addEvaluate(String orderGuid, String msg, String score) {
+		if (StringUtils.isEmpty(orderGuid) || StringUtils.isEmpty(score)) {
 			return getResult(ResultInfo.INF_EMPTY);
 		}
-		ResultInfo result = orderService.addBabysitterOrderEvaluate(employGuid,
-				orderGuid, babysitterGuid, msg, score);
+		ResultInfo result = orderService.addBabysitterOrderEvaluate(orderGuid,
+				msg, score);
 		return getResult(result);
 	}
 
@@ -210,19 +205,18 @@ public class WeChatEmployerController extends BaseController {
 	 */
 	@ResponseBody
 	@RequestMapping("/addMakeBabysitterOrder")
-	public PageResult addMakeBabysitterOrder(String date, String price,
-			String address, String name, String mobile, String checkCode,
-			String openid, String countyGuid, String babysitterGuid) {
-		if (StringUtils.isEmpty(date) || StringUtils.isEmpty(price)
-				|| StringUtils.isEmpty(address) || StringUtils.isEmpty(name)
-				|| StringUtils.isEmpty(mobile)
+	public PageResult addMakeBabysitterOrder(String date, String address,
+			String name, String mobile, String checkCode, String openid,
+			String countyGuid, String babysitterGuid) {
+		if (StringUtils.isEmpty(date) || StringUtils.isEmpty(address)
+				|| StringUtils.isEmpty(name) || StringUtils.isEmpty(mobile)
 				|| StringUtils.isEmpty(checkCode)
 				|| StringUtils.isEmpty(countyGuid)
 				|| StringUtils.isEmpty(babysitterGuid))
 			return getErrRes(ResultInfo.INF_EMPTY);
-		PageResult result = orderService.addMakeBabysitterOrder(date, price,
-				address, name, mobile, checkCode, openid, countyGuid,
-				babysitterGuid, getResult());
+		PageResult result = orderService.addMakeBabysitterOrder(date, address,
+				name, mobile, checkCode, openid, countyGuid, babysitterGuid,
+				getResult());
 		return result;
 	}
 
@@ -240,10 +234,28 @@ public class WeChatEmployerController extends BaseController {
 	@RequestMapping("/addWechatOrder")
 	public PageResult payFrontMoney(HttpServletRequest request, String orderNo,
 			String openid) {
+		if (StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(openid)) {
+			return getErrRes(ResultInfo.INF_EMPTY);
+		}
 		String ip = RemoteIPGeter.getIpAddr(request);
 		PageResult result = orderService.payFrontMoney(orderNo, ip,
 				getResult(), openid);
 
+		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping("/serviceEnd")
+	public PageResult serviceEnd(String orderGuid) {
+		PageResult result = orderService.serviceEnd(orderGuid, getResult());
+		return result;
+	}
+
+	@ResponseBody
+	@RequestMapping("/orderHistoryRecord")
+	public PageResult orderHistoryRecord(String orderGuid) {
+		PageResult result = orderService.orderHistoryRecord(orderGuid,
+				getResult());
 		return result;
 	}
 }

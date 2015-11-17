@@ -48,6 +48,10 @@ public class WeChatGongZhongHaoCallBackServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
+		System.out
+				.println("<----------------------------------------------------------------------------------------->");
+		System.out
+				.println("<----------------------------------------------------------------------------------------->");
 		if (request.getCharacterEncoding() == null) {
 			request.setCharacterEncoding(ENCODING);
 		}
@@ -98,7 +102,7 @@ public class WeChatGongZhongHaoCallBackServlet extends HttpServlet {
 				throw new RuntimeException("sign verify error");
 			}
 			if (StringUtils.isEmpty(root.elementText("cash_fee_type"))) {
-				if (!"CNY".equalsIgnoreCase(root.elementText("cash_fee_type"))) {
+				if (!"CNY".equalsIgnoreCase(root.elementText("fee_type"))) {
 					throw new RuntimeException("cash_fee_type error , not CNY");
 				}
 			}
@@ -126,6 +130,10 @@ public class WeChatGongZhongHaoCallBackServlet extends HttpServlet {
 			out.flush();
 			out.close();
 		}
+		System.out
+				.println("<----------------------------------------------------------------------------------------->");
+		System.out
+				.println("<----------------------------------------------------------------------------------------->");
 	}
 
 	/**
@@ -135,7 +143,7 @@ public class WeChatGongZhongHaoCallBackServlet extends HttpServlet {
 	@Override
 	protected void doPost(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		doPost(request, response);
+		doGet(request, response);
 	}
 
 }

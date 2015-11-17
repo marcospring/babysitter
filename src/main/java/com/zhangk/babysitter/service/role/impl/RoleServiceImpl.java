@@ -34,13 +34,15 @@ public class RoleServiceImpl implements RoleService {
 		String hql = "from Role r";
 		String countHql = "select count(r.id) from Role r";
 
-		Pagination<Role> p = dao.getPageResult(Role.class, hql, page.getPageNo(), page.getPageSize());
+		Pagination<Role> p = dao.getPageResult(Role.class, hql,
+				page.getPageNo(), page.getPageSize());
 		List<Role> list = p.getResult();
 		List<RoleView> result = new ArrayList<RoleView>();
 		for (Role role : list) {
 			result.add(role.view());
 		}
-		Pagination<RoleView> pageView = new Pagination<RoleView>(result, p.getPageNo(), p.getPageSize());
+		Pagination<RoleView> pageView = new Pagination<RoleView>(result,
+				p.getPageNo(), p.getPageSize());
 		Long count = dao.getSingleResultByHQL(Long.class, countHql);
 		pageView.setResultSize(count);
 		return pageView;
@@ -75,10 +77,10 @@ public class RoleServiceImpl implements RoleService {
 		for (Long menuId : resourceTreeIds) {
 			menuIds.add(menuId);
 		}
-		List<Menu> menus = role.getMenus();
-		for (Menu menu : menus) {
-			menuIds.add(menu.getId());
-		}
+		// List<Menu> menus = role.getMenus();
+		// for (Menu menu : menus) {
+		// menuIds.add(menu.getId());
+		// }
 		List<Menu> roleMenus = new ArrayList<Menu>();
 		for (Iterator<Long> mid = menuIds.iterator(); mid.hasNext();) {
 			Menu m = new Menu();

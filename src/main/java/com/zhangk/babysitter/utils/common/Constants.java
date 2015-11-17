@@ -23,6 +23,25 @@ public class Constants {
 	// 是否已读
 	public static final int READ = 1;
 	public static final int NON_READ = 0;
+	// 是/否标志
+	public static final int N = 1;
+	public static final int Y = 0;
+
+	// 微信排序类型
+	public static final int WECHAT_ORDER_LEVEL = 1;
+	// 客户满意度
+	public static final int WECHAT_ORDER_SATISFACTION = 2;
+	// 订单数量
+	public static final int WECHAT_ORDER_ORDER_COUNT = 3;
+
+	// 月嫂证件上传数量标志，0为可传多张，1为只能传一张
+	public static final int CREDENTIAL_COUNT_FLAG_MULTI = 0;
+	public static final int CREDENTIAL_COUNT_FLAG_SINGLE = 1;
+
+	// 月嫂证件上传积分标志，0为可多次积分，1为只能积分一次
+	public static final int CREDENTIAL_SCORE_FLAG_MULTI = 0;
+	public static final int CREDENTIAL_SCORE_FLAG_SINGLE = 1;
+
 	// 图片主域
 	public static final String IMG_DOMAIN = PropertiesUtils.getString(
 			"domain.image", "http://www.babysitter.com/babysitter");
@@ -50,7 +69,11 @@ public class Constants {
 	public static final String CODE_APPID = PropertiesUtils.getString(
 			"code.appid", "8a48b5514ecd7fa8014edcde557015c4");
 	public static final String MSG_TEMPLATE = PropertiesUtils.getString(
-			"code.template", "1");
+			"code.template", "30935");
+	public static final String MSG_TEMPLATE_ADVICE = PropertiesUtils.getString(
+			"code.template.advice", "39248");
+	public static final String MSG_TEMPLATE_ADVICE_PHONE = PropertiesUtils
+			.getString("code.template.advice.phone", "13522556002");
 
 	public static final int CREDENTIAL_TYPE_CREDENTIAL = 1;
 	public static final int CREDENTIAL_TYPE_PROFESSIONAL = 2;
@@ -96,7 +119,7 @@ public class Constants {
 					"https://api.mch.weixin.qq.com/pay/unifiedorder");
 	public static final String WECHAT_OPENID_NOTIFY_URL = PropertiesUtils
 			.getString("wechat.pay.notify.url",
-					"http://123.57.174.128:8080/babysitter/callback/GongZhongHao");
+					"http://mobile.yuesaostar.com/babysitter/callback/GongZhongHao");
 	public static final String WECHAT_OPENID_TRADE_TYPE = PropertiesUtils
 			.getString("wechat.pay.trade.type", "JSAPI");
 
@@ -107,5 +130,13 @@ public class Constants {
 	// 雇主订单默认抢单数量
 	public static final int SERVICE_ORDER_COUNT = PropertiesUtils.getInt(
 			"serviceorder.count", 10);
+
+	public static final String DEFAULT_HEAD_URL = "/dmg/head.png";
+
+	public static final String SERVICEORDER_DEFAULT_RATE = PropertiesUtils
+			.getString("countylevel.default.rate", "0.8");
+
+	public static final String DEFAULT_QIANG_BABYSITTER_COUNT = PropertiesUtils
+			.getString("default.qiangdan.babysitter.count", "7");
 
 }

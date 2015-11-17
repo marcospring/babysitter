@@ -29,6 +29,12 @@ public class Credential implements Serializable {
 	private String name;
 	private int credentialType;
 	private int score;
+	// 是否可以上传多次
+	private int uploadCountFlag;
+	// 是否可以多次积分
+	private int scoreFlag;
+	// 是否显示证件图片
+	private int isDisplayPhoto;
 	private List<BabysitterCredential> babysitters;
 
 	@Id
@@ -108,6 +114,30 @@ public class Credential implements Serializable {
 
 	public DicCredentialView view() {
 		return new DicCredentialView(this);
+	}
+
+	public int getUploadCountFlag() {
+		return uploadCountFlag;
+	}
+
+	public void setUploadCountFlag(int uploadCountFlag) {
+		this.uploadCountFlag = uploadCountFlag;
+	}
+
+	public int getScoreFlag() {
+		return scoreFlag;
+	}
+
+	public void setScoreFlag(int scoreFlag) {
+		this.scoreFlag = scoreFlag;
+	}
+
+	public int getIsDisplayPhoto() {
+		return isDisplayPhoto;
+	}
+
+	public void setIsDisplayPhoto(int isDisplayPhoto) {
+		this.isDisplayPhoto = isDisplayPhoto;
 	}
 
 	public static Credential getInstance() {

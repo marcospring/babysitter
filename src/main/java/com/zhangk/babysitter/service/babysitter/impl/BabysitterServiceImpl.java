@@ -141,7 +141,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			params.add(cardNo);
 		}
 		if (!StringUtils.isEmpty(identificationNo)) {
-			hql.append(" and r.IdentificationNo like ? ");
+			hql.append(" and r.identificationNo like ? ");
 			params.add("%" + identificationNo + "%");
 		}
 		StringBuffer countHql = new StringBuffer(" select count(r.id) ");
@@ -156,8 +156,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		List<Babysitter> list = p.getResult();
 		List<BabysitterView> viewList = new ArrayList<BabysitterView>();
 		for (Babysitter babysitter : list) {
-			BabysitterView view = new BabysitterView(babysitter);
-			viewList.add(view);
+			viewList.add(babysitter.view());
 		}
 
 		Pagination<BabysitterView> pa = new Pagination<BabysitterView>(
@@ -187,7 +186,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 		for (BabysitterCredential babysitterCredential : credentials) {
 			if (babysitterCredential.getCredential() != null
 					&& !babysitterCredential.getCredential().getName()
-							.contains("相册")) {
+							.contains("相册") && babysitterCredential.isOvld()) {
 				resultCredentials.add(babysitterCredential);
 			}
 		}
@@ -262,10 +261,16 @@ public class BabysitterServiceImpl implements BabysitterService {
 	public PageResult register(String telephone, String password, String name,
 			String cardNo, String countyGuid, String verifyCode, PageResult res) {
 		try {
-			String hql = "from Babysitter b where b.ovld = true and b.IdentificationNo=?";
+			String hql = "from Babysitter b where b.ovld = true and b.identificationNo=?";
+			String mobileHql = "from Babysitter b where b.ovld = true and b.mobilePhone=?";
 
 			Babysitter valideBabysitter = dao.getSingleResultByHQL(
 					Babysitter.class, hql, cardNo);
+			if (valideBabysitter == null) {
+				valideBabysitter = dao.getSingleResultByHQL(Babysitter.class,
+						mobileHql, telephone);
+			}
+
 			if (valideBabysitter == null) {
 				County county = dao.getResultByGUID(County.class, countyGuid);
 				if (county == null) {
@@ -326,6 +331,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			res.setResult(ResultInfo.BAD_REQUEST);
 		}
 		// } else {
 		// res.put("code", ResultInfo.CHECK_CODE_ERROR.getCode());
@@ -627,7 +633,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 			}
 			BabysitterOrder order = BabysitterOrder.getInstance();
 			order.setEmployer(employer);
-			order.setOrderPrice(Long.valueOf(price));
+			order.setOrderPrice(Long.valueOf(price.trim()));
 			order.setBabysitter(babysitter);
 			order.setState(Constants.NEW_ORDER);
 			order.setOrderId(recordService.createOrderId());
@@ -817,11 +823,11 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	private long getOrderCountIndex(long babysitterId) {
-		String sql = "select count(t.id) counter from babysitter_babysitter_order t where t.babysitter_id=? and state >=5";
+		String sql = "select count(t.id) counter from babysitter_babysitter_order t where t.ovld = true and t.babysitter_id=? and state >=5";
 		long counter = (Long) dao.getSession().createSQLQuery(sql)
 				.addScalar("counter", LongType.INSTANCE)
 				.setLong(0, babysitterId).uniqueResult();
-		String indexSql = "select count(t.bid) counter from (select babysitter_id bid from babysitter_babysitter_order t where t.state>=5 group by babysitter_id having(count(t.id)>?)) t;";
+		String indexSql = "select count(t.bid) counter from (select babysitter_id bid from babysitter_babysitter_order t where t.ovld = true and t.state>=5 group by babysitter_id having(count(t.id)>?)) t;";
 		long index = (Long) dao.getSession().createSQLQuery(indexSql)
 				.addScalar("counter", LongType.INSTANCE).setLong(0, counter)
 				.uniqueResult();
@@ -829,7 +835,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	private long getScoreCountIndex(long score) {
-		String sql = "select count(t.id) counter from babysitter_babysitter t where t.score> ?";
+		String sql = "select count(t.id) counter from babysitter_babysitter t where t.ovld = true and t.score> ?";
 		long index = (Long) dao.getSession().createSQLQuery(sql)
 				.addScalar("counter", LongType.INSTANCE).setLong(0, score)
 				.uniqueResult();
@@ -944,7 +950,7 @@ public class BabysitterServiceImpl implements BabysitterService {
 	}
 
 	public PageResult nameSearch(String name, PageResult result) {
-		String hql = "from Babysitter b where b.name like ?";
+		String hql = "from Babysitter b where b.ovld = true and b.name like ?";
 		List<Babysitter> list = dao.getListResultByHQL(Babysitter.class, hql,
 				"%" + name + "%");
 		List<BabysitterView> viewList = new ArrayList<BabysitterView>();
@@ -1068,6 +1074,17 @@ public class BabysitterServiceImpl implements BabysitterService {
 		resultMap.put("recommondCount", infos.get(0).getBabysitters().size());
 		result.setResult(ResultInfo.SUCCESS);
 		result.put("result", resultMap);
+		return result;
+	}
+
+	public PageResult checkBabysitterMobile(String mobile, PageResult result) {
+		String mobileHql = "from Babysitter b where b.ovld = true and b.mobilePhone=?";
+		Babysitter valideBabysitter = dao.getSingleResultByHQL(
+				Babysitter.class, mobileHql, mobile);
+		if (valideBabysitter != null)
+			result.setResult(ResultInfo.BABYSITTER_NOT_NULL);
+		else
+			result.setResult(ResultInfo.SUCCESS);
 		return result;
 	}
 

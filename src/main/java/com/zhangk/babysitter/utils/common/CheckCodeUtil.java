@@ -23,7 +23,8 @@ public class CheckCodeUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void sendMessage(String phoneNo, String... arg) {
+	public static void sendMessage(String phoneNo, String templateNo,
+			String... arg) {
 		HashMap<String, Object> result = null;
 
 		// 初始化SDK
@@ -66,7 +67,7 @@ public class CheckCodeUtil {
 		// String[]{"6532","5"}); *
 		// *则13800000000手机号收到的短信内容是：【云通讯】您使用的是云通讯短信模板，您的验证码是6532，请于5分钟内正确输入 *
 		// *********************************************************************************************************************
-		result = restAPI.sendTemplateSMS(phoneNo, Constants.MSG_TEMPLATE, arg);
+		result = restAPI.sendTemplateSMS(phoneNo, templateNo, arg);
 
 		System.out.println("SDKTestGetSubAccounts result=" + result);
 		if ("000000".equals(result.get("statusCode"))) {

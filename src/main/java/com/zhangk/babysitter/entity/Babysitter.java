@@ -256,6 +256,14 @@ public class Babysitter implements Serializable {
 	}
 
 	public BabysitterView view() {
+		// 去除删除订单
+		List<BabysitterOrder> ordersView = new ArrayList<BabysitterOrder>();
+		List<BabysitterOrder> orders = this.getOrders();
+		for (BabysitterOrder babysitterOrder : orders) {
+			if (babysitterOrder.isOvld())
+				ordersView.add(babysitterOrder);
+		}
+		this.setOrders(ordersView);
 		return new BabysitterView(this);
 	}
 

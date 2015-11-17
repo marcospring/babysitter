@@ -4,21 +4,30 @@ import com.zhangk.babysitter.entity.BabysitterCredential;
 import com.zhangk.babysitter.utils.common.Constants;
 
 public class CredentialView {
+	private String id;
 	private String guid;
 	private String dicGuid;
 	private String name;
+	private String yuesaoid;
+	private String babysitterLevel;
+	private String babysitterTelephone;
+	private String babysitterCounty;
+	private String babysitterNo;
 	private int check;
 	private int credentialType;
+	private String babysitterName;
 	private int score;
 	private String url;
 
 	public CredentialView() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public CredentialView(BabysitterCredential credential) {
+		setId(String.valueOf(credential.getId()));
 		setName(credential.getCredential() == null ? "无" : credential
 				.getCredential().getName());
+		setBabysitterName(credential.getBabysitter() == null ? "无" : credential
+				.getBabysitter().getName());
 		setGuid(credential.getGuid());
 		setDicGuid(credential.getCredential() == null ? "" : credential
 				.getCredential().getGuid());
@@ -27,7 +36,29 @@ public class CredentialView {
 				.getCredential().getScore());
 		setCredentialType(credential.getCredential() == null ? Constants.CREDENTIAL_TYPE_CREDENTIAL
 				: credential.getCredential().getCredentialType());
-		setUrl(Constants.IMG_DOMAIN + credential.getCredentialUrl());
+		if (credential.getCredential().getIsDisplayPhoto() == Constants.Y) {
+			setUrl(Constants.IMG_DOMAIN + credential.getCredentialUrl());
+		}
+		setBabysitterCounty(credential.getBabysitter() == null ? "未知"
+				: credential.getBabysitter().getCounty() == null ? "未知"
+						: credential.getBabysitter().getCounty().getName());
+		setBabysitterLevel(credential.getBabysitter() == null ? "未知"
+				: credential.getBabysitter().getLevel() != null ? credential
+						.getBabysitter().getLevel().getLevel().getName() : "无");
+		setBabysitterTelephone(credential.getBabysitter() == null ? "未知"
+				: credential.getBabysitter().getMobilePhone());
+		setBabysitterNo(credential.getBabysitter() == null ? "未知" : credential
+				.getBabysitter().getCardNo());
+		setYuesaoid(credential.getBabysitter() == null ? "未知" : String
+				.valueOf(credential.getBabysitter().getId()));
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getUrl() {
@@ -84,6 +115,54 @@ public class CredentialView {
 
 	public void setCredentialType(int credentialType) {
 		this.credentialType = credentialType;
+	}
+
+	public String getBabysitterName() {
+		return babysitterName;
+	}
+
+	public void setBabysitterName(String babysitterName) {
+		this.babysitterName = babysitterName;
+	}
+
+	public String getBabysitterLevel() {
+		return babysitterLevel;
+	}
+
+	public void setBabysitterLevel(String babysitterLevel) {
+		this.babysitterLevel = babysitterLevel;
+	}
+
+	public String getBabysitterTelephone() {
+		return babysitterTelephone;
+	}
+
+	public void setBabysitterTelephone(String babysitterTelephone) {
+		this.babysitterTelephone = babysitterTelephone;
+	}
+
+	public String getBabysitterCounty() {
+		return babysitterCounty;
+	}
+
+	public void setBabysitterCounty(String babysitterCounty) {
+		this.babysitterCounty = babysitterCounty;
+	}
+
+	public String getBabysitterNo() {
+		return babysitterNo;
+	}
+
+	public void setBabysitterNo(String babysitterNo) {
+		this.babysitterNo = babysitterNo;
+	}
+
+	public String getYuesaoid() {
+		return yuesaoid;
+	}
+
+	public void setYuesaoid(String yuesaoid) {
+		this.yuesaoid = yuesaoid;
 	}
 
 }

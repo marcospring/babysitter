@@ -94,7 +94,7 @@
 				</tr>
 				<tr>
 					<td  class="titleTd">身份证号</td>
-					<td style="text-align:left;"><input name="identificationNo" type="text" placeholder="请输电话号码" class="easyui-validatebox span2" data-options="required:true" value="${vo.identificationNo}"></td>
+					<td style="text-align:left;"><input name="identificationNo" type="text" placeholder="请输身份证号" class="easyui-validatebox span2" data-options="required:true" value="${vo.identificationNo}"></td>
 					<td  class="titleTd">生日</td>
 					<td style="text-align:left;"><input name="birthday" id="birthday" type="text"  value="${vo.birthday}"></td>
 				</tr>

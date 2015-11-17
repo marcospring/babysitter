@@ -9,6 +9,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 
 public class ExcelOperator {
 	private HSSFWorkbook excelBook;
@@ -59,24 +60,24 @@ public class ExcelOperator {
 	public String getCellStringValue(HSSFCell cell) {
 		String cellValue = "";
 		switch (cell.getCellType()) {
-		case HSSFCell.CELL_TYPE_STRING:// 字符串类型
+		case Cell.CELL_TYPE_STRING:// 字符串类型
 			cellValue = cell.getStringCellValue();
 			if (cellValue.trim().equals("") || cellValue.trim().length() <= 0)
 				cellValue = " ";
 			break;
-		case HSSFCell.CELL_TYPE_NUMERIC: // 数值类型
+		case Cell.CELL_TYPE_NUMERIC: // 数值类型
 			cellValue = String.valueOf(cell.getNumericCellValue());
 			break;
-		case HSSFCell.CELL_TYPE_FORMULA: // 公式
-			cell.setCellType(HSSFCell.CELL_TYPE_NUMERIC);
+		case Cell.CELL_TYPE_FORMULA: // 公式
+			cell.setCellType(Cell.CELL_TYPE_NUMERIC);
 			cellValue = String.valueOf(cell.getNumericCellValue());
 			break;
-		case HSSFCell.CELL_TYPE_BLANK:
+		case Cell.CELL_TYPE_BLANK:
 			cellValue = " ";
 			break;
-		case HSSFCell.CELL_TYPE_BOOLEAN:
+		case Cell.CELL_TYPE_BOOLEAN:
 			break;
-		case HSSFCell.CELL_TYPE_ERROR:
+		case Cell.CELL_TYPE_ERROR:
 			break;
 		default:
 			break;

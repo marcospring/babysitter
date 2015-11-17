@@ -16,7 +16,8 @@ public enum ResultInfo {
 			"客户经理为空"), SERVICE_ORDER_OVER(1023, "抢单已结束"), NONE_CUSTOMERMANAGER_SERVICE(
 			1024, "没有安排客户经理，请拨打总台电话"), NO_BABYSITTER_SERVICE_ORDER(1025,
 			"该订单还未添加月嫂订单"), IDENTIFICATION_NO_INVALID(1026, "身份证号不合法"), PAY_FAIL(
-			1027, "支付失败"), SUCCESS(0, "操作成功");
+			1027, "支付失败"), MULTI_EMPLYER(1028, "openid对应多个雇主"), COUNTY_LEVEL_NULL(
+			1029, "城市级别为空"), SUCCESS(0, "操作成功");
 
 	private int code;
 	private String msg;

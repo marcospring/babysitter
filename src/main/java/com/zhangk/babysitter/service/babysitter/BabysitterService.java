@@ -142,4 +142,6 @@ public interface BabysitterService {
 
 	PageResult getRecommondCount(String countyGuid, PageResult result);
 
+	PageResult checkBabysitterMobile(String mobile, PageResult result);
+
 }

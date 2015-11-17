@@ -63,7 +63,8 @@ public class BabysitterView {
 	public BabysitterView(Babysitter babysitter) {
 		setId(babysitter.getId());
 		setGuid(babysitter.getGuid());
-		setHeadUrl(babysitter.getHeadUrl());
+		setHeadUrl(StringUtils.isEmpty(babysitter.getHeadUrl()) ? Constants.DEFAULT_HEAD_URL
+				: babysitter.getHeadUrl());
 		setPrice(babysitter.getLevel() != null ? babysitter.getLevel()
 				.getMoney() : 0);
 		setCardNo(babysitter.getCardNo());
@@ -137,7 +138,8 @@ public class BabysitterView {
 	private List<BabysitterOrderView> getOrderView(List<BabysitterOrder> orders) {
 		List<BabysitterOrderView> result = new ArrayList<BabysitterOrderView>();
 		for (BabysitterOrder info : orders) {
-			result.add(info.view());
+			if (info.isOvld())
+				result.add(info.view());
 		}
 		return result;
 	}

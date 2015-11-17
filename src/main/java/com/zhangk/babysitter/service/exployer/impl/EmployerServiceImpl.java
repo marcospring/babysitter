@@ -2,6 +2,7 @@ package com.zhangk.babysitter.service.exployer.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
@@ -16,6 +17,7 @@ import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.entity.PanicBuyingOrder;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
+import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
@@ -71,9 +73,8 @@ public class EmployerServiceImpl implements EmployerService {
 		return employer;
 	}
 
-	public List<BabysitterView> getRecommendBabysitter(String date, int page,
-			String countyGuid, String orderGuid) {
-		List<BabysitterView> result = new ArrayList<BabysitterView>();
+	public Pagination<BabysitterView> getRecommendBabysitter(String page,
+			String orderGuid) {
 		// 计算档期起止时间
 		// Map<String, Date> dates = ExpectedDateCreate.getExpectedDate(date);
 		// // 获得今日推荐月嫂列表
@@ -103,16 +104,22 @@ public class EmployerServiceImpl implements EmployerService {
 		//
 		// } else {
 		// 获取抢单的月嫂
+		List<BabysitterView> result = new ArrayList<BabysitterView>();
+		int pageInt = 1;
+		if (!StringUtils.isEmpty(page))
+			pageInt = Integer.valueOf(page);
 		String hql = "from PanicBuyingOrder t where t.ovld = true and serviceOrder.guid = ? order by t.createDate desc";
-		List<BabysitterView> views = new ArrayList<BabysitterView>();
 		Pagination<PanicBuyingOrder> pages = dao.getPageResult(
-				PanicBuyingOrder.class, hql, page, 5, orderGuid);
+				PanicBuyingOrder.class, hql, pageInt, 5, orderGuid);
 		List<PanicBuyingOrder> list = pages.getResult();
 		if (list != null && list.size() > 0) {
 			for (PanicBuyingOrder panicBuyingOrder : list) {
-				views.add(panicBuyingOrder.getBabysitter().view());
+				result.add(panicBuyingOrder.getBabysitter().view());
 			}
 		}
+		Pagination<BabysitterView> resultPage = new Pagination<BabysitterView>(
+				result, pageInt,
+				Integer.valueOf(Constants.DEFAULT_QIANG_BABYSITTER_COUNT));
 		// if (page == pageCount) {
 		// for (int i = preResult.size() - lastCount; i < preResult.size(); i++)
 		// {
@@ -138,7 +145,7 @@ public class EmployerServiceImpl implements EmployerService {
 		// }
 		// }
 		// }
-		return result;
+		return resultPage;
 	}
 
 	public Pagination<EmployerView> getPageEmployerListForOrder(
@@ -183,17 +190,93 @@ public class EmployerServiceImpl implements EmployerService {
 		return dao.getResultByGUID(Employer.class, guid);
 	}
 
-	public PageResult search(String countyGuid, String babysitterName,
-			PageResult result) {
-		String hql = "from Babysitter t where t.county.guid=? and t.name like ?";
-		List<Babysitter> list = dao.getListResultByHQL(Babysitter.class, hql,
-				countyGuid, "%" + babysitterName + "%");
-		List<BabysitterView> views = new ArrayList<BabysitterView>();
-		for (Babysitter babysitter : list) {
-			views.add(babysitter.view());
+	@SuppressWarnings("rawtypes")
+	public PageResult search(String pageSize, String pageNo, String countyGuid,
+			String babysitterName, String orderFlag, PageResult result) {
+		int pageSizeInt = StringUtils.isEmpty(pageSize) ? 10 : Integer
+				.valueOf(pageSize);
+		int pageNoInt = StringUtils.isEmpty(pageNo) ? 1 : Integer
+				.valueOf(pageNo);
+		int orderFlagInt = Constants.WECHAT_ORDER_LEVEL;
+		if (!StringUtils.isEmpty(orderFlag)) {
+			orderFlagInt = Integer.valueOf(orderFlag);
 		}
 		result.setResult(ResultInfo.SUCCESS);
-		result.put("result", views);
+		if (orderFlagInt != Constants.WECHAT_ORDER_ORDER_COUNT) {
+			StringBuffer hql = new StringBuffer();
+			List<Object> params = new ArrayList<Object>();
+			hql.append("from Babysitter t where t.ovld = true ");
+			if (!StringUtils.isEmpty(countyGuid)) {
+				hql.append(" and t.county.guid = ?");
+				params.add(countyGuid);
+			}
+			if (!StringUtils.isEmpty(babysitterName)) {
+				hql.append(" and t.name like ?");
+				params.add("%" + babysitterName + "%");
+			}
+			if (orderFlagInt == Constants.WECHAT_ORDER_LEVEL) {
+				hql.append(" order by t.level.level.score desc");
+			} else if (orderFlagInt == Constants.WECHAT_ORDER_SATISFACTION) {
+				hql.append(" order by t.score desc");
+			} else {
+				hql.append(" order by t.level.level.score desc");
+			}
+			StringBuffer countHql = new StringBuffer(" select count(t.id) ");
+			countHql.append(hql);
+			Object[] objParams = new Object[params.size()];
+			for (int i = 0; i < objParams.length; i++) {
+				objParams[i] = params.get(i);
+			}
+			Pagination<Babysitter> p = dao.getPageResultObjectParams(
+					Babysitter.class, hql.toString(), pageNoInt, pageSizeInt,
+					objParams);
+			List<Babysitter> list = p.getResult();
+			List<BabysitterView> viewList = new ArrayList<BabysitterView>();
+			for (Babysitter babysitter : list) {
+				viewList.add(babysitter.view());
+			}
+
+			Pagination<BabysitterView> pa = new Pagination<BabysitterView>(
+					viewList, p.getPageNo(), p.getPageSize());
+			Long count = dao.getSingleResultByHQLObjectParams(Long.class,
+					countHql.toString(), objParams);
+			pa.setResultSize(count);
+			result.put("result", pa);
+		} else if (orderFlagInt == Constants.WECHAT_ORDER_ORDER_COUNT) {
+			StringBuffer hql = new StringBuffer();
+			List<Object> params = new ArrayList<Object>();
+			hql.append("select new Map(t.babysitter.id as bid) from BabysitterOrder t where t.ovld = true ");
+			if (!StringUtils.isEmpty(countyGuid)) {
+				hql.append(" and t.babysitter.county.guid = ?");
+				params.add(countyGuid);
+			}
+			if (!StringUtils.isEmpty(babysitterName)) {
+				hql.append(" and t.babysitter.name like ?");
+				params.add("%" + babysitterName + "%");
+			}
+			hql.append(" group by t.babysitter.id order by count(t.id) desc ");
+			Object[] objParams = new Object[params.size()];
+			for (int i = 0; i < objParams.length; i++) {
+				objParams[i] = params.get(i);
+			}
+			Pagination<Map> p = dao.getPageResultObjectParams(Map.class,
+					hql.toString(), pageNoInt, pageSizeInt, objParams);
+			List<Map> list = p.getResult();
+			List<BabysitterView> viewList = new ArrayList<BabysitterView>();
+			for (Map m : list) {
+				long bid = Long.valueOf(String.valueOf(m.get("bid")));
+				viewList.add(dao.getResultById(Babysitter.class, bid).view());
+			}
+
+			Pagination<BabysitterView> pa = new Pagination<BabysitterView>(
+					viewList, p.getPageNo(), p.getPageSize());
+			StringBuffer countHql = new StringBuffer();
+			countHql.append("select count(*) ").append(hql.substring(39));
+			List<Map> listCount = dao.getListResultByHQLObjectParams(Map.class,
+					hql.toString(), objParams);
+			pa.setResultSize(listCount.size());
+			result.put("result", pa);
+		}
 		return result;
 	}
 }

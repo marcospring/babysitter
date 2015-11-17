@@ -37,10 +37,11 @@ public interface ServiceOrderService {
 
 	PageResult wechatAddServiceOrder(String date, String price,
 			String countyGuid, String address, String name, String mobile,
-			String checkCode, String openid, PageResult result, int isNotAdvice);
+			String checkCode, String openid, PageResult result,
+			String isNotAdvice);
 
-	ResultInfo addBabysitterOrderEvaluate(String employGuid, String orderGuid,
-			String babysitterGuid, String msg, String score);
+	ResultInfo addBabysitterOrderEvaluate(String orderGuid, String msg,
+			String score);
 
 	PageResult orderList(String mobile, String openid, PageResult result);
 
@@ -69,7 +70,7 @@ public interface ServiceOrderService {
 			PageResult result);
 
 	void addBabysitterAdvice(String countyGuid, ServiceOrder order,
-			Map<String, Date> expectedDate);
+			Map<String, Date> expectedDate, String countyLevelGuid);
 
 	void addServiceOrderAdvice(String id);
 
@@ -91,10 +92,13 @@ public interface ServiceOrderService {
 			String countyGuid, String address, String name, String mobile,
 			String checkCode, String openid);
 
-	PageResult addMakeBabysitterOrder(String date, String price,
-			String address, String name, String mobile, String checkCode,
-			String openid, String countyGuid, String babysitterGuid,
-			PageResult result);
+	PageResult addMakeBabysitterOrder(String date, String address, String name,
+			String mobile, String checkCode, String openid, String countyGuid,
+			String babysitterGuid, PageResult result);
 
 	PageResult getBabysitterOrderInfo(String serviceOrderGuid, PageResult result);
+
+	PageResult serviceEnd(String orderGuid, PageResult result);
+
+	PageResult orderHistoryRecord(String orderGuid, PageResult result);
 }

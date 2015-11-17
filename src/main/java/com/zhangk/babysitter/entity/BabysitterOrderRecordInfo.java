@@ -11,28 +11,25 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.GUIDCreator;
-import com.zhangk.babysitter.viewmodel.CountyLevelView;
+import com.zhangk.babysitter.viewmodel.BabysitterOrderRecordInfoView;
 
 @Entity
-@Table(name = "babysitter_county_level")
-public class CountyLevel implements Serializable {
+@Table(name = "babysitter_babysitter_order_record")
+public class BabysitterOrderRecordInfo implements Serializable {
+
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
+
 	private long id;
 	private boolean ovld;
 	private String guid;
 	private Date createDate;
 	private Date updateDate;
-	private County county;
-	private Level level;
-	private long money;
-	private long score;
-	// 分成比例
-	private double rate;
+	private BabysitterOrder babysitterOrder;
+	private int state;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -77,57 +74,29 @@ public class CountyLevel implements Serializable {
 	}
 
 	@ManyToOne
-	@JoinColumn(name = "county_id")
-	public County getCounty() {
-		return county;
+	@JoinColumn(name = "order_id")
+	public BabysitterOrder getBabysitterOrder() {
+		return babysitterOrder;
 	}
 
-	public void setCounty(County county) {
-		this.county = county;
+	public void setBabysitterOrder(BabysitterOrder babysitterOrder) {
+		this.babysitterOrder = babysitterOrder;
 	}
 
-	@ManyToOne
-	@JoinColumn(name = "level_id")
-	public Level getLevel() {
-		return level;
+	public BabysitterOrderRecordInfoView view() {
+		return new BabysitterOrderRecordInfoView(this);
 	}
 
-	public void setLevel(Level level) {
-		this.level = level;
+	public int getState() {
+		return state;
 	}
 
-	public long getMoney() {
-		return money;
+	public void setState(int state) {
+		this.state = state;
 	}
 
-	public void setMoney(long money) {
-		this.money = money;
-	}
-
-	public long getScore() {
-		return score;
-	}
-
-	public void setScore(long score) {
-		this.score = score;
-	}
-
-	public CountyLevelView view() {
-		return new CountyLevelView(this);
-	}
-
-	public double getRate() {
-		if (rate == 0f)
-			rate = Double.valueOf(Constants.SERVICEORDER_DEFAULT_RATE);
-		return rate;
-	}
-
-	public void setRate(double rate) {
-		this.rate = rate;
-	}
-
-	public static CountyLevel getInstance() {
-		CountyLevel o = new CountyLevel();
+	public static BabysitterOrderRecordInfo getInstance() {
+		BabysitterOrderRecordInfo o = new BabysitterOrderRecordInfo();
 		o.setOvld(true);
 		o.setGuid(GUIDCreator.GUID());
 		o.setCreateDate(new Date());

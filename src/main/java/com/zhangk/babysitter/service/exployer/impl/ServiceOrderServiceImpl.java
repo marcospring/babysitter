@@ -1,6 +1,7 @@
 package com.zhangk.babysitter.service.exployer.impl;
 
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -23,7 +24,9 @@ import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
+import com.zhangk.babysitter.entity.BabysitterOrderRecordInfo;
 import com.zhangk.babysitter.entity.County;
+import com.zhangk.babysitter.entity.CountyLevel;
 import com.zhangk.babysitter.entity.CustomerManager;
 import com.zhangk.babysitter.entity.CustomerManagerDuty;
 import com.zhangk.babysitter.entity.Employer;
@@ -35,12 +38,14 @@ import com.zhangk.babysitter.service.common.CheckCodeService;
 import com.zhangk.babysitter.service.common.NumberRecordService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.service.exployer.ServiceOrderService;
+import com.zhangk.babysitter.utils.common.CheckCodeUtil;
 import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.utils.data.RequestXMLCreater;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
+import com.zhangk.babysitter.viewmodel.EmployerView;
 import com.zhangk.babysitter.viewmodel.ServiceOrderView;
 
 @SuppressWarnings("deprecation")
@@ -100,23 +105,25 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	@Transactional
-	public ResultInfo addBabysitterOrderEvaluate(String employGuid,
-			String orderGuid, String babysitterGuid, String msg, String score) {
-		// Employer employer = dao.getResultByGUID(Employer.class, employGuid);
-		// if (employer == null)
-		// return ResultInfo.EMPLOYER_NULL;
+	public ResultInfo addBabysitterOrderEvaluate(String orderGuid, String msg,
+			String score) {
 		BabysitterOrder order = dao.getResultByGUID(BabysitterOrder.class,
 				orderGuid);
 		if (order == null)
 			return ResultInfo.BABYSITTER_ORDER_NULL;
-		Babysitter babysitter = dao.getResultByGUID(Babysitter.class,
-				babysitterGuid);
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class, order
+				.getBabysitter().getGuid());
 		if (babysitter == null)
 			return ResultInfo.BABYSITTER_NULL;
 		order.setScore(Integer.valueOf(score));
 		order.setEvaluation(msg);
 		order.setState(Constants.ORDER_OVER);
 		dao.update(order);
+		BabysitterOrderRecordInfo info = BabysitterOrderRecordInfo
+				.getInstance();
+		info.setBabysitterOrder(order);
+		info.setState(order.getState());
+		dao.add(info);
 
 		// BabysitterEvaluate evaluate = BabysitterEvaluate.getInstance();
 		// evaluate.setBabysitter(babysitter);
@@ -138,16 +145,33 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 
 	public PageResult orderList(String mobile, String openid, PageResult result) {
 		Employer employer = null;
+		List<ServiceOrderView> view = new ArrayList<ServiceOrderView>();
 		if (StringUtils.isEmpty(openid)) {
 			String mobileHql = "from Employer t where t.ovld = true and t.mobilePhone = ?";
 			employer = dao.getSingleResultByHQL(Employer.class, mobileHql,
 					mobile);
 		} else {
 			String openidHql = "from Employer t where t.ovld = true and t.openid = ?";
-			employer = dao.getSingleResultByHQL(Employer.class, openidHql,
-					openid);
+			List<Employer> listEmployers = dao.getListResultByHQL(
+					Employer.class, openidHql, openid);
+			if (listEmployers == null || listEmployers.size() == 0) {
+				result.setResult(ResultInfo.SUCCESS);
+				result.put("result", view);
+				return result;
+			}
+			if (listEmployers.size() > 1) {
+				result.setResult(ResultInfo.MULTI_EMPLYER);
+				List<EmployerView> listViews = new ArrayList<EmployerView>();
+				for (Employer e : listEmployers) {
+					listViews.add(e.view());
+				}
+				result.put("result", listViews);
+				return result;
+			} else {
+				employer = listEmployers.get(0);
+			}
+
 		}
-		List<ServiceOrderView> view = new ArrayList<ServiceOrderView>();
 		if (employer == null) {
 			result.setResult(ResultInfo.SUCCESS);
 			result.put("result", view);
@@ -291,9 +315,10 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	 * 雇主添加订单，需要根据订单的开始结束时间、订单所属地区查找符合要求的月嫂添加到需要通知的月嫂的数据表中
 	 */
 	@Transactional
-	public PageResult wechatAddServiceOrder(String date, String price,
-			String countyGuid, String address, String name, String mobile,
-			String checkCode, String openid, PageResult result, int isNotAdvice) {
+	public PageResult wechatAddServiceOrder(String date,
+			String countyLevelGuid, String countyGuid, String address,
+			String name, String mobile, String checkCode, String openid,
+			PageResult result, String isNotAdvice) {
 		try {
 			// boolean flag = codeService.updateCheckCode(mobile, checkCode,
 			// CheckCodeService.PUBLISH_ORDER);
@@ -302,15 +327,29 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			// }
 
 			// 添加雇主订单
-			ServiceOrder order = addEmployerServiceOrder(date, price,
+			ServiceOrder order = addEmployerServiceOrder(date, countyLevelGuid,
 					countyGuid, address, name, mobile, checkCode, openid);
+			if (order == null) {
+				result.setResult(ResultInfo.COUNTY_LEVEL_NULL);
+				return result;
+			}
 			Map<String, Date> expectedDate = ExpectedDateCreate
 					.getExpectedDate(date);
-			if (isNotAdvice == 0) {
-				addBabysitterAdvice(countyGuid, order, expectedDate);
+			if (StringUtils.isEmpty(isNotAdvice)) {
+				addBabysitterAdvice(countyGuid, order, expectedDate,
+						countyLevelGuid);
 			}
 			result.setResult(ResultInfo.SUCCESS);
 			result.put("result", order.view());
+			// 短信通知客户经理
+			String telephone = Constants.MSG_TEMPLATE_ADVICE_PHONE;
+			String telephones[] = telephone.split(",");
+			for (String phone : telephones) {
+				CheckCodeUtil.sendMessage(phone,
+						Constants.MSG_TEMPLATE_ADVICE_PHONE,
+						ExpectedDateCreate.formatDateTime(new Date()),
+						String.valueOf(order.getId()));
+			}
 			return result;
 		} catch (CheckErrorException e) {
 			result.setResult(ResultInfo.CHECK_CODE_ERROR);
@@ -323,11 +362,15 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	@Transactional
-	public ServiceOrder addEmployerServiceOrder(String date, String price,
-			String countyGuid, String address, String name, String mobile,
-			String checkCode, String openid) {
+	public ServiceOrder addEmployerServiceOrder(String date,
+			String countyLevelGuid, String countyGuid, String address,
+			String name, String mobile, String checkCode, String openid) {
 		Employer employer = employerService.getEmployerByMobile(mobile);
 		County county = dao.getResultByGUID(County.class, countyGuid);
+		CountyLevel countyLevel = dao.getResultByGUID(CountyLevel.class,
+				countyLevelGuid);
+		if (countyLevel == null)
+			return null;
 		if (employer == null) {
 			employer = Employer.getInstance();
 			employer.setMobilePhone(mobile.replace(" ", ""));
@@ -341,7 +384,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		ServiceOrder order = ServiceOrder.getInstance();
 		order.setEmployer(employer);
 		order.setCounty(county);
-		order.setOrderPrice(Long.valueOf(price));
+		order.setOrderPrice(Long.valueOf(countyLevel.getMoney()));
 		order.setAddress(address);
 		order.setMobilePhone(mobile);
 		order.setEmployerName(name);
@@ -357,22 +400,45 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 
 	@Transactional
 	public void addBabysitterAdvice(String countyGuid, ServiceOrder order,
-			Map<String, Date> expectedDate) {
+			Map<String, Date> expectedDate, String countyLevelGuid) {
 		// 添加需要通知的月嫂
-		String hql = "from Babysitter b where b.county.guid=?";
+		CountyLevel countyLevel = dao.getResultByGUID(CountyLevel.class,
+				countyLevelGuid);
+		String hql = "from Babysitter b where b.county.guid=? and b.level.level.score>=? and b.state = 1 ";
 		List<Babysitter> babysitters = dao.getListResultByHQL(Babysitter.class,
-				hql, countyGuid);
+				hql, countyGuid, countyLevel.getLevel().getScore());
+		// 添加可以抢单月嫂策略,SQL已经判断了所属城市、级别、审核状态三个条件
+		// 1.排除最低薪水不符合条件的
+		if (babysitters.size() == 0)
+			return;
+		BigDecimal salary = new BigDecimal(countyLevel.getMoney());
+		salary = salary.add(new BigDecimal(-1000));
+		salary = salary.multiply(new BigDecimal(countyLevel.getRate()));
+		long salaryLong = salary.longValue();
 		for (Babysitter babysitter : babysitters) {
-			if (ExpectedDateCreate.checkBabysitterOrder(babysitter,
+			if (babysitter.getLowerSalary() > salaryLong)
+				babysitters.remove(babysitter);
+		}
+		// 2.排除档期不符合条件
+		if (babysitters.size() == 0)
+			return;
+		for (Babysitter babysitter : babysitters) {
+			if (!ExpectedDateCreate.checkBabysitterOrder(babysitter,
 					expectedDate)) {
-				PanicBuyingBabysitterAdvice advice = PanicBuyingBabysitterAdvice
-						.getInstance();
-				advice.setBabysitter(babysitter);
-				advice.setServiceOrder(order);
-				advice.setIsAdvice(false);
-				advice.setIsOver(false);
-				dao.add(advice);
+				babysitters.remove(babysitter);
 			}
+		}
+		// 添加月嫂通知
+		if (babysitters.size() == 0)
+			return;
+		for (Babysitter babysitter : babysitters) {
+			PanicBuyingBabysitterAdvice advice = PanicBuyingBabysitterAdvice
+					.getInstance();
+			advice.setBabysitter(babysitter);
+			advice.setServiceOrder(order);
+			advice.setIsAdvice(false);
+			advice.setIsOver(false);
+			dao.add(advice);
 		}
 	}
 
@@ -407,9 +473,17 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		babysitterOrder.setServiceEndDate(serviceOrder.getServiceEndDate());
 		babysitterOrder.setState(Constants.NEW_ORDER);
 		dao.add(babysitterOrder);
+		// 添加月嫂订单变更信息
+		BabysitterOrderRecordInfo recordInfo = BabysitterOrderRecordInfo
+				.getInstance();
+		recordInfo.setBabysitterOrder(babysitterOrder);
+		recordInfo.setState(babysitterOrder.getState());
+		dao.add(recordInfo);
+
 		// 更新雇主订单
 		serviceOrder.setOrderGuid(babysitterOrder.getGuid());
 		dao.update(serviceOrder);
+
 		// 更新月嫂抢单通知表中该订单的所有记录为不可用即订单已经被抢
 		String hql = "from PanicBuyingBabysitterAdvice t where t.ovld = true and t.serviceOrder.guid = ?";
 		List<PanicBuyingBabysitterAdvice> list = dao.getListResultByHQL(
@@ -444,7 +518,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		dateMap.put(ExpectedDateCreate.BEGIN_DATE, order.getServiceBeginDate());
 		dateMap.put(ExpectedDateCreate.END_DATE, order.getServiceEndDate());
 		// 重新加入月嫂通知
-		addBabysitterAdvice(order.getCounty().getGuid(), order, dateMap);
+		// addBabysitterAdvice(order.getCounty().getGuid(), order, dateMap,);
 		// 更新雇主订单没有完成抢单
 		order.setOver(true);
 		dao.update(order);
@@ -519,6 +593,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 						openid);
 		String xml = RequestXMLCreater.getInstance().buildXmlString(params,
 				Constants.WECHAT_OPENID_PAY_APPSECRET);
+		System.out.println("======================>" + xml);
 		HttpClient httpclient = new DefaultHttpClient();
 		HttpPost httppost = new HttpPost(Constants.WECHAT_OPENID_PAY_URL);
 		StringEntity myEntity = new StringEntity(xml, "UTF-8");
@@ -566,12 +641,22 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	@Transactional
-	public PageResult addMakeBabysitterOrder(String date, String price,
-			String address, String name, String mobile, String checkCode,
-			String openid, String countyGuid, String babysitterGuid,
-			PageResult result) {
-		ServiceOrder order = addEmployerServiceOrder(date, price, countyGuid,
+	public PageResult addMakeBabysitterOrder(String date, String address,
+			String name, String mobile, String checkCode, String openid,
+			String countyGuid, String babysitterGuid, PageResult result) {
+		Babysitter babysitter = dao.getResultByGUID(Babysitter.class,
+				babysitterGuid);
+		if (babysitter == null) {
+			result.setResult(ResultInfo.BABYSITTER_NULL);
+			return result;
+		}
+		ServiceOrder order = addEmployerServiceOrder(date,
+				String.valueOf(babysitter.getLevel().getMoney()), countyGuid,
 				address, name, mobile, checkCode, openid);
+		if (order == null) {
+			result.setResult(ResultInfo.COUNTY_LEVEL_NULL);
+			return result;
+		}
 		result = markBabysitter(babysitterGuid, order.getGuid(), result);
 		return result;
 	}
@@ -593,6 +678,37 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 				orderGuid);
 		result.setResult(ResultInfo.SUCCESS);
 		result.put("result", order.view());
+		return result;
+	}
+
+	@Transactional
+	public PageResult serviceEnd(String orderGuid, PageResult result) {
+		BabysitterOrder order = dao.getResultByGUID(BabysitterOrder.class,
+				orderGuid);
+		if (order == null) {
+			result.setResult(ResultInfo.BABYSITTER_ORDER_NULL);
+			return result;
+		}
+		order.setState(Constants.OUT_ORDER);
+		// 设置订单日志
+		BabysitterOrderRecordInfo info = BabysitterOrderRecordInfo
+				.getInstance();
+		info.setBabysitterOrder(order);
+		info.setState(order.getState());
+		dao.add(info);
+		result.setResult(ResultInfo.SUCCESS);
+		return result;
+	}
+
+	public PageResult orderHistoryRecord(String orderGuid, PageResult result) {
+		BabysitterOrder order = dao.getResultByGUID(BabysitterOrder.class,
+				orderGuid);
+		if (order == null) {
+			result.setResult(ResultInfo.BABYSITTER_ORDER_NULL);
+			return result;
+		}
+		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", order.getInfos());
 		return result;
 	}
 }

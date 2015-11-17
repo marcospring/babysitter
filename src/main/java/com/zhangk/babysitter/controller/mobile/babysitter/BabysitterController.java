@@ -101,6 +101,15 @@ public class BabysitterController extends BaseController {
 	}
 
 	@ResponseBody
+	@RequestMapping("/checkRegister")
+	public PageResult registerCheckMobile(String telephone) {
+		if (StringUtils.isEmpty(telephone)) {
+			return getErrRes(ResultInfo.INF_EMPTY);
+		}
+		return babysitterService.checkBabysitterMobile(telephone, getResult());
+	}
+
+	@ResponseBody
 	@RequestMapping("/login")
 	public PageResult login(String telephone, String password) {
 		if (StringUtils.isEmpty(telephone) || StringUtils.isEmpty(password))

@@ -12,6 +12,7 @@ import com.zhangk.babysitter.entity.CheckCode;
 import com.zhangk.babysitter.service.common.CheckCodeService;
 import com.zhangk.babysitter.utils.common.CheckCodeType;
 import com.zhangk.babysitter.utils.common.CheckCodeUtil;
+import com.zhangk.babysitter.utils.common.Constants;
 
 @Service
 public class CheckCodeServiceImpl implements CheckCodeService {
@@ -37,8 +38,8 @@ public class CheckCodeServiceImpl implements CheckCodeService {
 		DBcode.setCode(code);
 		dao.add(DBcode);
 		// 发短信
-		CheckCodeUtil.sendMessage(telephone, code, CheckCodeType.getMsg(type),
-				"5");
+		CheckCodeUtil.sendMessage(telephone, Constants.MSG_TEMPLATE, code,
+				CheckCodeType.getMsg(type), "5");
 		//
 		return DBcode;
 	}

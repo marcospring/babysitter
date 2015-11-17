@@ -21,25 +21,31 @@ public class EmployerController extends BaseController {
 
 	@ResponseBody
 	@RequestMapping("/addOrder")
-	public PageResult addServiceOrder(String date, String price, String countyGuid, String address, String name, String mobile, String checkCode) {
-		if (StringUtils.isEmpty(date) || StringUtils.isEmpty(price) || StringUtils.isEmpty(countyGuid) || StringUtils.isEmpty(address) || StringUtils.isEmpty(name)
+	public PageResult addServiceOrder(String date, String price,
+			String countyGuid, String address, String name, String mobile,
+			String checkCode) {
+		if (StringUtils.isEmpty(date) || StringUtils.isEmpty(price)
+				|| StringUtils.isEmpty(countyGuid)
+				|| StringUtils.isEmpty(address) || StringUtils.isEmpty(name)
 				|| StringUtils.isEmpty(mobile)) {
 			return getResult(ResultInfo.INF_EMPTY);
 		}
-		ResultInfo result = orderService.addServiceOrder(date, price, countyGuid, address, name, mobile, checkCode);
+		ResultInfo result = orderService.addServiceOrder(date, price,
+				countyGuid, address, name, mobile, checkCode);
 		return getResult(result);
 	}
 
 	@ResponseBody
 	@RequestMapping("/addEvaluate")
-	public PageResult addEvaluate(String employGuid, String orderGuid, String babysitterGuid, String msg, String score) {
-		if (StringUtils.isEmpty(employGuid) || StringUtils.isEmpty(orderGuid) || StringUtils.isEmpty(babysitterGuid) || StringUtils.isEmpty(msg) || StringUtils.isEmpty(score)) {
+	public PageResult addEvaluate(String orderGuid, String msg, String score) {
+		if (StringUtils.isEmpty(orderGuid) || StringUtils.isEmpty(msg)
+				|| StringUtils.isEmpty(score)) {
 			return getResult(ResultInfo.INF_EMPTY);
 		}
-		ResultInfo result = orderService.addBabysitterOrderEvaluate(employGuid, orderGuid, babysitterGuid, msg, score);
+		ResultInfo result = orderService.addBabysitterOrderEvaluate(orderGuid,
+				msg, score);
 		return getResult(result);
 	}
-
 	// @ResponseBody
 	// @RequestMapping("/recommend")
 	// public PageResult getEmployerRecommond(String date, int page,

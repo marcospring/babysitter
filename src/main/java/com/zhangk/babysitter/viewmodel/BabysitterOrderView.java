@@ -1,10 +1,13 @@
 package com.zhangk.babysitter.viewmodel;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import com.zhangk.babysitter.entity.BabysitterOrder;
+import com.zhangk.babysitter.entity.BabysitterOrderRecordInfo;
 import com.zhangk.babysitter.utils.mapper.JsonDateSerializer;
 
 public class BabysitterOrderView {
@@ -23,6 +26,7 @@ public class BabysitterOrderView {
 	private String evaluation;
 	private int score;
 	private String babysitterGuid;
+	private List<BabysitterOrderRecordInfoView> orderRecords;
 
 	public BabysitterOrderView() {
 		// TODO Auto-generated constructor stub
@@ -44,6 +48,12 @@ public class BabysitterOrderView {
 		setScore(order.getScore());
 		setOrderId(order.getOrderId());
 		setBabysitterGuid(order.getBabysitter().getGuid());
+		List<BabysitterOrderRecordInfoView> views = new ArrayList<BabysitterOrderRecordInfoView>();
+		for (BabysitterOrderRecordInfo babysitterOrderRecordInfo : order
+				.getInfos()) {
+			views.add(babysitterOrderRecordInfo.view());
+		}
+		setOrderRecords(views);
 	}
 
 	public String getGuid() {
@@ -166,6 +176,14 @@ public class BabysitterOrderView {
 
 	public void setBabysitterName(String babysitterName) {
 		this.babysitterName = babysitterName;
+	}
+
+	public List<BabysitterOrderRecordInfoView> getOrderRecords() {
+		return orderRecords;
+	}
+
+	public void setOrderRecords(List<BabysitterOrderRecordInfoView> orderRecords) {
+		this.orderRecords = orderRecords;
 	}
 
 }

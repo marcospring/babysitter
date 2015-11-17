@@ -1,7 +1,9 @@
 package com.zhangk.babysitter.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -9,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
@@ -39,6 +42,7 @@ public class BabysitterOrder implements Serializable {
 	private String employerAddress;
 	private String employerTelephone;
 	private String evaluation;
+	private List<BabysitterOrderRecordInfo> infos;
 	private int score;
 
 	@Id
@@ -193,6 +197,17 @@ public class BabysitterOrder implements Serializable {
 
 	public void setOrderFrontPrice(long orderFrontPrice) {
 		this.orderFrontPrice = orderFrontPrice;
+	}
+
+	@OneToMany(mappedBy = "babysitterOrder")
+	public List<BabysitterOrderRecordInfo> getInfos() {
+		if (infos == null)
+			infos = new ArrayList<BabysitterOrderRecordInfo>();
+		return infos;
+	}
+
+	public void setInfos(List<BabysitterOrderRecordInfo> infos) {
+		this.infos = infos;
 	}
 
 	public static BabysitterOrder getInstance() {

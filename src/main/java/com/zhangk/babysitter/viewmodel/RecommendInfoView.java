@@ -22,8 +22,7 @@ public class RecommendInfoView {
 		setCreateDate(info.getCreateDate());
 		List<BabysitterView> views = new ArrayList<BabysitterView>();
 		for (Babysitter babysitter : info.getBabysitters()) {
-			BabysitterView view = new BabysitterView(babysitter);
-			views.add(view);
+			views.add(babysitter.view());
 		}
 		setBabysitters(views);
 		setRecommendCount(views.size());
