@@ -143,13 +143,13 @@ $.extend(detail.Page.prototype, {
             tel = tel.substr(0, 3) + 'xxxx' + tel.substr(7);
             $('.data-comment-list').append(
                 commentTemplate.
-                    replace('%%SCORE%%', order.score).
+                    replace('%%SCORE%%', order.score ? order.score + "分" : "未评价").
                     replace('%%EMPLORER%%', order.employerName).
                     replace('%%TEL%%', tel).
-                    replace('%%CONTENT%%', order.evaluation).
+                    replace('%%CONTENT%%', order.evaluation ? order.evaluation : "该客户暂时未进行评价").
                     replace('%%ORDERID%%', order.orderId).
                     replace('%%TIME%%', translateTimeString(order.beginDate) + '至' + translateTimeString(order.endDate)).
-                    replace('%%ADDRESS%%', order.address)
+                    replace('%%ADDRESS%%', order.address.substr(0, 5) + "****")
             );
         }
 

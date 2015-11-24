@@ -24,6 +24,7 @@ public class Pagination<T> {
 		this.result = result;
 		this.pageNo = pageNo;
 		this.pageSize = pageSize;
+		// this.pageCount = getPageCount();
 	}
 
 	public Pagination(List<T> result, int pageNo) {
@@ -56,7 +57,8 @@ public class Pagination<T> {
 	}
 
 	public long getPageCount() {
-		pageCount = resultSize > 0 ? (resultSize % pageSize == 0 ? resultSize / pageSize : resultSize / pageSize + 1) : 0;
+		pageCount = resultSize > 0 ? (resultSize % pageSize == 0 ? resultSize
+				/ pageSize : resultSize / pageSize + 1) : 0;
 		return pageCount;
 	}
 

@@ -20,7 +20,10 @@ import org.dom4j.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.zhangk.babysitter.service.babysitter.BabysitterOrderService;
 import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.Md5Utils;
 
@@ -45,13 +48,18 @@ public class WeChatGongZhongHaoCallBackServlet extends HttpServlet {
 	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse
 	 *      response)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void doGet(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
-		System.out
-				.println("<----------------------------------------------------------------------------------------->");
-		System.out
-				.println("<----------------------------------------------------------------------------------------->");
+		WebApplicationContext wac = WebApplicationContextUtils
+				.getRequiredWebApplicationContext(getServletContext());
+		BabysitterOrderService orderService = wac
+				.getBean(BabysitterOrderService.class);
+		logger.info(orderService.toString());
+
+		logger.info("<----------------------------------------------------------------------------------------->");
+		logger.info("<----------------------------------------------------------------------------------------->");
 		if (request.getCharacterEncoding() == null) {
 			request.setCharacterEncoding(ENCODING);
 		}
@@ -106,9 +114,22 @@ public class WeChatGongZhongHaoCallBackServlet extends HttpServlet {
 					throw new RuntimeException("cash_fee_type error , not CNY");
 				}
 			}
-			System.out
-					.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>回调成功啦！！！！！！<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
 			logger.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>回调成功啦！！！！！！<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+			String transactionId = root.elementText("transaction_id");
+			String outTradeNo = root.elementText("out_trade_no");
+			if (StringUtils.isEmpty(outTradeNo))
+				throw new RuntimeException("outTradeNo is null");
+			if (outTradeNo.contains(BabysitterOrderService.FRONT)) {
+				logger.info("[订单号:{},微信订单号:{},支付定金回调成功]", outTradeNo,
+						transactionId);
+				orderService.updateBabysitterOrder(outTradeNo, transactionId,
+						Constants.EARNEST_MONEY);
+			} else if (outTradeNo.contains(BabysitterOrderService.END)) {
+				logger.info("[订单号:{},微信订单号:{},支付尾款回调成功]", outTradeNo,
+						transactionId);
+				orderService.updateBabysitterOrder(outTradeNo, transactionId,
+						Constants.FULL_MONEY);
+			}
 			// boolean ret = SDKUtil.requestBilling(
 			// root.elementText("out_trade_no"),
 			// root.elementText("transaction_id"),
@@ -116,7 +137,8 @@ public class WeChatGongZhongHaoCallBackServlet extends HttpServlet {
 			// ChannelPayWayMapper.WECHAT, true,
 			// String.valueOf(ChannelEnum.CYSDK.value()));
 			// if (ret) {
-			// out.print("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
+			//
+			out.print("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");
 			// return;
 			// } else {
 			// throw new RuntimeException("request billing error,return false");
@@ -130,10 +152,8 @@ public class WeChatGongZhongHaoCallBackServlet extends HttpServlet {
 			out.flush();
 			out.close();
 		}
-		System.out
-				.println("<----------------------------------------------------------------------------------------->");
-		System.out
-				.println("<----------------------------------------------------------------------------------------->");
+		logger.info("<----------------------------------------------------------------------------------------->");
+		logger.info("<----------------------------------------------------------------------------------------->");
 	}
 
 	/**

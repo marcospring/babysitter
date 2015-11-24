@@ -8,11 +8,14 @@ import com.zhangk.babysitter.viewmodel.BabysitterOrderView;
 
 public interface BabysitterOrderService {
 
+	String FRONT = "front";
+	String END = "end";
+
 	ResultInfo addBabysitterOrder(String babysitterGuid, String countyGuid,
 			String address, String name, String mobile, String date,
 			String price);
 
-	int updateBabysitterOrder(String orderGuid, int state);
+	int updateBabysitterOrder(String orderNO, String transactionId, int state);
 
 	Pagination<BabysitterOrderView> manageOrderList(
 			Pagination<BabysitterOrder> page, String babysitterGuid,

@@ -245,6 +245,20 @@ public class WeChatEmployerController extends BaseController {
 	}
 
 	@ResponseBody
+	@RequestMapping("/endWechatOrder")
+	public PageResult endWechatOrder(HttpServletRequest request,
+			String orderNo, String openid) {
+		if (StringUtils.isEmpty(orderNo) || StringUtils.isEmpty(openid)) {
+			return getErrRes(ResultInfo.INF_EMPTY);
+		}
+		String ip = RemoteIPGeter.getIpAddr(request);
+		PageResult result = orderService.endWechatOrder(orderNo, ip,
+				getResult(), openid);
+
+		return result;
+	}
+
+	@ResponseBody
 	@RequestMapping("/serviceEnd")
 	public PageResult serviceEnd(String orderGuid) {
 		PageResult result = orderService.serviceEnd(orderGuid, getResult());

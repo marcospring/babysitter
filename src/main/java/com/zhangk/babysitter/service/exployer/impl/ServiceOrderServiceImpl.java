@@ -34,6 +34,7 @@ import com.zhangk.babysitter.entity.PanicBuyingBabysitterAdvice;
 import com.zhangk.babysitter.entity.PanicBuyingOrder;
 import com.zhangk.babysitter.entity.ServiceOrder;
 import com.zhangk.babysitter.exception.CheckErrorException;
+import com.zhangk.babysitter.service.babysitter.BabysitterOrderService;
 import com.zhangk.babysitter.service.common.CheckCodeService;
 import com.zhangk.babysitter.service.common.NumberRecordService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
@@ -132,12 +133,20 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		// evaluate.setMsg(msg);
 		// evaluate.setScore(Integer.valueOf(score));
 		// dao.add(evaluate);
+		int sumSocre = 0;
 		int count = 0;
 		List<BabysitterOrder> orders = babysitter.getOrders();
+
 		for (BabysitterOrder o : orders) {
-			count += o.getScore();
+			if (o.getState() == Constants.ORDER_OVER) {
+				sumSocre += o.getScore();
+				count += 1;
+			}
 		}
-		int avg = count / orders.size();
+		int avg = 0;
+		if (count != 0) {
+			avg = sumSocre / count;
+		}
 		babysitter.setScore(avg);
 		dao.update(babysitter);
 		return ResultInfo.SUCCESS;
@@ -345,8 +354,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			String telephone = Constants.MSG_TEMPLATE_ADVICE_PHONE;
 			String telephones[] = telephone.split(",");
 			for (String phone : telephones) {
-				CheckCodeUtil.sendMessage(phone,
-						Constants.MSG_TEMPLATE_ADVICE_PHONE,
+				CheckCodeUtil.sendMessage(phone, Constants.MSG_TEMPLATE_ADVICE,
 						ExpectedDateCreate.formatDateTime(new Date()),
 						String.valueOf(order.getId()));
 			}
@@ -409,6 +417,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 				hql, countyGuid, countyLevel.getLevel().getScore());
 		// 添加可以抢单月嫂策略,SQL已经判断了所属城市、级别、审核状态三个条件
 		// 1.排除最低薪水不符合条件的
+		List<Babysitter> removeBabysitters = new ArrayList<Babysitter>();
 		if (babysitters.size() == 0)
 			return;
 		BigDecimal salary = new BigDecimal(countyLevel.getMoney());
@@ -417,17 +426,21 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		long salaryLong = salary.longValue();
 		for (Babysitter babysitter : babysitters) {
 			if (babysitter.getLowerSalary() > salaryLong)
-				babysitters.remove(babysitter);
+				removeBabysitters.add(babysitter);
 		}
+		babysitters.removeAll(removeBabysitters);
 		// 2.排除档期不符合条件
 		if (babysitters.size() == 0)
 			return;
+		if (removeBabysitters.size() != 0)
+			removeBabysitters.clear();
 		for (Babysitter babysitter : babysitters) {
 			if (!ExpectedDateCreate.checkBabysitterOrder(babysitter,
 					expectedDate)) {
-				babysitters.remove(babysitter);
+				removeBabysitters.add(babysitter);
 			}
 		}
+		babysitters.removeAll(removeBabysitters);
 		// 添加月嫂通知
 		if (babysitters.size() == 0)
 			return;
@@ -496,10 +509,12 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	private long getFrontPrice(long orderPrice) {
-		Double frontPrice = new Double(orderPrice * 0.2);
+		BigDecimal frontPrice = new BigDecimal(orderPrice);
+		frontPrice = frontPrice.multiply(new BigDecimal(0.2));
+		// Double frontPrice = new Double(orderPrice * 0.2);
 		String frontPriceStr = frontPrice.toString();
 		frontPriceStr = frontPriceStr.substring(0, frontPriceStr.indexOf("."));
-		return new Long(frontPriceStr).longValue();
+		return new BigDecimal(frontPriceStr).longValue();
 	}
 
 	@Transactional
@@ -577,7 +592,6 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		return duty == null ? null : duty.getManager();
 	}
 
-	@SuppressWarnings({ "resource" })
 	public PageResult payFrontMoney(String orderNo, String ip,
 			PageResult result, String openid) {
 		String hql = "from BabysitterOrder t where t.orderId = ?";
@@ -587,51 +601,20 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			result.setResult(ResultInfo.BABYSITTER_ORDER_NULL);
 			return result;
 		}
+		if (order.getState() != Constants.NEW_ORDER) {
+			result.setResult(ResultInfo.INVALID_ORDER);
+			return result;
+		}
+
 		Map<String, String> params = RequestXMLCreater.getInstance()
-				.getPayRequestMap(order.getGuid(), "月嫂定金", order.getOrderId(),
+				.getPayRequestMap(order.getGuid(), "月嫂定金",
+						order.getOrderId() + BabysitterOrderService.FRONT,
 						String.valueOf(order.getOrderFrontPrice() * 100), ip,
 						openid);
 		String xml = RequestXMLCreater.getInstance().buildXmlString(params,
 				Constants.WECHAT_OPENID_PAY_APPSECRET);
 		System.out.println("======================>" + xml);
-		HttpClient httpclient = new DefaultHttpClient();
-		HttpPost httppost = new HttpPost(Constants.WECHAT_OPENID_PAY_URL);
-		StringEntity myEntity = new StringEntity(xml, "UTF-8");
-		httppost.addHeader("Content-Type", "text/xml");
-		httppost.setEntity(myEntity);
-		try {
-			HttpResponse response = httpclient.execute(httppost);
-			HttpEntity resEntity = response.getEntity();
-			InputStreamReader reader = new InputStreamReader(
-					resEntity.getContent(), "UTF-8");
-			StringBuffer resultStr = new StringBuffer();
-			char[] buff = new char[1024];
-			int length = 0;
-			while ((length = reader.read(buff)) != -1) {
-				resultStr.append(new String(buff, 0, length));
-			}
-			System.out.println(resultStr.toString());
-			httpclient.getConnectionManager().shutdown();
-			Map<String, String> responseResult = RequestXMLCreater
-					.getInstance().getXmlMapResult(resultStr.toString());
-			Map<String, String> resultMap;
-			if (Constants.PAY_SUCCESS.equals(responseResult.get("return_code"))
-					&& Constants.PAY_MESSAGE_OK.equals(responseResult
-							.get("return_msg"))
-					&& Constants.PAY_SUCCESS.equals(responseResult
-							.get("result_code"))) {
-				resultMap = RequestXMLCreater.getInstance().getPayResponseMap(
-						responseResult.get("prepay_id"), order.getGuid());
-
-				result.setResult(ResultInfo.SUCCESS);
-				result.put("result", resultMap);
-			} else {
-				result.put("code", responseResult.get("err_code"));
-				result.put("msg", responseResult.get("err_code_des"));
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		sendPaymentToWeChatServer(result, order, xml);
 		return result;
 	}
 
@@ -650,9 +633,9 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			result.setResult(ResultInfo.BABYSITTER_NULL);
 			return result;
 		}
-		ServiceOrder order = addEmployerServiceOrder(date,
-				String.valueOf(babysitter.getLevel().getMoney()), countyGuid,
-				address, name, mobile, checkCode, openid);
+		ServiceOrder order = addEmployerServiceOrder(date, babysitter
+				.getLevel().getGuid(), countyGuid, address, name, mobile,
+				checkCode, openid);
 		if (order == null) {
 			result.setResult(ResultInfo.COUNTY_LEVEL_NULL);
 			return result;
@@ -710,5 +693,76 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		result.setResult(ResultInfo.SUCCESS);
 		result.put("result", order.getInfos());
 		return result;
+	}
+
+	public PageResult endWechatOrder(String orderNo, String ip,
+			PageResult result, String openid) {
+		String hql = "from BabysitterOrder t where t.orderId = ?";
+		BabysitterOrder order = dao.getSingleResultByHQL(BabysitterOrder.class,
+				hql, orderNo);
+		if (order == null) {
+			result.setResult(ResultInfo.BABYSITTER_ORDER_NULL);
+			return result;
+		}
+		if (order.getState() != Constants.EARNEST_MONEY) {
+			result.setResult(ResultInfo.INVALID_ORDER);
+			return result;
+		}
+		BigDecimal orderPrice = new BigDecimal(order.getOrderPrice());
+		orderPrice = orderPrice.add(new BigDecimal(0 - order
+				.getOrderFrontPrice()));
+		orderPrice = orderPrice.multiply(new BigDecimal(100));
+		Map<String, String> params = RequestXMLCreater.getInstance()
+				.getPayRequestMap(order.getGuid(), "月嫂尾款",
+						order.getOrderId() + BabysitterOrderService.END,
+						orderPrice.toString(), ip, openid);
+		String xml = RequestXMLCreater.getInstance().buildXmlString(params,
+				Constants.WECHAT_OPENID_PAY_APPSECRET);
+		System.out.println("======================>" + xml);
+		sendPaymentToWeChatServer(result, order, xml);
+		return result;
+	}
+
+	@SuppressWarnings("resource")
+	private void sendPaymentToWeChatServer(PageResult result,
+			BabysitterOrder order, String xml) {
+		HttpClient httpclient = new DefaultHttpClient();
+		HttpPost httppost = new HttpPost(Constants.WECHAT_OPENID_PAY_URL);
+		StringEntity myEntity = new StringEntity(xml, "UTF-8");
+		httppost.addHeader("Content-Type", "text/xml");
+		httppost.setEntity(myEntity);
+		try {
+			HttpResponse response = httpclient.execute(httppost);
+			HttpEntity resEntity = response.getEntity();
+			InputStreamReader reader = new InputStreamReader(
+					resEntity.getContent(), "UTF-8");
+			StringBuffer resultStr = new StringBuffer();
+			char[] buff = new char[1024];
+			int length = 0;
+			while ((length = reader.read(buff)) != -1) {
+				resultStr.append(new String(buff, 0, length));
+			}
+			System.out.println(resultStr.toString());
+			httpclient.getConnectionManager().shutdown();
+			Map<String, String> responseResult = RequestXMLCreater
+					.getInstance().getXmlMapResult(resultStr.toString());
+			Map<String, String> resultMap;
+			if (Constants.PAY_SUCCESS.equals(responseResult.get("return_code"))
+					&& Constants.PAY_MESSAGE_OK.equals(responseResult
+							.get("return_msg"))
+					&& Constants.PAY_SUCCESS.equals(responseResult
+							.get("result_code"))) {
+				resultMap = RequestXMLCreater.getInstance().getPayResponseMap(
+						responseResult.get("prepay_id"), order.getGuid());
+
+				result.setResult(ResultInfo.SUCCESS);
+				result.put("result", resultMap);
+			} else {
+				result.put("code", responseResult.get("err_code"));
+				result.put("msg", responseResult.get("err_code_des"));
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

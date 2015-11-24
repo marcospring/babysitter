@@ -15,6 +15,7 @@ import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Babysitter;
 import com.zhangk.babysitter.entity.BabysitterOrder;
+import com.zhangk.babysitter.entity.BabysitterOrderRecordInfo;
 import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.exception.BabysitterNullException;
@@ -96,15 +97,36 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 		return ResultInfo.SUCCESS;
 	}
 
-	public int updateBabysitterOrder(String orderGuid, int state) {
+	@Transactional
+	public int updateBabysitterOrder(String orderNO, String transactionId,
+			int state) {
 		try {
-			BabysitterOrder order = dao.getResultByGUID(BabysitterOrder.class,
-					orderGuid);
+			boolean isFront = true;
+			if (orderNO.endsWith(FRONT))
+				orderNO = orderNO.substring(0, orderNO.indexOf(FRONT));
+			if (orderNO.endsWith(END)) {
+				orderNO = orderNO.substring(0, orderNO.indexOf(END));
+				isFront = !isFront;
+			}
+
+			String hql = "from BabysitterOrder t where t.orderId = ?";
+			BabysitterOrder order = dao.getSingleResultByHQL(
+					BabysitterOrder.class, hql, orderNO);
 			if (order == null) {
 				return ResultInfo.BABYSITTER_ORDER_NULL.getCode();
 			}
+			if (isFront)
+				order.setWechatFrontOrderNo(transactionId);
+			else
+				order.setWechatEndOrderNo(transactionId);
 			order.setState(state);
 			dao.update(order);
+			// 设置订单日志
+			BabysitterOrderRecordInfo info = BabysitterOrderRecordInfo
+					.getInstance();
+			info.setBabysitterOrder(order);
+			info.setState(order.getState());
+			dao.add(info);
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 			return ResultInfo.BAD_REQUEST.getCode();

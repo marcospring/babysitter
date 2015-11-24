@@ -43,6 +43,8 @@ public class BabysitterOrder implements Serializable {
 	private String employerTelephone;
 	private String evaluation;
 	private List<BabysitterOrderRecordInfo> infos;
+	private String wechatFrontOrderNo;
+	private String wechatEndOrderNo;
 	private int score;
 
 	@Id
@@ -208,6 +210,22 @@ public class BabysitterOrder implements Serializable {
 
 	public void setInfos(List<BabysitterOrderRecordInfo> infos) {
 		this.infos = infos;
+	}
+
+	public String getWechatFrontOrderNo() {
+		return wechatFrontOrderNo;
+	}
+
+	public void setWechatFrontOrderNo(String wechatFrontOrderNo) {
+		this.wechatFrontOrderNo = wechatFrontOrderNo;
+	}
+
+	public String getWechatEndOrderNo() {
+		return wechatEndOrderNo;
+	}
+
+	public void setWechatEndOrderNo(String wechatEndOrderNo) {
+		this.wechatEndOrderNo = wechatEndOrderNo;
 	}
 
 	public static BabysitterOrder getInstance() {

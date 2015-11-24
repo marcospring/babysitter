@@ -44,10 +44,14 @@
 									if(val ==1){
 										stateStr = "新发布";
 									}else if(val ==2){
-										stateStr = "等待上户";
-									}else if(val ==3||val ==4){
+										stateStr = "已付定金";
+									}else if(val ==3){
+										stateStr = "尾款结算，待上户";
+									}else if(val ==4){
 										stateStr = "上户中";
-									}else if(val ==5 || val ==6){
+									}else if(val ==5){
+										stateStr = "已经下户，待评价";
+									}else if( val ==6){
 										stateStr = "订单完成";
 									}
 									return stateStr;

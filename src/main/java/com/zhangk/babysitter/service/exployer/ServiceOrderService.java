@@ -88,6 +88,9 @@ public interface ServiceOrderService {
 	PageResult payFrontMoney(String orderNo, String ip, PageResult result,
 			String openid);
 
+	PageResult endWechatOrder(String orderNo, String ip, PageResult result,
+			String openid);
+
 	ServiceOrder addEmployerServiceOrder(String date, String price,
 			String countyGuid, String address, String name, String mobile,
 			String checkCode, String openid);

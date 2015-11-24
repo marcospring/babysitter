@@ -11,6 +11,7 @@ public class BabysitterOrderRecordInfoView {
 	private String guid;
 	private Date createDate;
 	private Date updateDate;
+	private int state;
 
 	public BabysitterOrderRecordInfoView() {
 		// TODO Auto-generated constructor stub
@@ -20,6 +21,7 @@ public class BabysitterOrderRecordInfoView {
 		setGuid(info.getGuid());
 		setCreateDate(info.getCreateDate());
 		setUpdateDate(info.getUpdateDate());
+		setState(info.getState());
 	}
 
 	public String getGuid() {
@@ -46,6 +48,14 @@ public class BabysitterOrderRecordInfoView {
 
 	public void setUpdateDate(Date updateDate) {
 		this.updateDate = updateDate;
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void setState(int state) {
+		this.state = state;
 	}
 
 }
