@@ -42,6 +42,13 @@ public class Constants {
 	public static final int CREDENTIAL_SCORE_FLAG_MULTI = 0;
 	public static final int CREDENTIAL_SCORE_FLAG_SINGLE = 1;
 
+	// 优惠行为使用方向
+	public static final int SHARE = 1;
+	public static final int USERS = 2;
+	// 优惠卷使用情况
+	public static final int USE = 1;// 使用
+	public static final int UNUSE = 2;// 未使用
+
 	// 图片主域
 	public static final String IMG_DOMAIN = PropertiesUtils.getString(
 			"domain.image", "http://www.babysitter.com/babysitter");
@@ -54,6 +61,9 @@ public class Constants {
 	// 证件
 	public static final String URL_CARD = PropertiesUtils.getString("url.card",
 			"/resource/user/card/");
+	// 二维码
+	public static final String URL_BARCODE = PropertiesUtils.getString(
+			"url.barcode", "/resource/user/barcode/");
 
 	public static final int ORDER_ID = 1;
 	public static final int BABYSITTER_ID = 2;

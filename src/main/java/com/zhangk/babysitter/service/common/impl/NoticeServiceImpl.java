@@ -36,8 +36,7 @@ public class NoticeServiceImpl implements NoticeService {
 		String hql = "from CompanyNotice c where c.ovld = true and c.babysitter.guid=? order by c.createDate desc";
 		String countHql = "select count(c.id) from CompanyNotice c where c.ovld = true and c.babysitter.guid=?";
 		Pagination<CompanyNotice> notices = dao.getPageResult(
-				CompanyNotice.class, hql, page.getPageNo(), page.getPageSize(),
-				guid);
+				CompanyNotice.class, hql, page.getPageNo(), 100, guid);
 		List<CompanyNotice> list = notices.getResult();
 		List<CompanyNoticeView> views = new ArrayList<CompanyNoticeView>();
 		for (CompanyNotice notice : list) {

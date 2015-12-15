@@ -78,7 +78,8 @@ public class BabysitterView {
 				.size() : 0);
 		setCredentials(getCredentialView(babysitter.getCredentials()));
 		setPromotions(getPromotionView(babysitter.getPromotions()));
-		setImages(getImageView(babysitter.getImages()));
+		setImages(getImageView(babysitter.getCredentials(),
+				babysitter.getImages()));
 		setOrders(getOrderView(babysitter.getOrders()));
 		setRestInfos(getRestView(babysitter.getRestInfos()));
 		setBankCardNo(babysitter.getBankCardNo());
@@ -144,11 +145,28 @@ public class BabysitterView {
 		return result;
 	}
 
-	private List<BabysitterImageView> getImageView(List<BabysitterImage> images) {
+	private List<BabysitterImageView> getImageView(
+			List<BabysitterCredential> images,
+			List<BabysitterImage> babysitterImages) {
 		List<BabysitterImageView> result = new ArrayList<BabysitterImageView>();
-		for (BabysitterImage img : images) {
-			result.add(img.view());
+		// 从月嫂证件中查看是否存在相册。如果存在相册则添加
+		for (BabysitterCredential img : images) {
+			if (img != null && img.getCredential() != null) {
+				if (img.getCredential().getId() == 9
+						&& img.getIscheck() == Constants.PASS) {
+					BabysitterImage m = new BabysitterImage();
+					m.setGuid(img.getGuid());
+					m.setUrl(img.getCredentialUrl());
+					m.setName(img.getCredential().getName());
+					result.add(m.view());
+				}
+			}
 		}
+		// 从imageLife中找
+		for (BabysitterImage image : babysitterImages) {
+			result.add(image.view());
+		}
+
 		return result;
 	}
 
@@ -170,7 +188,10 @@ public class BabysitterView {
 			List<BabysitterCredential> credentials) {
 		List<CredentialView> result = new ArrayList<CredentialView>();
 		for (BabysitterCredential credential : credentials) {
-			result.add(credential.view());
+			if (credential != null && credential.getCredential() != null
+					&& credential.getCredential().getId() != 9) {
+				result.add(credential.view());
+			}
 		}
 		return result;
 	}

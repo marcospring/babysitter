@@ -65,18 +65,20 @@ public class NumberRecordServiceImpl implements NumberRecordService {
 			record = listRecord.get(0);
 		}
 		// 获取数据当前值
-		long number = record.getNumber();
-		// 当前值加1
-		number += 1;
-		// 去掉4，如果含有4则在4的位置变为5
-		number = getNumber(number);
-		// 更新record数值
-		record.setNumber(number);
+		Long number = record.getNumber();
+		synchronized (number) {
+			// 当前值加1
+			number += 1;
+			// 去掉4，如果含有4则在4的位置变为5
+			number = getNumber(number);
+			// 更新record数值
+			record.setNumber(number);
+		}
 		dao.update(record);
 		return record;
 	}
 
-	public synchronized String createOrderId() {
+	public String createOrderId() {
 		StringBuffer orderId = new StringBuffer("Y");
 		Calendar c = Calendar.getInstance();
 		int year = c.get(Calendar.YEAR);

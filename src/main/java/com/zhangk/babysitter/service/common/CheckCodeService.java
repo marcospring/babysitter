@@ -7,6 +7,7 @@ public interface CheckCodeService {
 	int PUBLISH_ORDER = 2;
 	int LOGIN = 3;
 	int CHANGE_PASS = 4;
+	int PREFERENTIAL = 5;
 
 	CheckCode addCheckCode(String telephone, int type);
 

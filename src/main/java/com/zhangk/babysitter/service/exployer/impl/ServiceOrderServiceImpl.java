@@ -571,6 +571,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		return views;
 	}
 
+	@Transactional
 	public PageResult markBabysitterId(String babysitterId,
 			String serviceOrderId, PageResult result) {
 		long babysitterIdl = Long.valueOf(babysitterId);

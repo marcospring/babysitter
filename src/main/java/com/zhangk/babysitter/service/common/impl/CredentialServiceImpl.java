@@ -86,6 +86,8 @@ public class CredentialServiceImpl implements CredentialService {
 		List<BabysitterCredential> list = p.getResult();
 		List<CredentialView> viewList = new ArrayList<CredentialView>();
 		for (BabysitterCredential babysitterCredential : list) {
+			// 后台需要展示证件照片
+			babysitterCredential.getCredential().setIsDisplayPhoto(Constants.Y);
 			CredentialView view = babysitterCredential.view();
 			viewList.add(view);
 		}

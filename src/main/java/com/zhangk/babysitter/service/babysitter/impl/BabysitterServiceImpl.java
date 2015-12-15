@@ -181,16 +181,17 @@ public class BabysitterServiceImpl implements BabysitterService {
 		}
 		babysitter.setOrders(resultOrders);
 		// 证件中去掉相册
-		List<BabysitterCredential> resultCredentials = new ArrayList<BabysitterCredential>();
-		List<BabysitterCredential> credentials = babysitter.getCredentials();
-		for (BabysitterCredential babysitterCredential : credentials) {
-			if (babysitterCredential.getCredential() != null
-					&& !babysitterCredential.getCredential().getName()
-							.contains("相册") && babysitterCredential.isOvld()) {
-				resultCredentials.add(babysitterCredential);
-			}
-		}
-		babysitter.setCredentials(resultCredentials);
+		// List<BabysitterCredential> resultCredentials = new
+		// ArrayList<BabysitterCredential>();
+		// List<BabysitterCredential> credentials = babysitter.getCredentials();
+		// for (BabysitterCredential babysitterCredential : credentials) {
+		// if (babysitterCredential.getCredential() != null
+		// && !babysitterCredential.getCredential().getName()
+		// .contains("相册") && babysitterCredential.isOvld()) {
+		// resultCredentials.add(babysitterCredential);
+		// }
+		// }
+		// babysitter.setCredentials(resultCredentials);
 		BabysitterView view = babysitter.view();
 		view.setOrderCountIndex(getOrderCountIndex(view.getId()));
 		view.setScoreIndex(getScoreCountIndex(view.getScore()));
@@ -626,6 +627,19 @@ public class BabysitterServiceImpl implements BabysitterService {
 				employer.setUsername(employerName);
 				employerService.addEmployer(employer);
 			}
+			// 添加雇主订单
+			ServiceOrder serviceOrder = ServiceOrder.getInstance();
+			serviceOrder.setAddress(address);
+			serviceOrder.setEmployer(employer);
+			serviceOrder.setEmployerName(employerName);
+			serviceOrder.setMobilePhone(telephone.replace(" ", ""));
+			serviceOrder.setOrderPrice(Long.valueOf(price.trim()));
+			serviceOrder.setServiceBeginDate(ExpectedDateCreate
+					.parseDate(beginDate));
+			serviceOrder.setServiceEndDate(ExpectedDateCreate
+					.parseDate(endDate));
+			dao.add(serviceOrder);
+
 			Babysitter babysitter = dao.getResultByGUID(Babysitter.class, guid);
 			if (babysitter == null) {
 				res.setResult(ResultInfo.BABYSITTER_NULL);

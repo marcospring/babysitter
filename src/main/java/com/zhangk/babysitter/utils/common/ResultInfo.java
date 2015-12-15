@@ -17,7 +17,9 @@ public enum ResultInfo {
 			1024, "没有安排客户经理，请拨打总台电话"), NO_BABYSITTER_SERVICE_ORDER(1025,
 			"该订单还未添加月嫂订单"), IDENTIFICATION_NO_INVALID(1026, "身份证号不合法"), PAY_FAIL(
 			1027, "支付失败"), MULTI_EMPLYER(1028, "openid对应多个雇主"), COUNTY_LEVEL_NULL(
-			1029, "城市级别为空"), INVALID_ORDER(1030, "异常订单"), SUCCESS(0, "操作成功");
+			1029, "城市级别为空"), INVALID_ORDER(1030, "异常订单"), PREFERENTIAL_TYPE_NULL(
+			1031, "优惠券类型不存在"), PROMOTER_NULL(1032, "优惠券推广人不存在"), PROMOTER_NOT_NULL(
+			1033, "已经领取该优惠券"), SUCCESS(0, "操作成功");
 
 	private int code;
 	private String msg;

@@ -34,6 +34,7 @@ import com.zhangk.babysitter.service.level.CountyLevelService;
 import com.zhangk.babysitter.service.level.LevelService;
 import com.zhangk.babysitter.service.manager.CustomerManagerService;
 import com.zhangk.babysitter.service.menu.MenuService;
+import com.zhangk.babysitter.service.preferential.PreferentialService;
 import com.zhangk.babysitter.service.role.RoleService;
 import com.zhangk.babysitter.service.user.UserService;
 import com.zhangk.babysitter.utils.common.Pagination;
@@ -69,6 +70,8 @@ public class DataProvioder extends BaseController {
 	private CustomerManagerService managerService;
 	@Autowired
 	private NoticeService noticeService;
+	@Autowired
+	private PreferentialService preferentialService;
 
 	@ResponseBody
 	@RequestMapping("/userData")
@@ -406,6 +409,20 @@ public class DataProvioder extends BaseController {
 	public PageResult addNotice() {
 		noticeService.addNotice("测试", "这是一个通知的测试内容",
 				"D2BE42629FD34A16A58530236EA93043");
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/addPreferentialType")
+	public PageResult addPreferentialType() {
+		preferentialService.addPreferentialType();
+		return res;
+	}
+
+	@ResponseBody
+	@RequestMapping("/addPreferentialBehavior")
+	public PageResult addPreferentialBehavior() {
+		preferentialService.addPreferentialBehavior();
 		return res;
 	}
 }
