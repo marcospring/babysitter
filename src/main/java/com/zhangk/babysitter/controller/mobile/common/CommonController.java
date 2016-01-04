@@ -100,8 +100,8 @@ public class CommonController extends BaseController {
 			return getErrRes(ResultInfo.INF_EMPTY);
 		telephone = telephone.replace(" ", "");
 		CheckCode code = codeService.addCheckCode(telephone.trim(), type);
-		res.put("result", code.view());
 		res.setResult(ResultInfo.SUCCESS);
+		res.put("result", code.view());
 		return res;
 	}
 

@@ -129,4 +129,16 @@ public class ManageBabysitterOrderController extends BaseController {
 		result.put("total", views.getResultSize());
 		return result;
 	}
+
+	@RequestMapping("/orderUpdate")
+	public Object orderUpdate(HttpServletRequest request) {
+
+		return "manage/babysitterOrder/orderUpdate";
+	}
+
+	@RequestMapping("/collectMoney")
+	public Object collectMoney(HttpServletRequest request) {
+
+		return "manage/babysitterOrder/collectMoney";
+	}
 }
