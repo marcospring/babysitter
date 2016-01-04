@@ -35,4 +35,8 @@ public interface BabysitterOrderService {
 
 	PageResult getOrderInfo(String orderNo, PageResult result);
 
+	ResultInfo payFrountMoney(String id, String frountMoney);
+
+	ResultInfo payEndMoney(String id);
+
 }

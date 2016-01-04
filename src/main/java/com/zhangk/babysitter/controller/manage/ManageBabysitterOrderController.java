@@ -141,4 +141,26 @@ public class ManageBabysitterOrderController extends BaseController {
 
 		return "manage/babysitterOrder/collectMoney";
 	}
+
+	@ResponseBody
+	@RequestMapping("/submitCollectMoney")
+	public Object submitCollectMoney(String id, String orderFrontPrice) {
+		ResultInfo info = orderService.payFrountMoney(id, orderFrontPrice);
+		if (info != ResultInfo.SUCCESS)
+			return MyResponse.errorResponse(
+					ResultInfo.BABYSITTER_ORDER_NULL.getCode(),
+					ResultInfo.BABYSITTER_ORDER_NULL.getMsg());
+		return MyResponse.successResponse();
+	}
+
+	@ResponseBody
+	@RequestMapping("/submitEndMoney")
+	public Object submitEndMoney(String id) {
+		ResultInfo info = orderService.payEndMoney(id);
+		if (info != ResultInfo.SUCCESS)
+			return MyResponse.errorResponse(
+					ResultInfo.BABYSITTER_ORDER_NULL.getCode(),
+					ResultInfo.BABYSITTER_ORDER_NULL.getMsg());
+		return MyResponse.successResponse();
+	}
 }

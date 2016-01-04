@@ -1,5 +1,6 @@
 package com.zhangk.babysitter.service.babysitter.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,6 +46,7 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 	@Autowired
 	private NumberRecordService recordService;
 
+	@Override
 	public ResultInfo addBabysitterOrder(String babysitterGuid,
 			String countyGuid, String address, String name, String mobile,
 			String date, String price) {
@@ -97,6 +99,7 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 		return ResultInfo.SUCCESS;
 	}
 
+	@Override
 	@Transactional
 	public int updateBabysitterOrder(String orderNO, String transactionId,
 			int state) {
@@ -134,6 +137,7 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 		return 0;
 	}
 
+	@Override
 	public Pagination<BabysitterOrderView> manageOrderList(
 			Pagination<BabysitterOrder> page, String babysitterGuid,
 			String babysitterName, String employerName,
@@ -185,6 +189,7 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 		return pa;
 	}
 
+	@Override
 	@Transactional
 	public ResultInfo manageAddOrder(String guid, String beginDate,
 			String endDate, String price, String address, String employerName,
@@ -238,6 +243,7 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 		return new Long(frontPriceStr).longValue();
 	}
 
+	@Override
 	@Transactional
 	public void deleteOrder(String ids) {
 		String idArr[] = ids.split(",");
@@ -250,10 +256,12 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 		}
 	}
 
+	@Override
 	public BabysitterOrder getOrder(String id) {
 		return dao.getResultById(BabysitterOrder.class, Long.parseLong(id));
 	}
 
+	@Override
 	@Transactional
 	public ResultInfo manageEditOrder(String id, String employerName,
 			String employerTelephone, String employerAddress, String price,
@@ -288,6 +296,7 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 		return ResultInfo.SUCCESS;
 	}
 
+	@Override
 	public PageResult getOrderInfo(String orderNo, PageResult result) {
 		String hql = "from BabysitterOrder t where t.orderId = ?";
 		BabysitterOrder order = dao.getSingleResultByHQL(BabysitterOrder.class,
@@ -295,6 +304,44 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 		result.setResult(ResultInfo.SUCCESS);
 		result.put("result", order.view());
 		return result;
+	}
+
+	@Override
+	@Transactional
+	public ResultInfo payFrountMoney(String id, String frountMoney) {
+		long idl = Long.valueOf(id);
+		BabysitterOrder order = dao.getResultById(BabysitterOrder.class, idl);
+		if (order == null)
+			return ResultInfo.BABYSITTER_ORDER_NULL;
+		BigDecimal frountDecimal = new BigDecimal(frountMoney);
+		order.setOrderFrontPrice(frountDecimal.longValue());
+		order.setState(Constants.EARNEST_MONEY);
+		dao.update(order);
+		// 设置订单日志
+		BabysitterOrderRecordInfo info = BabysitterOrderRecordInfo
+				.getInstance();
+		info.setBabysitterOrder(order);
+		info.setState(order.getState());
+		dao.add(info);
+		return ResultInfo.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public ResultInfo payEndMoney(String id) {
+		long idl = Long.valueOf(id);
+		BabysitterOrder order = dao.getResultById(BabysitterOrder.class, idl);
+		if (order == null)
+			return ResultInfo.BABYSITTER_ORDER_NULL;
+		order.setState(Constants.FULL_MONEY);
+		dao.update(order);
+		// 设置订单日志
+		BabysitterOrderRecordInfo info = BabysitterOrderRecordInfo
+				.getInstance();
+		info.setBabysitterOrder(order);
+		info.setState(order.getState());
+		dao.add(info);
+		return ResultInfo.SUCCESS;
 	}
 
 }
