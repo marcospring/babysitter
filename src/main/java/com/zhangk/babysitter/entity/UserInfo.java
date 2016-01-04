@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.zhangk.babysitter.utils.common.GUIDCreator;
@@ -33,6 +34,7 @@ public class UserInfo implements Serializable {
 	private String username;
 	private String password;
 	private String name;
+	private County county;
 	private List<Role> roles;
 
 	@Id
@@ -115,6 +117,16 @@ public class UserInfo implements Serializable {
 
 	public UserInfoView view() {
 		return new UserInfoView(this);
+	}
+
+	@ManyToOne
+	@JoinColumn(name = "county_id")
+	public County getCounty() {
+		return county;
+	}
+
+	public void setCounty(County county) {
+		this.county = county;
 	}
 
 	public static UserInfo getInstance() {

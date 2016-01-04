@@ -3,10 +3,13 @@ package com.zhangk.babysitter.viewmodel;
 import java.util.Date;
 import java.util.List;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import com.zhangk.babysitter.entity.PreferentialReceiveInfo;
 import com.zhangk.babysitter.entity.PreferentialTypeBehavior;
 import com.zhangk.babysitter.entity.ReceiveBehavior;
 import com.zhangk.babysitter.utils.common.Constants;
+import com.zhangk.babysitter.utils.mapper.JsonDateSerializer;
 
 public class PreferentialReceiverView {
 	private String guid;
@@ -72,6 +75,7 @@ public class PreferentialReceiverView {
 		this.toPhone = toPhone;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public Date getCreateDate() {
 		return createDate;
 	}
@@ -80,6 +84,7 @@ public class PreferentialReceiverView {
 		this.createDate = createDate;
 	}
 
+	@JsonSerialize(using = JsonDateSerializer.class)
 	public Date getEndDate() {
 		return endDate;
 	}

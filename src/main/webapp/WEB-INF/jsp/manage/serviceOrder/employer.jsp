@@ -30,22 +30,22 @@
 							}, {
 								field : 'guid',
 								title : 'GUID',
-								width : 70
+								width : 270
 							} ] ],
 							columns : [ [ {
 								field : 'name',
 								title : '用户名称',
-								width : 200
+								width : 150
 
 							}, {
 								field : 'telphone',
 								title : '电话',
-								width : 300
+								width : 150
 
 							}, {
-								field : 'adress',
+								field : 'address',
 								title : '地址',
-								width : 300
+								width : 500
 
 							}] ],
 							toolbar : '#toolbar',
@@ -76,19 +76,36 @@
 
 
 	function addOrder(id) {
-		if (id == undefined) {
-			var rows = dataGrid.datagrid('getSelections');
-			id = rows[0].guid;
-		} else {
-			dataGrid.datagrid('unselectAll').datagrid('uncheckAll');
-		}
-		parent.$
+	 	var rows = dataGrid.datagrid('getSelections');
+		if(rows.length == 0){
+			alert("请选择雇主！");
+			return;
+		} 
+		var id = rows[0].guid;
+	parent.$
 				.modalDialog({
 					title : '添加订单',
-					width : 350,
-					height : 400,
+					width : 390,
+					height : 430,
 					href : '${pageContext.request.contextPath}/manage/serviceOrder/goAdd.html?id='
 							+ id,
+					buttons : [ {
+						text : '添加',
+						handler : function() {
+							parent.$.modalDialog.openner_dataGrid = dataGrid;//因为添加成功之后，需要刷新这个dataGrid，所以先预定义好
+							var f = parent.$.modalDialog.handler.find('#form');
+							f.submit();
+						}
+					} ]
+				}); 
+	}
+	function addEmployer() {
+		parent.$
+				.modalDialog({
+					title : '添加雇主',
+					width : 370,
+					height : 250,
+					href : '${pageContext.request.contextPath}/manage/serviceOrder/goAddEmployer.html',
 					buttons : [ {
 						text : '添加',
 						handler : function() {
@@ -130,6 +147,9 @@
 		<a onclick="addOrder();" href="javascript:void(0);"
 			class="easyui-linkbutton"
 			data-options="plain:true,iconCls:'pencil_add'">添加订单</a>
+		<a onclick="addEmployer();" href="javascript:void(0);"
+			class="easyui-linkbutton"
+			data-options="plain:true,iconCls:'pencil_add'">添加雇主</a>
 		<!-- <a onclick="batchDeleteFun();" href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'delete'">批量删除</a> -->
 	</div>
 </body>

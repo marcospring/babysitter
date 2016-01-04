@@ -101,6 +101,7 @@ public class CommonController extends BaseController {
 		telephone = telephone.replace(" ", "");
 		CheckCode code = codeService.addCheckCode(telephone.trim(), type);
 		res.put("result", code.view());
+		res.setResult(ResultInfo.SUCCESS);
 		return res;
 	}
 

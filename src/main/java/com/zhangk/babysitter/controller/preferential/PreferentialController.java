@@ -50,21 +50,22 @@ public class PreferentialController extends BaseController {
 		return "/preferential/preferentialInfo";
 	}
 
-	@ResponseBody
 	@RequestMapping("/addPreferentialReceiver")
-	public PageResult addPreferentialReceiver(String preferentialValue,
+	public String addPreferentialReceiver(String preferentialValue,
 			String toUserTelephone, String verifyCode) {
 		if (StringUtils.isEmpty(preferentialValue)
 				|| StringUtils.isEmpty(toUserTelephone)
 				|| StringUtils.isEmpty(verifyCode))
-			return getErrRes(ResultInfo.INF_EMPTY);
+			request.setAttribute("preferential",
+					getErrRes(ResultInfo.INF_EMPTY));
 		PageResult result = service.addPreferentialReceiver(preferentialValue,
 				toUserTelephone, verifyCode, getResult());
-		return result;
+		request.setAttribute("preferential", result);
+		return "/preferential/preferentialResult";
 	}
 
 	@ResponseBody
-	@RequestMapping("/preferentialReceiverList")
+	@RequestMapping("/searchPreferential")
 	public PageResult preferentialList(String phone) {
 		if (StringUtils.isEmpty(phone))
 			return getErrRes(ResultInfo.INF_EMPTY);

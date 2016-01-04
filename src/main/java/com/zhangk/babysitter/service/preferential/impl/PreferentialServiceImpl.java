@@ -144,7 +144,10 @@ public class PreferentialServiceImpl implements PreferentialService {
 			receiveBehavior.setInfo(receive);
 			dao.add(receiveBehavior);
 		}
+		PreferentialReceiverView view = new PreferentialReceiverView(receive,
+				Constants.USERS);
 		result.setResult(ResultInfo.SUCCESS);
+		result.put("result", view);
 		return result;
 	}
 
@@ -154,6 +157,15 @@ public class PreferentialServiceImpl implements PreferentialService {
 				PreferentialReceiveInfo.class, hql, phone);
 		List<PreferentialReceiverView> resultObjects = new ArrayList<PreferentialReceiverView>();
 		for (PreferentialReceiveInfo receiver : list) {
+			resultObjects.add(new PreferentialReceiverView(receiver,
+					Constants.SHARE));
+		}
+		String hqls = "from PreferentialReceiveInfo t where t.ovld = true and t.toUserPhone=?";
+		List<PreferentialReceiveInfo> listResult = dao.getListResultByHQL(
+				PreferentialReceiveInfo.class, hqls, phone);
+		// List<PreferentialReceiverView> resultObjects = new
+		// ArrayList<PreferentialReceiverView>();
+		for (PreferentialReceiveInfo receiver : listResult) {
 			resultObjects.add(new PreferentialReceiverView(receiver,
 					Constants.USERS));
 		}
@@ -198,15 +210,13 @@ public class PreferentialServiceImpl implements PreferentialService {
 	}
 
 	public PageResult preferentialPromoterList(String phone, PageResult result) {
-		String hql = "from PreferentialPromoter t where t.ovld = true and t.telephone=?";
-		List<PreferentialPromoter> list = dao.getListResultByHQL(
-				PreferentialPromoter.class, hql, phone);
+		String hql = "from PreferentialReceiveInfo t where t.ovld = true and t.toUserPhone=?";
+		List<PreferentialReceiveInfo> list = dao.getListResultByHQL(
+				PreferentialReceiveInfo.class, hql, phone);
 		List<PreferentialReceiverView> resultObjects = new ArrayList<PreferentialReceiverView>();
-		for (PreferentialPromoter promoter : list) {
-			for (PreferentialReceiveInfo receiver : promoter.getReceivers()) {
-				resultObjects.add(new PreferentialReceiverView(receiver,
-						Constants.SHARE));
-			}
+		for (PreferentialReceiveInfo receiver : list) {
+			resultObjects.add(new PreferentialReceiverView(receiver,
+					Constants.USERS));
 		}
 		result.setResult(ResultInfo.SUCCESS);
 		result.put("result", resultObjects);

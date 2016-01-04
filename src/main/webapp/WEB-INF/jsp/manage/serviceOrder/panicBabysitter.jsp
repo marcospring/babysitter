@@ -115,8 +115,6 @@
 	        } 
 		
 		var serviceOrderId = '${getBabysitterServiceOrderId}';
-		alert(id);
-		alert(serviceOrderId);
 		parent.$.messager
 		.confirm(
 				'询问',

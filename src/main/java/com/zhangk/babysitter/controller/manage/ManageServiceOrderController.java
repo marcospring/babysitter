@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.zhangk.babysitter.controller.BaseController;
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.entity.ServiceOrder;
+import com.zhangk.babysitter.entity.UserInfo;
 import com.zhangk.babysitter.service.exployer.EmployerService;
 import com.zhangk.babysitter.service.exployer.ServiceOrderService;
+import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.Pagination;
 import com.zhangk.babysitter.utils.common.ResultInfo;
 import com.zhangk.babysitter.viewmodel.BabysitterView;
@@ -60,9 +62,29 @@ public class ManageServiceOrderController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/add")
 	public Object add(String guid, String beginDate, String endDate,
-			String price, String address, String employerName, String telephone) {
-		orderService.manageAddOrder(beginDate, endDate, price, address,
-				employerName, telephone);
+			String price, String address, String employerName,
+			String telephone, String rate, String countyGuid) {
+		orderService.manageAddOrder(guid, beginDate, endDate, price, address,
+				employerName, telephone, rate, countyGuid);
+		return MyResponse.successResponse();
+	}
+
+	@RequestMapping("/goAddEmployer")
+	public Object goAddEmployer(HttpServletRequest request, String id) {
+		// Employer employer = employerService.getEmployer(id);
+		// request.setAttribute("vo", employer);
+		UserInfo userinfo = (UserInfo) request.getSession().getAttribute(
+				Constants.SESSION_USER);
+		request.setAttribute("county", userinfo.getCounty());
+		return "manage/serviceOrder/addEmployer";
+	}
+
+	@ResponseBody
+	@RequestMapping("/addEmployer")
+	public Object addEmployer(HttpServletRequest request, String address,
+			String employerName, String telephone, int countyId) {
+		employerService.addEmployerFromManage(employerName, telephone, address,
+				countyId);
 		return MyResponse.successResponse();
 	}
 

@@ -56,32 +56,46 @@
 	<div data-options="region:'center',border:false" title="" style="overflow: hidden;">
 		<form id="form" method="post">
 			<input type="hidden" name="guid" value="${vo.guid}"/>
-			<table class="table table-hover table-condensed" style="font-size:14px;">
+			<table class="table table-hover table-condensed" border="1">
 				<tr>
-					<td style="text-align:right;">雇主名称</td>
+					<td  class="titleTd">雇主名称</td>
 					<td style="text-align:left;"><input name="employerName" type="text" placeholder="请输入雇主名称" class="easyui-validatebox span2" data-options="required:true" value="${vo.username }" ></td>
                     </tr>
 				<tr>
-				<td style="text-align:right;">雇主电话</td>
+				<td class="titleTd">雇主电话</td>
                     <td style="text-align:left;"><input name="telephone" type="text" placeholder="请输入雇主电话"  class="easyui-numberbox span2" data-options="required:true" value="${vo.mobilePhone }"></td>
 				</tr>
 				<tr>
-					<td style="text-align:right;">雇主地址</td>
+					<td class="titleTd">所属地区</td>
+					<td style="text-align:left;">
+						<input name="county" type="text" readonly="readonly" class="easyui-validatebox span2" value="${vo.county.name}">
+						<input name="countyGuid" type="hidden" value="${vo.county.guid}">
+					</td>
+                  </tr>
+				<tr>
+					<td class="titleTd">雇主地址</td>
+					<td style="text-align:left;"><input name="address" type="text" placeholder="请输入雇主地址" class="easyui-validatebox span2" data-options="required:true" value="${vo.address }"></td>
+                  </tr>
+				<tr>
+					<td class="titleTd">月嫂级别</td>
 					<td style="text-align:left;"><input name="address" type="text" placeholder="请输入雇主地址" class="easyui-validatebox span2" data-options="required:true" value="${vo.address }"></td>
                   </tr>
                    <tr>
-                     <td style="text-align:right;">订单开始时间</td>
+                     <td class="titleTd">订单开始时间</td>
                     <td style="text-align:left;"><input id="beginDate" name="beginDate" type="text" data-options="required:true" ></td>
                     </tr>
 				<tr>
-					<td style="text-align:right;">订单服务天数</td>
+					<td class="titleTd">订单服务天数</td>
 					<td style="text-align:left;"><input id="endDate" name="endDate"  type="text" ></td>
 				</tr>
 				<tr>
-					<td style="text-align:right;">订单价格</td>
+					<td class="titleTd">订单价格</td>
 					<td style="text-align:left;"><input id="price" name="price" class = "easyui-numberbox"> </td>
 				</tr>
-			
+				<tr>
+					<td class="titleTd">分成比例</td>
+					<td style="text-align:left;"><input id="rate" name="rate" class = "easyui-numberbox"> </td>
+				</tr>
 			</table>
 		</form>
 	</div>

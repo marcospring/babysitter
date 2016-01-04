@@ -16,8 +16,8 @@ public class QRCodeTest {
 	private static int UNIT_WIDTH = 10;
 
 	public static void main(String args[]) throws Exception {
-		createImg();
-
+		// createImg();
+		MatrixToImageWriter.create2DImg("D:/a", "aaa", "高山白痴");
 	}
 
 	public static void createImg() {

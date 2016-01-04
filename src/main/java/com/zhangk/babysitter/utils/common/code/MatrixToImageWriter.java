@@ -59,7 +59,7 @@ public class MatrixToImageWriter {
 			Map<EncodeHintType, Object> hints = new HashMap<EncodeHintType, Object>();
 			hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
 			hints.put(EncodeHintType.MARGIN, 0);
-			hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+			hints.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.M);
 			BitMatrix bitMatrix = multiFormatWriter.encode(content,
 					BarcodeFormat.QR_CODE, 500, 500, hints);
 			File filePath = new File(path);

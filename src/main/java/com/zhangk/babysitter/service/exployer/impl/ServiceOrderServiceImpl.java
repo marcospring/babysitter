@@ -237,25 +237,21 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	@Transactional
-	public ResultInfo manageAddOrder(String beginDate, String endDate,
-			String price, String address, String employerName, String telephone) {
+	public ResultInfo manageAddOrder(String guid, String beginDate,
+			String endDate, String price, String address, String employerName,
+			String telephone, String rate, String countyGuid) {
 		try {
-			String hql = "from Employer e where e.ovld = true and e.mobilePhone = ?";
+			String hql = "from Employer e where e.ovld = true and e.guid = ?";
 			Employer employer = dao.getSingleResultByHQL(Employer.class, hql,
-					telephone);
-			if (employer == null) {
-				employer = Employer.getInstance();
-				employer.setMobilePhone(telephone.replace(" ", ""));
-				// employer.setCounty(county);
-				employer.setAddress(address);
-				employer.setUsername(employerName);
-				dao.add(employer);
-			}
+					guid);
+			County county = dao.getResultByGUID(County.class, countyGuid);
 			ServiceOrder order = ServiceOrder.getInstance();
 			order.setAddress(address);
 			order.setEmployer(employer);
 			order.setMobilePhone(telephone);
 			order.setOrderPrice(Long.valueOf(price));
+			order.setRate(Double.valueOf(rate));
+			order.setCounty(county);
 			order.setServiceBeginDate(ExpectedDateCreate.parseDate(beginDate));
 			order.setServiceEndDate(ExpectedDateCreate.addDays(
 					ExpectedDateCreate.parseDate(beginDate),
@@ -345,8 +341,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 			Map<String, Date> expectedDate = ExpectedDateCreate
 					.getExpectedDate(date);
 			if (StringUtils.isEmpty(isNotAdvice)) {
-				addBabysitterAdvice(countyGuid, order, expectedDate,
-						countyLevelGuid);
+				addBabysitterAdvice(countyGuid, order, expectedDate);
 			}
 			result.setResult(ResultInfo.SUCCESS);
 			result.put("result", order.view());
@@ -393,6 +388,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		order.setEmployer(employer);
 		order.setCounty(county);
 		order.setOrderPrice(Long.valueOf(countyLevel.getMoney()));
+		order.setRate(countyLevel.getRate());
 		order.setAddress(address);
 		order.setMobilePhone(mobile);
 		order.setEmployerName(name);
@@ -404,55 +400,6 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		order.setServiceEndDate(expectedDate.get(ExpectedDateCreate.END_DATE));
 		dao.add(order);
 		return order;
-	}
-
-	@Transactional
-	public void addBabysitterAdvice(String countyGuid, ServiceOrder order,
-			Map<String, Date> expectedDate, String countyLevelGuid) {
-		// 添加需要通知的月嫂
-		CountyLevel countyLevel = dao.getResultByGUID(CountyLevel.class,
-				countyLevelGuid);
-		String hql = "from Babysitter b where b.county.guid=? and b.level.level.score>=? and b.state = 1 ";
-		List<Babysitter> babysitters = dao.getListResultByHQL(Babysitter.class,
-				hql, countyGuid, countyLevel.getLevel().getScore());
-		// 添加可以抢单月嫂策略,SQL已经判断了所属城市、级别、审核状态三个条件
-		// 1.排除最低薪水不符合条件的
-		List<Babysitter> removeBabysitters = new ArrayList<Babysitter>();
-		if (babysitters.size() == 0)
-			return;
-		BigDecimal salary = new BigDecimal(countyLevel.getMoney());
-		salary = salary.add(new BigDecimal(-1000));
-		salary = salary.multiply(new BigDecimal(countyLevel.getRate()));
-		long salaryLong = salary.longValue();
-		for (Babysitter babysitter : babysitters) {
-			if (babysitter.getLowerSalary() > salaryLong)
-				removeBabysitters.add(babysitter);
-		}
-		babysitters.removeAll(removeBabysitters);
-		// 2.排除档期不符合条件
-		if (babysitters.size() == 0)
-			return;
-		if (removeBabysitters.size() != 0)
-			removeBabysitters.clear();
-		for (Babysitter babysitter : babysitters) {
-			if (!ExpectedDateCreate.checkBabysitterOrder(babysitter,
-					expectedDate)) {
-				removeBabysitters.add(babysitter);
-			}
-		}
-		babysitters.removeAll(removeBabysitters);
-		// 添加月嫂通知
-		if (babysitters.size() == 0)
-			return;
-		for (Babysitter babysitter : babysitters) {
-			PanicBuyingBabysitterAdvice advice = PanicBuyingBabysitterAdvice
-					.getInstance();
-			advice.setBabysitter(babysitter);
-			advice.setServiceOrder(order);
-			advice.setIsAdvice(false);
-			advice.setIsOver(false);
-			dao.add(advice);
-		}
 	}
 
 	@Transactional
@@ -518,6 +465,58 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 	}
 
 	@Transactional
+	public void addBabysitterAdvice(String countyGuid, ServiceOrder order,
+			Map<String, Date> expectedDate) {
+		// 添加需要通知的月嫂
+		// CountyLevel countyLevel = dao.getResultByGUID(CountyLevel.class,
+		// countyLevelGuid);
+		String hql = "from Babysitter b where b.county.guid=? and b.level.level.money>=? and b.state = 1 ";
+		List<Babysitter> babysitters = dao.getListResultByHQL(Babysitter.class,
+				hql, countyGuid, order.getOrderPrice());
+		// 添加可以抢单月嫂策略,SQL已经判断了所属城市、级别、审核状态三个条件
+		// 1.排除最低薪水不符合条件的
+		List<Babysitter> removeBabysitters = new ArrayList<Babysitter>();
+		if (babysitters.size() == 0)
+			return;
+		BigDecimal salary = new BigDecimal(order.getOrderPrice());
+		salary = salary.add(new BigDecimal(-1000));
+		double rate = 1;
+		if (order.getRate() != 0)
+			rate = order.getRate();
+		salary = salary.multiply(new BigDecimal(rate));
+		long salaryLong = salary.longValue();
+		for (Babysitter babysitter : babysitters) {
+			if (babysitter.getLowerSalary() > salaryLong)
+				removeBabysitters.add(babysitter);
+		}
+		babysitters.removeAll(removeBabysitters);
+		// 2.排除档期不符合条件
+		if (babysitters.size() == 0)
+			return;
+		if (removeBabysitters.size() != 0)
+			removeBabysitters.clear();
+		for (Babysitter babysitter : babysitters) {
+			if (!ExpectedDateCreate.checkBabysitterOrder(babysitter,
+					expectedDate)) {
+				removeBabysitters.add(babysitter);
+			}
+		}
+		babysitters.removeAll(removeBabysitters);
+		// 添加月嫂通知
+		if (babysitters.size() == 0)
+			return;
+		for (Babysitter babysitter : babysitters) {
+			PanicBuyingBabysitterAdvice advice = PanicBuyingBabysitterAdvice
+					.getInstance();
+			advice.setBabysitter(babysitter);
+			advice.setServiceOrder(order);
+			advice.setIsAdvice(false);
+			advice.setIsOver(false);
+			dao.add(advice);
+		}
+	}
+
+	@Transactional
 	public void addServiceOrderAdvice(String id) {
 		long idl = Long.valueOf(id);
 		ServiceOrder order = dao.getResultById(ServiceOrder.class, idl);
@@ -533,7 +532,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 		dateMap.put(ExpectedDateCreate.BEGIN_DATE, order.getServiceBeginDate());
 		dateMap.put(ExpectedDateCreate.END_DATE, order.getServiceEndDate());
 		// 重新加入月嫂通知
-		// addBabysitterAdvice(order.getCounty().getGuid(), order, dateMap,);
+		addBabysitterAdvice(order.getCounty().getGuid(), order, dateMap);
 		// 更新雇主订单没有完成抢单
 		order.setOver(true);
 		dao.update(order);
@@ -560,7 +559,7 @@ public class ServiceOrderServiceImpl implements ServiceOrderService {
 
 	public List<BabysitterView> getPanicBabysitters(String serviceOrderId) {
 		long serviceOrderIdl = Long.valueOf(serviceOrderId);
-		String hql = "from PanicBuyingOrder t where t.ovld = true and t.serviceOrder.id = ?";
+		String hql = "from PanicBuyingOrder t where t.ovld = true and t.serviceOrder.id = ? and t.serviceOrder.orderGuid is null";
 		List<PanicBuyingOrder> orders = dao.getListResultByHQL(
 				PanicBuyingOrder.class, hql, serviceOrderIdl);
 		List<BabysitterView> views = new ArrayList<BabysitterView>();

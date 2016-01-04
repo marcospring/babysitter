@@ -30,43 +30,43 @@
 							}, {
 								field : 'guid',
 								title : 'GUID',
-								width : 70
+								width : 270
 							} ] ],
 							columns : [ [  {
 								field : 'name',
 								title : '雇主姓名',
-								width : 200
+								width : 100
 
 							},{
 								field : 'telephone',
 								title : '雇主电话',
-								width : 200
+								width : 150
 
 							}, {
 								field : 'address',
 								title : '雇主地址',
-								width : 300
+								width : 380
 
 							}, {
 								field : 'createDate',
 								title : '订单创建时间',
-								width : 300,
+								width : 100,
 								
 
 							}, {
 								field : 'serviceBeginDate',
 								title : '开始时间',
-								width : 350
+								width : 100
 
 							}, {
 								field : 'serviceEndDate',
 								title : '结束时间',
-								width : 300
+								width : 100
 
 							} , {
 								field : 'orderPrice',
 								title : '订单价格',
-								width : 300
+								width : 100
 
 							}] ],
 							toolbar : '#toolbar',

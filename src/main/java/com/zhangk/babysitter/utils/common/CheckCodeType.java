@@ -3,7 +3,7 @@ package com.zhangk.babysitter.utils.common;
 public enum CheckCodeType {
 
 	REGISTER(1, "注册"), PUBLISH_ORDER(2, "发布订单"), LOGIN(3, "登陆"), CHANGE_PASS(4,
-			"修改密码");
+			"修改密码"), PREFERENTIAL(5, "领取优惠券");
 
 	private int code;
 	private String msg;
@@ -39,6 +39,9 @@ public enum CheckCodeType {
 			break;
 		case 4:
 			msg = CHANGE_PASS.getMsg();
+			break;
+		case 5:
+			msg = PREFERENTIAL.getMsg();
 			break;
 		}
 		return msg;

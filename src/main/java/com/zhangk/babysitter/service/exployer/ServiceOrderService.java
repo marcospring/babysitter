@@ -48,8 +48,9 @@ public interface ServiceOrderService {
 	Pagination<ServiceOrderView> manageOrderList(Pagination<ServiceOrder> page,
 			String exployerName, String telephone);
 
-	ResultInfo manageAddOrder(String beginDate, String endDate, String price,
-			String address, String employerName, String telephone);
+	ResultInfo manageAddOrder(String guid, String beginDate, String endDate,
+			String price, String address, String employerName,
+			String telephone, String rate, String countyGuid);
 
 	void deleteOrder(String ids);
 
@@ -70,7 +71,7 @@ public interface ServiceOrderService {
 			PageResult result);
 
 	void addBabysitterAdvice(String countyGuid, ServiceOrder order,
-			Map<String, Date> expectedDate, String countyLevelGuid);
+			Map<String, Date> expectedDate);
 
 	void addServiceOrderAdvice(String id);
 

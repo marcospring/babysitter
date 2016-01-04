@@ -13,6 +13,7 @@ import org.springframework.util.StringUtils;
 import com.zhangk.babysitter.controller.BaseController.PageResult;
 import com.zhangk.babysitter.dao.BaseDao;
 import com.zhangk.babysitter.entity.Babysitter;
+import com.zhangk.babysitter.entity.County;
 import com.zhangk.babysitter.entity.Employer;
 import com.zhangk.babysitter.entity.PanicBuyingOrder;
 import com.zhangk.babysitter.service.babysitter.BabysitterService;
@@ -278,5 +279,17 @@ public class EmployerServiceImpl implements EmployerService {
 			result.put("result", pa);
 		}
 		return result;
+	}
+
+	@Transactional
+	public void addEmployerFromManage(String name, String mobilePhone,
+			String address, int countyId) {
+		Employer employee = Employer.getInstance();
+		employee.setUsername(name);
+		employee.setMobilePhone(mobilePhone);
+		employee.setAddress(address);
+		County county = dao.getResultById(County.class, countyId);
+		employee.setCounty(county);
+		dao.add(employee);
 	}
 }

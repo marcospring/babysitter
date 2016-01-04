@@ -15,6 +15,9 @@ public interface EmployerService {
 
 	void addEmployer(Employer employer);
 
+	void addEmployerFromManage(String name, String mobilePhone, String address,
+			int countyId);
+
 	void deleteEmployer(long id);
 
 	void updateEmployer(Employer employer);
