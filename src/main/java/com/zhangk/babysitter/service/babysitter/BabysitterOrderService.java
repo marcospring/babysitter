@@ -39,4 +39,10 @@ public interface BabysitterOrderService {
 
 	ResultInfo payEndMoney(String id);
 
+	ResultInfo adviceInOrder(String id, String beginDate);
+
+	ResultInfo submitPauper(String id);
+
+	ResultInfo submitFamily(String id);
+
 }

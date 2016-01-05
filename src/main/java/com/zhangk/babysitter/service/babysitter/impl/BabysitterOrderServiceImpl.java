@@ -26,6 +26,7 @@ import com.zhangk.babysitter.service.babysitter.BabysitterService;
 import com.zhangk.babysitter.service.common.CheckCodeService;
 import com.zhangk.babysitter.service.common.NumberRecordService;
 import com.zhangk.babysitter.service.exployer.EmployerService;
+import com.zhangk.babysitter.utils.common.CheckCodeUtil;
 import com.zhangk.babysitter.utils.common.Constants;
 import com.zhangk.babysitter.utils.common.ExpectedDateCreate;
 import com.zhangk.babysitter.utils.common.Pagination;
@@ -344,4 +345,76 @@ public class BabysitterOrderServiceImpl implements BabysitterOrderService {
 		return ResultInfo.SUCCESS;
 	}
 
+	@Override
+	@Transactional
+	public ResultInfo adviceInOrder(String id, String beginDate) {
+		long idl = Long.valueOf(id);
+		BabysitterOrder order = dao.getResultById(BabysitterOrder.class, idl);
+		if (order == null)
+			return ResultInfo.BABYSITTER_ORDER_NULL;
+		Babysitter babysitter = order.getBabysitter();
+		if (babysitter == null)
+			return ResultInfo.BABYSITTER_NULL;
+		String telephone = babysitter.getMobilePhone();
+		if (StringUtils.isEmpty(telephone))
+			return ResultInfo.BABYSITTER_TELEPHONE_NULL;
+		String employeephone = order.getEmployerTelephone();
+		if (StringUtils.isEmpty(employeephone))
+			return ResultInfo.EMPLOYEE_TELEPHONE_NULL;
+		// 更新月嫂订单上户时间
+		try {
+			order.setServiceBeginDate(ExpectedDateCreate.parseDate(beginDate));
+			dao.update(order);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		String simpleDateStr = ExpectedDateCreate.formatDate(order
+				.getServiceBeginDate());
+		// 发短信给月嫂
+		CheckCodeUtil.sendMessage(telephone,
+				Constants.MSG_TEMPLATE_BABYSITTER_INORDER_ADVICE,
+				babysitter.getName(), order.getEmployerName(), simpleDateStr,
+				order.getEmployerAddress(), order.getEmployerTelephone());
+		// 给雇主发短信
+		CheckCodeUtil.sendMessage(employeephone,
+				Constants.MSG_TEMPLATE_EMPLOYEE_ADVICE, babysitter.getName(),
+				simpleDateStr, order.getEmployerAddress(), telephone);
+		return ResultInfo.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public ResultInfo submitPauper(String id) {
+		long idl = Long.valueOf(id);
+		BabysitterOrder order = dao.getResultById(BabysitterOrder.class, idl);
+		if (order == null)
+			return ResultInfo.BABYSITTER_ORDER_NULL;
+		order.setState(Constants.OUT_ORDER);
+		dao.update(order);
+		// 设置订单日志
+		BabysitterOrderRecordInfo info = BabysitterOrderRecordInfo
+				.getInstance();
+		info.setBabysitterOrder(order);
+		info.setState(order.getState());
+		dao.add(info);
+		return ResultInfo.SUCCESS;
+	}
+
+	@Override
+	@Transactional
+	public ResultInfo submitFamily(String id) {
+		long idl = Long.valueOf(id);
+		BabysitterOrder order = dao.getResultById(BabysitterOrder.class, idl);
+		if (order == null)
+			return ResultInfo.BABYSITTER_ORDER_NULL;
+		order.setState(Constants.IN_ORDER);
+		dao.update(order);
+		// 设置订单日志
+		BabysitterOrderRecordInfo info = BabysitterOrderRecordInfo
+				.getInstance();
+		info.setBabysitterOrder(order);
+		info.setState(order.getState());
+		dao.add(info);
+		return ResultInfo.SUCCESS;
+	}
 }

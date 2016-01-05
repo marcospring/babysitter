@@ -176,6 +176,15 @@ public class ExpectedDateCreate {
 		return localSimpleDateFormat.format(paramDate);
 	}
 
+	public static String formatSimpleDate(Date paramDate) {
+		if (paramDate == null)
+			return null;
+		SimpleDateFormat localSimpleDateFormat = new SimpleDateFormat(
+				"yyyy年MM月dd");
+		localSimpleDateFormat.setLenient(false);
+		return localSimpleDateFormat.format(paramDate);
+	}
+
 	public static String formatDateTime(Date paramDate) {
 		if (paramDate == null)
 			return null;

@@ -19,7 +19,8 @@ public enum ResultInfo {
 			1027, "支付失败"), MULTI_EMPLYER(1028, "openid对应多个雇主"), COUNTY_LEVEL_NULL(
 			1029, "城市级别为空"), INVALID_ORDER(1030, "异常订单"), PREFERENTIAL_TYPE_NULL(
 			1031, "优惠券类型不存在"), PROMOTER_NULL(1032, "优惠券推广人不存在"), PROMOTER_NOT_NULL(
-			1033, "已经领取该优惠券"), SUCCESS(0, "操作成功");
+			1033, "已经领取该优惠券"), BABYSITTER_TELEPHONE_NULL(1034, "月嫂电话为空"), EMPLOYEE_TELEPHONE_NULL(
+			1035, "雇主电话为空"), SUCCESS(0, "操作成功");
 
 	private int code;
 	private String msg;

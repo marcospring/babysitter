@@ -82,6 +82,10 @@ public class Constants {
 			"code.template", "30935");
 	public static final String MSG_TEMPLATE_ADVICE = PropertiesUtils.getString(
 			"code.template.advice", "39248");
+	public static final String MSG_TEMPLATE_BABYSITTER_INORDER_ADVICE = PropertiesUtils
+			.getString("code.template.babysitter.inorder.advice", "59386");
+	public static final String MSG_TEMPLATE_EMPLOYEE_ADVICE = PropertiesUtils
+			.getString("code.template.employee.advice", "59385");
 	public static final String MSG_TEMPLATE_ADVICE_PHONE = PropertiesUtils
 			.getString("code.template.advice.phone", "13522556002");
 

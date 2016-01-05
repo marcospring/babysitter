@@ -30,6 +30,8 @@ public class ManageBabysitterOrderController extends BaseController {
 
 	public static final int EDIT_TYPE = 1;
 	public static final int NEW_EDIT_TYPE = 2;
+	public static final int BABYSITTER_IN_ORDER = 3;
+	public static final int BABYSITTER_END_ORDER = 4;
 
 	@RequestMapping("/go")
 	public String go() {
@@ -99,6 +101,10 @@ public class ManageBabysitterOrderController extends BaseController {
 			return "manage/babysitterOrder/editOrder";
 		} else if (type == NEW_EDIT_TYPE) {
 			return "manage/babysitterOrder/newEditOrder";
+		} else if (type == BABYSITTER_IN_ORDER) {
+			return "manage/babysitterOrder/babysitterFamily";
+		} else if (type == BABYSITTER_END_ORDER) {
+			return "manage/babysitterOrder/babysitterPauper";
 		} else {
 			return "manage/babysitterOrder/paymentEditOrder";
 		}
@@ -156,15 +162,13 @@ public class ManageBabysitterOrderController extends BaseController {
 	public Object submitCollectMoney(String id, String orderFrontPrice) {
 		ResultInfo info = orderService.payFrountMoney(id, orderFrontPrice);
 		if (info != ResultInfo.SUCCESS)
-			return MyResponse.errorResponse(
-					ResultInfo.BABYSITTER_ORDER_NULL.getCode(),
-					ResultInfo.BABYSITTER_ORDER_NULL.getMsg());
+			return MyResponse.errorResponse(info.getCode(), info.getMsg());
 		return MyResponse.successResponse();
 	}
 
 	/**
 	 * 转至收尾款页面
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -179,9 +183,45 @@ public class ManageBabysitterOrderController extends BaseController {
 	public Object submitEndMoney(String id) {
 		ResultInfo info = orderService.payEndMoney(id);
 		if (info != ResultInfo.SUCCESS)
-			return MyResponse.errorResponse(
-					ResultInfo.BABYSITTER_ORDER_NULL.getCode(),
-					ResultInfo.BABYSITTER_ORDER_NULL.getMsg());
+			return MyResponse.errorResponse(info.getCode(), info.getMsg());
+		return MyResponse.successResponse();
+	}
+
+	@RequestMapping("/adviceInOrder")
+	public Object adviceInOrder(String id, String beginDate) {
+		ResultInfo info = orderService.adviceInOrder(id, beginDate);
+		if (info != ResultInfo.SUCCESS)
+			return MyResponse.errorResponse(info.getCode(), info.getMsg());
+		return MyResponse.successResponse();
+	}
+
+	@RequestMapping("/family")
+	public Object family(HttpServletRequest request) {
+
+		return "manage/babysitterOrder/family";
+	}
+
+	@ResponseBody
+	@RequestMapping("/submitFamily")
+	public Object submitFamily(String id) {
+		ResultInfo info = orderService.submitFamily(id);
+		if (info != ResultInfo.SUCCESS)
+			return MyResponse.errorResponse(info.getCode(), info.getMsg());
+		return MyResponse.successResponse();
+	}
+
+	@RequestMapping("/pauper")
+	public Object pauper(HttpServletRequest request) {
+
+		return "manage/babysitterOrder/pauper";
+	}
+
+	@ResponseBody
+	@RequestMapping("/submitPauper")
+	public Object submitPauper(String id) {
+		ResultInfo info = orderService.submitPauper(id);
+		if (info != ResultInfo.SUCCESS)
+			return MyResponse.errorResponse(info.getCode(), info.getMsg());
 		return MyResponse.successResponse();
 	}
 }
