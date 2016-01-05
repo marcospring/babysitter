@@ -28,6 +28,9 @@ public class ManageBabysitterOrderController extends BaseController {
 	@Autowired
 	private BabysitterService babysitterService;
 
+	public static final int EDIT_TYPE = 1;
+	public static final int NEW_EDIT_TYPE = 2;
+
 	@RequestMapping("/go")
 	public String go() {
 		return "/manage/babysitterOrder/order";
@@ -89,10 +92,16 @@ public class ManageBabysitterOrderController extends BaseController {
 	}
 
 	@RequestMapping("/goEdit")
-	public Object goEdit(HttpServletRequest request, String id) {
+	public Object goEdit(HttpServletRequest request, String id, int type) {
 		BabysitterOrder order = orderService.getOrder(id);
 		request.setAttribute("vo", order);
-		return "manage/babysitterOrder/editOrder";
+		if (type == EDIT_TYPE) {
+			return "manage/babysitterOrder/editOrder";
+		} else if (type == NEW_EDIT_TYPE) {
+			return "manage/babysitterOrder/newEditOrder";
+		} else {
+			return "manage/babysitterOrder/paymentEditOrder";
+		}
 	}
 
 	@ResponseBody
@@ -151,6 +160,18 @@ public class ManageBabysitterOrderController extends BaseController {
 					ResultInfo.BABYSITTER_ORDER_NULL.getCode(),
 					ResultInfo.BABYSITTER_ORDER_NULL.getMsg());
 		return MyResponse.successResponse();
+	}
+
+	/**
+	 * 转至收尾款页面
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping("/payment")
+	public Object payment(HttpServletRequest request) {
+
+		return "manage/babysitterOrder/payment";
 	}
 
 	@ResponseBody
